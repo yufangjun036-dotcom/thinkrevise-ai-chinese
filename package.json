@@ -16,12 +16,16 @@
     "check:release": "node scripts/check-release-readiness.mjs",
     "benchmark:validate": "node scripts/benchmark-accuracy.mjs",
     "benchmark:live": "node scripts/benchmark-accuracy.mjs",
+    "test:accuracy-stability": "node scripts/check-live-academic-stability.mjs",
+    "benchmark:academic-validate": "node scripts/check-live-academic-stability.mjs",
+    "benchmark:longform-validate": "node scripts/check-longform-academic.mjs",
+    "test:longform-live": "node scripts/check-longform-academic.mjs",
     "test:demo": "node --experimental-strip-types scripts/check-demo-validation.mjs",
     "test:demo:live": "node scripts/check-demo-live.mjs",
     "test:api": "node scripts/check-api.mjs",
     "test:recovery": "node scripts/check-boundary-recovery.mjs",
     "test:live-ai": "node scripts/check-live-ai.mjs",
-    "verify": "npm run lint && npm run check:data && npm run check:limits && npm run check:copy && npm run check:safeguards && npm run check:security && npm run benchmark:validate && npm run build",
+    "verify": "npm run lint && npm run check:data && npm run check:limits && npm run check:copy && npm run check:safeguards && npm run check:security && npm run benchmark:validate && npm run benchmark:academic-validate && npm run benchmark:longform-validate && npm run build",
     "verify:release": "npm run verify && node scripts/run-local-release-suite.mjs && npm run check:release"
   },
   "dependencies": {

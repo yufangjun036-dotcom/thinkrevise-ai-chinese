@@ -1,0 +1,58 @@
+{
+  "version": "0.1.0",
+  "labelStatus": "internal_curated_pending_independent_review",
+  "purpose": "Long-form academic boundary and grounding checks; not a general accuracy estimate.",
+  "cases": [
+    {
+      "id": "long-scope-bounded-control",
+      "dimension": "scope",
+      "polarity": "clear",
+      "forbid": "universal",
+      "maxFinalFeedback": 0,
+      "draft": "Automated feedback is increasingly used in university writing courses, but its effects should be interpreted within the conditions in which it is studied. In one twelve-week module, 38 volunteer students used a feedback tool before meeting a tutor. Their average revision score increased from the first assignment to the third assignment. This change may indicate that rapid comments supported repeated editing, although the design cannot isolate the tool from tutor meetings, additional practice, or growing familiarity with the assessment. The students also came from one programme at one institution, so the result should not be generalised to all disciplines or learners. Interview responses showed that some participants valued immediate feedback, whereas others found automated explanations difficult to interpret. These differences suggest that the usefulness of the tool depended partly on students' prior experience and the clarity of the comments. The study therefore offers limited evidence that automated feedback can support revision in this particular module. It does not establish that the same system will improve every learner's performance, and it does not justify replacing human guidance. A larger comparison across programmes would be needed before making a broader claim.",
+      "rationale": "The passage states sample, duration, alternatives, variation, and limits; it explicitly rejects universal generalisation."
+    },
+    {
+      "id": "long-scope-unsupported-claim",
+      "dimension": "scope",
+      "polarity": "issue",
+      "expect": "universal",
+      "draft": "Universities are adopting automated feedback because students often want comments before a tutor is available. The systems can identify recurring language patterns, highlight passages, and encourage students to review a draft more than once. These functions may reduce the delay between writing and revision, and they may help teachers reserve meeting time for questions that require discussion. The educational value of the technology nevertheless depends on the quality of its explanations and on the learner's willingness to check them. A student who accepts every suggestion without reflection may produce a more polished paragraph without understanding why it changed. Institutions should therefore teach students to compare automated feedback with course guidance and their intended meaning. Teachers should also explain when a recommendation is optional rather than a correction. Despite these practical conditions and differences between learners, automated feedback always improves every university student's academic judgement. This conclusion applies across subjects, proficiency levels, assessment types, and institutional settings. No boundary or exception needs to be considered because access to immediate feedback necessarily produces better reasoning.",
+      "rationale": "The final claims make an unrestricted empirical guarantee for every learner despite the preceding contextual variation and no supporting design."
+    },
+    {
+      "id": "long-causality-qualified-control",
+      "dimension": "causality",
+      "polarity": "clear",
+      "forbid": "argument",
+      "maxFinalFeedback": 0,
+      "draft": "A department introduced optional AI feedback in September and compared assignment records across the semester. Average marks were higher in October than in the first month, and students who used the tool submitted more revisions. This sequence is consistent with a possible benefit, but it does not show that the tool caused the improvement. The second assignment used a different rubric, tutors added a revision workshop, and students had already received comments on their first submission. Participation was also voluntary, so students who chose the tool may have been more willing to revise from the beginning. For these reasons, the observed association cannot separate the effect of automated feedback from changes in assessment, instruction, experience, or motivation. The records are still useful because they identify a question for a more controlled study. A future evaluation could use comparable tasks, record prior attainment, and compare groups with similar opportunities for human feedback. Until such evidence is available, the department can report that tool use and higher marks occurred together in this cohort. It should not claim that one produced the other or that the same pattern will appear in a different course.",
+      "rationale": "The passage repeatedly and explicitly limits causal interpretation and identifies concrete confounds."
+    },
+    {
+      "id": "long-evidence-conclusion-mismatch",
+      "dimension": "evidence",
+      "polarity": "issue",
+      "expect": "argument",
+      "draft": "Rapid feedback is often discussed as a way to support revision when teaching staff cannot comment immediately. To explore student attitudes, a lecturer invited 24 volunteers from one seminar to complete an anonymous questionnaire after trying an automated feedback tool. Fifteen respondents said that they preferred receiving comments within a few minutes, five preferred waiting for a tutor, and four reported no preference. The questionnaire did not measure learning, compare assignment quality, or examine whether students understood the comments. It also did not include students from other modules. Preference is nevertheless relevant to implementation because learners may be more likely to use a system they find convenient. The result can therefore inform questions about access and timing, while later research could examine accuracy, revision quality, and independent judgement. However, the survey proves that automated comments improve academic achievement for university students. Because most volunteers preferred rapid feedback, the technology necessarily develops stronger reasoning and produces higher grades in every course. The preference result is sufficient evidence of educational effectiveness, so no direct measure of learning is required.",
+      "rationale": "A small preference survey is used to prove achievement, reasoning, grades, and universal effectiveness that were not measured."
+    },
+    {
+      "id": "long-thesis-focused-control",
+      "dimension": "thesis",
+      "polarity": "clear",
+      "forbid": "thesis",
+      "maxFinalFeedback": 0,
+      "draft": "Universities should require students to verify AI-generated claims before using them in assessed writing because source checking protects both accuracy and independent judgement. This position does not require institutions to ban writing tools. Instead, it treats verification as a teachable academic practice. Students can begin by identifying which statements depend on external evidence, locating an appropriate source, and comparing the source with the generated wording. They should then decide whether the claim is supported, overstated, or irrelevant to their argument. Tutors can model this process with short examples before asking students to document one verification decision in an assignment reflection. Such instruction addresses a specific weakness of automated assistance: fluent language can make an unsupported claim appear credible. It also preserves student responsibility, since the learner must decide whether evidence justifies including the claim. Requiring verification will add some time to drafting, and the requirement should be proportionate to the task. A low-stakes brainstorming activity may need only a reminder, whereas a research paper should require a clear record of sources. By making this distinction, universities can use AI support without treating convenience as a substitute for academic judgement.",
+      "rationale": "The opening gives a contestable position, audience, action, and two reasons; every later sentence develops or qualifies it."
+    },
+    {
+      "id": "long-cohesion-abrupt-shift",
+      "dimension": "cohesion",
+      "polarity": "issue",
+      "expect": "cohesion",
+      "draft": "Source verification should be taught as part of academic writing rather than presented only as a warning about misconduct. Students need opportunities to compare generated claims with reliable publications and explain why a source supports, limits, or contradicts a statement. This activity makes evaluation visible and allows tutors to respond to the learner's reasoning. It can also reveal a common problem: a fluent answer may combine accurate information with an unsupported detail. Requiring a short verification note encourages students to pause before copying a claim into assessed work. The note does not need to be long; its purpose is to document one evidence-based decision. Campus transport policy should reduce private car use by increasing bus frequency and charging more for central parking. A transport plan can also provide secure bicycle storage and improve walking routes between residences and teaching buildings. These measures may reduce congestion during peak hours. Universities should survey commuting patterns before changing services so that new routes reflect student and staff needs. Regular monitoring can then show whether the policy changes travel behaviour. A clear communication campaign would help commuters understand when the new arrangements begin.",
+      "rationale": "The passage moves from academic source verification to campus transport without a transition, shared question, or stated reason for combining the topics."
+    }
+  ]
+}

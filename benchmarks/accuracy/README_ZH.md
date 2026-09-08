@@ -13,6 +13,10 @@
 
 第一轮逐项复核与判定边界见 [`GOLD_AUDIT_ZH.md`](GOLD_AUDIT_ZH.md)。
 
+另有 `academic-stability-cases.json`，包含 17 个用于排查学术判断阶段波动的固定正反例，覆盖范围限定、因果判断、中心论点、跨句衔接和证据—结论匹配。它目前是项目内部构造的数据集，状态为 `internal_curated_pending_independent_review`；与 `cases.json` 分开维护，不能称为已经独立人工复核的金标准。
+
+`academic-longform-cases.json` 增加 6 篇不少于 140 词的内部长文，检查学术判断在较长上下文中的范围限定、因果边界、证据—结论匹配、论点聚焦、跨段衔接、原文定位和完全重复反馈。独立评审方法见 [`INDEPENDENT_REVIEW_GUIDE_ZH.md`](INDEPENDENT_REVIEW_GUIDE_ZH.md)。
+
 ## 指标含义
 
 - **客观错误召回率**：人工标注的拼写、语法、时态等错误中，系统找到了多少。
@@ -31,6 +35,18 @@
 
 ```bash
 npm run benchmark:validate
+```
+
+同时校验 17 例学术稳定性数据结构、不调用 API：
+
+```bash
+npm run benchmark:academic-validate
+```
+
+校验长文学术数据集结构与输入长度、不调用 API：
+
+```bash
+npm run benchmark:longform-validate
 ```
 
 只运行一个指定案例：

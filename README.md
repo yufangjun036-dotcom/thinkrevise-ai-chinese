@@ -4,6 +4,14 @@ ThinkRevise AI (Chinese) is an AI-guided academic English writing and revision a
 
 This repository is the validated Chinese-interface candidate build for an educational AI course and portfolio. A separate English version will be produced only after the Chinese release gate is complete, changing user-visible language while preserving layout, workflow, data behaviour, safeguards, and AI logic.
 
+## Product preview
+
+![ThinkRevise AI Chinese homepage](docs/images/portfolio-home-desktop.png)
+
+![ThinkRevise AI academic feedback workflow](docs/images/portfolio-feedback-desktop.png)
+
+The images above are captured from an isolated local production build in forced demo mode. They contain only synthetic classroom text and make no paid API requests.
+
 ## Current evidence
 
 | Area | Current result |
@@ -136,7 +144,7 @@ Live benchmarks are intentionally separate because they consume API credit. The 
 - [Accuracy benchmark and scoring guide](benchmarks/accuracy/README_ZH.md)
 - [Gold-set internal audit](benchmarks/accuracy/GOLD_AUDIT_ZH.md)
 - [Consolidated 36-case live benchmark report](reports/accuracy/2026-09-07T19-44-49-189Z.md)
-- [Latest dated local release result](docs/releases/2026-09-08-local-release-gate.md)
+- [Latest dated local portfolio release result](docs/releases/2026-09-09-portfolio-release-gate.md)
 - [Remaining portfolio and release gaps](docs/PORTFOLIO_GAPS_ZH.md)
 
 ## Current status

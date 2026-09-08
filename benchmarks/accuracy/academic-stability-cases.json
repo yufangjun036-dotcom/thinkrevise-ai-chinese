@@ -1,0 +1,151 @@
+{
+  "version": "0.1.0",
+  "labelStatus": "internal_curated_pending_independent_review",
+  "cases": [
+    {
+      "id": "universal-unsupported",
+      "dimension": "scope",
+      "polarity": "issue",
+      "expect": "universal",
+      "draft": "This tutoring method always improves every learner's performance.",
+      "rationale": "The empirical intervention claim applies without evidence, boundary, or exception to every learner."
+    },
+    {
+      "id": "universal-bounded",
+      "dimension": "scope",
+      "polarity": "clear",
+      "forbid": "universal",
+      "maxFinalFeedback": 0,
+      "draft": "In a controlled study of 24 volunteer learners, this tutoring method improved average quiz scores; the small sample limits generalisation.",
+      "rationale": "The sentence states the sample, measured outcome, and generalisation limit."
+    },
+    {
+      "id": "universal-logical-definition",
+      "dimension": "scope",
+      "polarity": "clear",
+      "forbid": "universal",
+      "maxFinalFeedback": 0,
+      "draft": "Every square has four sides. A square therefore always has four vertices.",
+      "rationale": "Always expresses a defining logical property, not an unsupported empirical frequency claim."
+    },
+    {
+      "id": "causality-unsupported",
+      "dimension": "causality",
+      "polarity": "issue",
+      "expect": "argument",
+      "draft": "The university introduced an online feedback platform. Consequently, the platform improved students' critical reasoning.",
+      "rationale": "Sequence alone is presented as proof of a causal educational outcome."
+    },
+    {
+      "id": "causality-qualified",
+      "dimension": "causality",
+      "polarity": "clear",
+      "forbid": "argument",
+      "maxFinalFeedback": 0,
+      "draft": "The university introduced an online feedback platform. Scores increased afterward, but this sequence alone does not establish that the platform caused the improvement.",
+      "rationale": "The text explicitly denies that temporal order establishes causation."
+    },
+    {
+      "id": "causality-confound-unsupported",
+      "dimension": "causality",
+      "polarity": "issue",
+      "expect": "argument",
+      "draft": "Students began using an AI feedback tool in September. Their essay scores increased in October. Therefore, the tool caused the improvement.",
+      "rationale": "A before-and-after sequence is converted into a causal conclusion without excluding alternatives."
+    },
+    {
+      "id": "causality-confound-qualified",
+      "dimension": "causality",
+      "polarity": "clear",
+      "forbid": "argument",
+      "maxFinalFeedback": 0,
+      "draft": "Students began using an AI feedback tool in September, and essay scores increased in October. Because the course assessment also changed, this sequence does not establish that the tool caused the improvement.",
+      "rationale": "The text identifies a confound and explicitly limits the causal interpretation."
+    },
+    {
+      "id": "thesis-overbroad",
+      "dimension": "thesis",
+      "polarity": "issue",
+      "expect": "thesis",
+      "draft": "Technology affects society in many ways. Digital tools influence study, work, and communication.",
+      "rationale": "The paragraph announces a broad topic and lists domains but gives no specific position."
+    },
+    {
+      "id": "thesis-focused",
+      "dimension": "thesis",
+      "polarity": "clear",
+      "forbid": "thesis",
+      "maxFinalFeedback": 0,
+      "draft": "Universities should teach source verification because students need to evaluate AI-generated claims before using them in assessed work.",
+      "rationale": "The sentence gives a specific position, audience, purpose, and reason."
+    },
+    {
+      "id": "thesis-descriptive-list",
+      "dimension": "thesis",
+      "polarity": "issue",
+      "expect": "thesis",
+      "draft": "This essay discusses artificial intelligence in universities. AI is used for feedback, planning, and administration. These applications affect students and staff in different ways.",
+      "rationale": "The passage describes a topic and applications but never states the essay's central claim."
+    },
+    {
+      "id": "thesis-qualified-position",
+      "dimension": "thesis",
+      "polarity": "clear",
+      "forbid": "thesis",
+      "maxFinalFeedback": 0,
+      "draft": "Although automated feedback can reduce response time, universities should require human review in high-stakes assessment because unverified comments may affect grades.",
+      "rationale": "The sentence states a qualified, contestable position and directly supplies its reason."
+    },
+    {
+      "id": "cohesion-abrupt",
+      "dimension": "cohesion",
+      "polarity": "issue",
+      "expect": "cohesion",
+      "draft": "Campus recycling can reduce waste. Artificial intelligence systems require transparent data governance.",
+      "rationale": "The adjacent sentences have no transition, shared content concept, or stated relation."
+    },
+    {
+      "id": "cohesion-connected",
+      "dimension": "cohesion",
+      "polarity": "clear",
+      "forbid": "cohesion",
+      "maxFinalFeedback": 0,
+      "draft": "Every square has four sides. This defining property is used in the following proof.",
+      "rationale": "This defining property explicitly refers back to the first sentence."
+    },
+    {
+      "id": "cohesion-long-abrupt",
+      "dimension": "cohesion",
+      "polarity": "issue",
+      "expect": "cohesion",
+      "draft": "Universities should teach source verification because students need to evaluate AI-generated claims. This training can help them compare claims with reliable evidence. Campus transport policies should reduce private car use.",
+      "rationale": "The third sentence changes to an unrelated policy topic without a transition or shared argumentative purpose."
+    },
+    {
+      "id": "cohesion-long-connected",
+      "dimension": "cohesion",
+      "polarity": "clear",
+      "forbid": "cohesion",
+      "maxFinalFeedback": 0,
+      "draft": "Universities should teach source verification because students need to evaluate AI-generated claims. This training can help them compare claims with reliable evidence. Such comparison is especially important before students cite AI-generated material in assessed work.",
+      "rationale": "Each sentence explicitly develops the same claim through clear reference and progression."
+    },
+    {
+      "id": "evidence-conclusion-mismatch",
+      "dimension": "evidence",
+      "polarity": "issue",
+      "expect": "argument",
+      "draft": "A survey found that 15 students preferred rapid feedback. This result proves that automated comments improve academic achievement.",
+      "rationale": "A small preference result does not prove an improvement in academic achievement."
+    },
+    {
+      "id": "evidence-conclusion-qualified",
+      "dimension": "evidence",
+      "polarity": "clear",
+      "forbid": "argument",
+      "maxFinalFeedback": 0,
+      "draft": "A survey found that 15 of 24 volunteers preferred rapid feedback. The result describes preference in this small sample and does not show that automated comments improve academic achievement.",
+      "rationale": "The conclusion stays within the observed construct and explicitly rejects an achievement inference."
+    }
+  ]
+}

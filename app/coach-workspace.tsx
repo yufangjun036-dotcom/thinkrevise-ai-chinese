@@ -211,7 +211,7 @@ function CheckIcon() {
 }
 
 function Brand({ compact = false }: { compact?: boolean }) {
-  return <button className="brand brand-button" type="button" onClick={() => { window.sessionStorage.removeItem(SESSION_RECOVERY_KEY); window.sessionStorage.removeItem(LEGACY_SESSION_RECOVERY_KEY); window.location.reload(); }} aria-label="返回首页并重新开始"><span className="brand-mark">T</span><span><strong>ThinkRevise</strong>{!compact && <small>AI 学术英语教练</small>}</span></button>;
+  return <button className="brand brand-button" type="button" onClick={() => { window.sessionStorage.removeItem(SESSION_RECOVERY_KEY); window.sessionStorage.removeItem(LEGACY_SESSION_RECOVERY_KEY); window.location.reload(); }} aria-label="返回 ThinkRevise AI 中文版首页并重新开始"><span className="brand-mark">T</span><span><strong>ThinkRevise AI</strong>{!compact && <small>Chinese · 学术英语教练</small>}</span></button>;
 }
 
 function Progress({ stage, helpMode }: { stage: Stage; helpMode: HelpMode }) {
@@ -815,5 +815,7 @@ export default function CoachWorkspace() {
 }
 
 function ProviderBadge({ response }: { response: CoachResponse }) {
-  return <div className={`provider-status ${response.provider}`}><span /><strong>{response.provider === "openai" ? "实时 AI 反馈" : "演示反馈模式"}</strong><p>{response.fallbackNotice || (response.provider === "openai" ? "AI 判断可能出错，请由学习者核对。" : "无需 API 密钥，适合现场试用与故障备用。")}</p></div>;
+  const languageCount = response.feedback.filter(item => /拼写|大小写|主谓|时态|词形|词性|冠词|单复数|动词形式|标点|句子完整/.test(item.category) && !/学术|建议|替换/.test(item.category)).length;
+  return <><div className={`provider-status ${response.provider}`}><span /><strong>{response.provider === "openai" ? "实时 AI 反馈" : "演示反馈模式"}</strong><p>{response.fallbackNotice || (response.provider === "openai" ? "AI 判断可能出错，请由学习者核对。" : "无需 API 密钥，适合现场试用与故障备用。")}</p></div>
+    <p className="second-check-note">本轮反馈分为语言检查 {languageCount} 项、学术与表达建议 {response.feedback.length - languageCount} 项。学术建议不是已证实的语法错误；是否采纳取决于原意、证据和写作要求。下方总数包含两类反馈，不代表错误总数。</p></>;
 }

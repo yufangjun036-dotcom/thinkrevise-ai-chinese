@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -23,13 +23,16 @@ function categoryFamily(value) {
   if (/词形|副词|动词形式/.test(value)) return "word_form";
   if (/冠词|单复数|不可数/.test(value)) return "noun_form";
   if (/句子完整|过长句|句法结构|残句|连写句|标点|句子连接|逗号拼接/.test(value)) return "sentence_structure";
-  if (/中心观点|中心论点|主题句/.test(value)) return "thesis";
+  if (/中心观点|中心论点|主题句|论点聚焦/.test(value)) return "thesis";
   if (/衔接|连贯|段落结构|篇章/.test(value)) return "cohesion";
   if (/未经论证的强调|绝对|一概而论|过度确定/.test(value)) return "register";
   if (/论证|证据|理由|解释/.test(value)) return "argument";
   if (/学术|口语|非正式|个人化|绝对化|宽泛|强调|用词|语域|措辞/.test(value)) return "register";
+  if (/语法|语言准确性/.test(value)) return "unclassified_grammar";
   return "other";
 }
+const isObjectiveFamily = family => ["spelling", "agreement", "tense", "word_form", "noun_form", "sentence_structure", "unclassified_grammar"].includes(family);
+assert.ok(isObjectiveFamily(categoryFamily('语法')), 'A generic grammar label must not hide from objective error scoring');
 
 function quotesOverlap(first, second) {
   const a = normalise(first);
@@ -43,8 +46,17 @@ function quotesOverlap(first, second) {
 
 function issueMatches(expected, actual) {
   const explicitAbsoluteClaim = expected.family === "register" && /\b(?:always|never|everyone|no one|nobody)\b/i.test(actual.quote ?? "");
-  return (expected.family === categoryFamily(actual.category) || explicitAbsoluteClaim) && quotesOverlap(expected.quote, actual.quote);
+  const expectedPhrase = ` ${normalise(expected.quote)} `;
+  const source = String(actual.correction ?? "").includes("→") ? String(actual.correction).split("→")[0] : "";
+  // A longer citation is acceptable when its inspectable edit explicitly targets
+  // the gold span. Merely including a word in a whole paragraph is insufficient.
+  const targetedContainedSpan = ` ${normalise(actual.quote)} `.includes(expectedPhrase)
+    && ` ${normalise(source)} `.includes(expectedPhrase);
+  return (expected.family === categoryFamily(actual.category) || explicitAbsoluteClaim) && (quotesOverlap(expected.quote, actual.quote) || targetedContainedSpan);
 }
+
+assert.ok(issueMatches({family:'register',quote:'always'}, {category:'过度绝对化',quote:'Automated feedback always improves',correction:'always improves → may improve'}));
+assert.ok(!issueMatches({family:'register',quote:'always'}, {category:'学术语域',quote:'Automated feedback always improves',correction:'feedback → comments'}));
 
 function correctionMatches(expected, actual) {
   const accepted = correctionGold[expected.key];
@@ -113,14 +125,16 @@ function validateDataset() {
 
 const validation = validateDataset();
 const runLive = process.env.RUN_LIVE_BENCHMARK === "1";
+const replayPath = process.env.BENCHMARK_REPLAY_REPORT;
+const replayReport = replayPath ? JSON.parse(await readFile(resolve(replayPath), "utf8")) : null;
 
-if (!runLive) {
+if (!runLive && !replayReport) {
   console.log(`Accuracy benchmark dataset passed: ${validation.cases} cases (${validation.initialCount} initial, ${validation.revisionCount} revision), ${validation.objectiveCount} objective and ${validation.advisoryCount} advisory gold issues.`);
   console.log("No API requests were made. Set RUN_LIVE_BENCHMARK=1 to execute a scored run.");
   process.exit(0);
 }
 
-const baseUrl = process.env.PROTOTYPE_URL || "http://127.0.0.1:3002";
+const baseUrl = replayReport?.summary.baseUrl || process.env.PROTOTYPE_URL || "http://127.0.0.1:3002";
 const endpoint = new URL("/api/coach", baseUrl);
 const requestedIds = new Set((process.env.BENCHMARK_CASES || "").split(",").map((value) => value.trim()).filter(Boolean));
 const requestedLimit = Number(process.env.BENCHMARK_LIMIT || 0);
@@ -129,11 +143,19 @@ if (requestedIds.size) assert.equal(selectedCases.length, requestedIds.size, "On
 if (Number.isFinite(requestedLimit) && requestedLimit > 0) selectedCases = selectedCases.slice(0, requestedLimit);
 assert.ok(selectedCases.length > 0, "No benchmark cases selected");
 
+const requestIntervalMs = Number(process.env.BENCHMARK_INTERVAL_MS || 15000);
+assert.ok(Number.isFinite(requestIntervalMs) && requestIntervalMs >= 0 && requestIntervalMs <= 60000);
+let lastRequestAt = 0;
 async function requestCoach(body) {
+  assert.ok(!replayReport, "Offline report replay must never make an API request");
+  const waitMs = Math.max(0, lastRequestAt + requestIntervalMs - Date.now());
+  if (waitMs) await new Promise(resolve => setTimeout(resolve, waitMs));
+  lastRequestAt = Date.now();
   const startedAt = performance.now();
-  const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(70000) });
   const data = await response.json();
   if (!response.ok) throw new Error(`${response.status}: ${data.error || "unknown API error"}`);
+  assert.equal(data.provider, "openai", "Demo/fallback output is not live accuracy evidence");
   return { data, durationMs: Math.round(performance.now() - startedAt) };
 }
 
@@ -149,7 +171,7 @@ function scoreFeedback(expectedIssues, feedback, draft) {
       matches.push({ expected, actual: feedback[actualIndex] });
     }
   }
-  const objectiveActualIndexes = feedback.map((item, index) => ({ item, index })).filter(({ item }) => ["spelling", "agreement", "tense", "word_form", "noun_form", "sentence_structure"].includes(categoryFamily(item.category)));
+  const objectiveActualIndexes = feedback.map((item, index) => ({ item, index })).filter(({ item }) => isObjectiveFamily(categoryFamily(item.category)));
   const objectiveExpected = expectedIssues.filter((issue) => issue.tier === "objective");
   const objectiveMatches = matches.filter(({ expected }) => expected.tier === "objective");
   const correctionChecks = objectiveMatches.map(({ expected, actual }) => correctionMatches(expected, actual)).filter((value) => value !== null);
@@ -168,7 +190,7 @@ function scoreFeedback(expectedIssues, feedback, draft) {
     objectiveCorrectionsAccepted: correctionChecks.filter(Boolean).length,
     advisoryExpected: expectedIssues.filter((issue) => issue.tier === "advisory").length,
     advisoryMatched: matches.filter(({ expected }) => expected.tier === "advisory").length,
-    unmatchedAdvisory: feedback.filter((item, index) => !usedActual.has(index) && !["spelling", "agreement", "tense", "word_form", "noun_form", "sentence_structure"].includes(categoryFamily(item.category))),
+    unmatchedAdvisory: feedback.filter((item, index) => !usedActual.has(index) && !isObjectiveFamily(categoryFamily(item.category))),
     misses,
     locatable,
     duplicates,
@@ -179,25 +201,28 @@ const results = [];
 for (const [index, testCase] of selectedCases.entries()) {
   process.stdout.write(`[${index + 1}/${selectedCases.length}] ${testCase.id} ... `);
   try {
+    const cached = replayReport?.results.find(result => result.id === testCase.id);
+    if (replayReport && (!cached || cached.error)) throw new Error(cached?.error || "Not run in source report");
+    if (cached) assert.equal(cached.provider, "openai");
     if (testCase.kind === "initial") {
-      const { data, durationMs } = await requestCoach({
+      const { data, durationMs } = cached ? {data: cached.output, durationMs: cached.durationMs} : await requestCoach({
         draft: testCase.draft,
         mode: "coach",
         goal: "对初稿进行全面综合诊断",
         taskPrompt: `当前主题：${testCase.theme}`,
         selfCheck: { mainPoint: "测试用人工标注文本", weakness: "尚不确定，希望通过 AI 诊断进一步确认", help: "全面检查" },
       });
-      results.push({ id: testCase.id, kind: testCase.kind, provider: data.provider, durationMs, score: scoreFeedback(testCase.expectedIssues, data.feedback, testCase.draft) });
+      results.push({ id: testCase.id, kind: testCase.kind, provider: data.provider, durationMs, output: data, score: scoreFeedback(testCase.expectedIssues, data.feedback, testCase.draft) });
       console.log(`${data.feedback.length} items, ${durationMs} ms`);
     } else {
-      const initial = await requestCoach({
+      const initial = cached ? {data: cached.initialOutput, durationMs: cached.durationMs} : await requestCoach({
         draft: testCase.originalDraft,
         mode: "coach",
         goal: "对原稿进行全面综合诊断",
         taskPrompt: `当前主题：${testCase.theme}`,
         selfCheck: { mainPoint: "测试用人工标注文本", weakness: "多个方面均需要改进，希望进行综合诊断", help: "全面检查" },
       });
-      const revision = await requestCoach({
+      const revision = cached ? {data: cached.output, durationMs: 0} : await requestCoach({
         phase: "revision",
         draft: testCase.revisedDraft,
         originalDraft: testCase.originalDraft,
@@ -217,6 +242,8 @@ for (const [index, testCase] of selectedCases.entries()) {
         kind: testCase.kind,
         provider: revision.data.provider,
         durationMs: initial.durationMs + revision.durationMs,
+        initialOutput: initial.data,
+        output: revision.data,
         revision: {
           expectedResolved: testCase.expectedRevision.resolved.length,
           resolvedDetected: resolvedDetected.length,
@@ -231,8 +258,11 @@ for (const [index, testCase] of selectedCases.entries()) {
       console.log(`revision checked, ${initial.durationMs + revision.durationMs} ms`);
     }
   } catch (error) {
-    results.push({ id: testCase.id, kind: testCase.kind, error: error instanceof Error ? error.message : String(error) });
-    console.log("ERROR");
+    const message = error instanceof Error ? error.message : String(error);
+    results.push({ id: testCase.id, kind: testCase.kind, error: message });
+    console.log(`ERROR: ${message}`);
+    // Save partial evidence instead of repeating requests against an exhausted limit.
+    if (/^429:|^503:|quota|budget/i.test(message)) break;
   }
 }
 
@@ -255,10 +285,14 @@ const ratio = (numerator, denominator) => denominator ? Number((numerator / deno
 const summary = {
   datasetVersion: dataset.version,
   generatedAt: new Date().toISOString(),
+  evidenceMode: replayReport ? "offline-rescore" : "live",
+  sourceReport: replayPath || null,
+  sourceGeneratedAt: replayReport?.summary.generatedAt || null,
   baseUrl,
   selectedCases: selectedCases.length,
   completedCases: results.filter((result) => !result.error).length,
   failedCases: results.filter((result) => result.error).length,
+  notRunCases: selectedCases.filter(testCase => !results.some(result => result.id === testCase.id)).map(testCase => testCase.id),
   objectiveRecall: ratio(totals.objectiveMatched, totals.objectiveExpected),
   objectivePrecisionAgainstGold: ratio(totals.objectiveMatched, totals.objectiveReturned),
   objectiveCorrectionAcceptance: ratio(totals.objectiveCorrectionsAccepted, totals.objectiveCorrectionsChecked),
@@ -281,6 +315,11 @@ const markdownPath = resolve(reportDirectory, `${stamp}.md`);
 await writeFile(jsonPath, `${JSON.stringify(report, null, 2)}\n`);
 await writeFile(markdownPath, `# ThinkRevise AI accuracy benchmark\n\n- Dataset: ${summary.datasetVersion}\n- Generated: ${summary.generatedAt}\n- Cases: ${summary.completedCases}/${summary.selectedCases}\n- Objective recall: ${summary.objectiveRecall ?? "n/a"}\n- Objective precision against gold: ${summary.objectivePrecisionAgainstGold ?? "n/a"}\n- Objective correction acceptance: ${summary.objectiveCorrectionAcceptance ?? "n/a"}\n- Advisory coverage: ${summary.advisoryCoverage ?? "n/a"}\n- Quote locatability: ${summary.quoteLocatability ?? "n/a"}\n- Duplicate rate: ${summary.duplicateRate ?? "n/a"}\n- Objective false positives against gold: ${summary.objectiveFalsePositivesAgainstGold}\n- Strong-text objective false positives: ${summary.strongTextObjectiveFalsePositives}\n- Revision resolved accuracy: ${summary.revisionResolvedAccuracy ?? "n/a"}\n- Revision remaining recall: ${summary.revisionRemainingRecall ?? "n/a"}\n- Revision new-issue recall: ${summary.revisionNewIssueRecall ?? "n/a"}\n- Average duration: ${summary.averageDurationMs} ms\n\nThis is an automated comparison against the current gold set. Unmatched academic-writing suggestions require human adjudication before they are counted as false positives.\n`);
 
+await appendFile(markdownPath, `\nEvidence mode: ${summary.evidenceMode}. Source report: ${summary.sourceReport ?? "this live run"}. Source generated at: ${summary.sourceGeneratedAt ?? summary.generatedAt}. Offline rescoring makes no new API requests.\n`);
 console.log(JSON.stringify(summary, null, 2));
 console.log(`Reports written to ${jsonPath} and ${markdownPath}`);
 if (summary.failedCases > 0) process.exitCode = 1;
+if (process.env.BENCHMARK_REQUIRE_ALL === "1") {
+  const unmet = results.some(result => result.error || result.score?.misses?.length || result.score?.objectiveUnmatched?.length || result.score?.duplicates || (result.score && (result.score.locatable !== result.score.returned || result.score.objectiveCorrectionsAccepted !== result.score.objectiveCorrectionsChecked)) || (result.revision && (result.revision.expectedResolved !== result.revision.resolvedDetected || result.revision.expectedRemaining !== result.revision.remainingDetected || result.revision.expectedNew !== result.revision.newDetected || result.revision.locatable !== result.revision.returned)));
+  if (unmet) { console.error("Selected-case accuracy gate failed; successful HTTP responses are not a passing score."); process.exitCode = 1; }
+}

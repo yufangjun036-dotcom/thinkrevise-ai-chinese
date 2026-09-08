@@ -16,6 +16,8 @@ for (const phrase of bannedInterfacePhrases) {
   assert.ok(!workspace.includes(phrase), `Chinese UI still contains the interface phrase: ${phrase}`);
 }
 assert.ok(layout.includes('lang="zh-CN"'), "Chinese root metadata must keep zh-CN as its language");
+assert.ok(workspace.includes("<strong>ThinkRevise AI</strong>"), "The visible Chinese-build brand name must remain ThinkRevise AI");
+assert.ok(workspace.includes("Chinese · 学术英语教练"), "The visible brand must identify the Chinese build");
 assert.ok(workspace.includes('path === "practice" ? limitWords(value, 300) : limitNonWhitespaceCharacters(value)'), "Each writing path must enforce its intended limit");
 assert.ok(workspace.includes('${draftWordCount} / 300 词'), "Topic writing must display its 300-word counter");
 assert.ok(workspace.includes('${draftWordCount} 词 · ${draftNonWhitespaceCount} / 6000 非空白字符'), "Academic revision must display words and the 6,000 non-whitespace-character allowance");

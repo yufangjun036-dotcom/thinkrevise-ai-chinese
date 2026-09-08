@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import {createRequire} from 'node:module';
+const require = createRequire(import.meta.url);
+const {chromium} = require('/Users/aba/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+if (process.env.RUN_LIVE_INCIDENT !== '1') throw new Error('Paid live browser test requires explicit opt-in.');
+const browser = await chromium.launch({channel:'chrome', headless:true});
+const page = await browser.newPage({viewport:{width:1280,height:900}});
+page.setDefaultTimeout(15000);
+const results=[];
+page.on('response', async r => {if (r.url().endsWith('/api/coach')) {const data=await r.json(); results.push(data); console.log(JSON.stringify(data));}});
+try {
+  await page.goto('http://127.0.0.1:3014');
+  await page.getByRole('button', {name:/进入修改工作室/}).click();
+  await page.getByRole('button', {name:/继续填写初稿/}).click();
+  const original='Nowadays, AI is really good for university students. It gives a lot of feedback and students can finish work fast. For example, a student can ask a chatbot to improve an essay in a few seconds. But sometimes students just use the answer and do not think about whether it is correct. They may also accept invented information. Many students is using AI without checking the answer careful, and teh feedback can be confusing. I think universities should teach students how to evaluate AI feedback because it is important. This teaching can help students use technology in a responsible way and still develop their own judgement.';
+  await page.getByPlaceholder('在这里输入或粘贴你的英文……').fill(original);
+  await page.getByPlaceholder('可用中文或英文简要概括').fill('大学应教学生判断 AI 反馈。');
+  await page.locator('select').first().selectOption({label:'语言准确性不足，存在较多拼写、语法或时态问题'});
+  await page.getByRole('button',{name:'分析并定位文章问题'}).click();
+  await page.getByRole('button',{name:/查看标记并开始自己修改/}).waitFor({timeout:70000});
+  assert.equal(results[0]?.provider,'openai');
+  await page.getByRole('button',{name:/查看标记并开始自己修改/}).click();
+  await page.getByRole('textbox',{name:'修改后的英文文本'}).fill(original.replace('students is','students are'));
+  await page.getByRole('button',{name:'提交第二稿并重新分析'}).click();
+  await page.getByRole('heading',{name:'AI 已重新分析你的第二稿'}).waitFor({timeout:70000});
+  assert.equal(results[1]?.provider,'openai');
+  assert.equal(results[1].revisionComparison.changedCount,0);
+  assert.ok(!results[1].feedback.some(item=>/主谓一致/.test(item.category)));
+  await page.getByPlaceholder('可以用中文或英文回答……').fill('复数主语使用 are；拼写和副词错误仍需要单独修改。');
+  await page.getByRole('button',{name:/完成并返回首页/}).click();
+  await page.getByRole('heading',{name:/今天，你想怎样练习/}).waitFor();
+  console.log('Browser incident journey completed through reflection.');
+} finally { await browser.close(); }
