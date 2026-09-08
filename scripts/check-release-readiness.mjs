@@ -54,6 +54,11 @@ assert.match(styles, /@media\s*\(max-width:\s*640px\)/, "The narrow-phone breakp
 assert.match(styles, /\.setup-columns,\s*\.feedback-grid,\s*\.comparison-grid\s*\{\s*grid-template-columns:\s*1fr/, "Comparisons must stack on narrow screens");
 assert.match(styles, /:focus-visible/, "Keyboard focus styling is missing");
 assert.match(styles, /prefers-reduced-motion/, "Reduced-motion support is missing");
+assert.match(styles, /\.loop-dots button\s*\{[^}]*width:\s*44px;[^}]*height:\s*44px;/, "Carousel step controls must keep a 44px touch target");
+assert.match(styles, /\.issue-navigator button\s*\{[^}]*min-height:\s*44px;/, "Issue navigation must keep a 44px touch target");
+assert.match(styles, /\.brand-button\s*\{[^}]*min-height:\s*44px;/, "Brand navigation must keep a 44px touch target");
+assert.match(styles, /\.back-button\s*\{[^}]*min-height:\s*44px;/, "Back navigation must keep a 44px touch target");
+assert.match(styles, /\.inline-issue-heading button\s*\{[^}]*width:\s*44px;[^}]*height:\s*44px;/, "Issue popover close control must keep a 44px touch target");
 assert.match(nextConfig, /poweredByHeader:\s*false/);
 assert.match(nextConfig, /X-Frame-Options/);
 assert.match(privacy, /API 数据默认不会用于训练模型/);

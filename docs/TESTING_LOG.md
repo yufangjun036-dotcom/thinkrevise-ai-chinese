@@ -267,3 +267,15 @@ The automated portion is complete. This does not replace the outstanding manual 
 | Real-phone live-provider identity | A successful phone journey is visibly distinguishable from demo fallback | The learner confirmed that the result displayed the green `实时 AI 反馈` status rather than the orange demo label | Pass |
 | Real-phone local-support mode | The middle support level reveals issue-level examples without supplying a complete replacement draft | The learner confirmed green live-AI status and expandable local examples; screenshot evidence shows the `仅供参考，不是整篇替代稿` boundary and a single-word correction for `teh` | Pass |
 | Real-phone direct-rewrite mode | Editing mode skips diagnosis cards and immediately presents the marked original plus complete rewrite | The learner confirmed all five expected behaviours: green live-AI status, no diagnosis-card stage, direct comparison, mobile vertical stacking and explicit editing-mode labelling | Pass |
+
+## 2026-09-09 — Touch-target and keyboard runtime audit
+
+| Check | Expected result | Observed result | Status |
+| --- | --- | --- | --- |
+| Revision-loop controls | Previous, next and step-dot controls provide at least a 44×44 CSS-pixel touch target | Local production runtime measured all six controls at approximately 45×45 pixels | Pass |
+| Revision setup controls | Every button in the setup step provides at least a 44-pixel-high touch target | The first audit found the brand return button at about 42 pixels and the back button at about 35 pixels; both were raised to 44 pixels and the repeated runtime audit found no undersized button | Pass after fix |
+| Keyboard focus | Keyboard users can see which control is focused | The first Tab stop displayed a solid 3-pixel focus outline on the brand navigation button | Pass |
+| Accessible naming | Interactive controls are exposed with usable names | The landing page and revision setup step contained no unnamed button, input, textarea or select control | Pass |
+| Structural semantics | The active page keeps one main region, one level-one heading and the correct document language | Runtime inspection returned one `main`, one `h1` and `lang="zh-CN"` | Pass |
+
+This runtime audit used the locally built production version. It verifies actual rendered control sizes at the available browser viewport, but it does not replace the outstanding 390×844 and 430×932 visual screenshots or a fresh narrow-screen keyboard/touch walkthrough.
