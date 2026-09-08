@@ -68,7 +68,7 @@ assert.ok(f.isStructurallyBareAquaticEcosystem(bareEcosystemIssue, bareEcosystem
 const shortEcosystemIssue = { ...bareEcosystemIssue, quote: 'aquatic ecosystem', correction: 'aquatic ecosystem → aquatic ecosystems' };
 assert.ok(f.isStructurallyBareAquaticEcosystem(shortEcosystemIssue, bareEcosystemDraft), 'A safe shorter ecosystem quote must keep the same reviewer protection');
 const shortestEcosystemRepair = { ...shortEcosystemIssue, correction: 'ecosystem → ecosystems', category: '语言准确性 · 冠词与不可数名词' };
-const normalisedShortestEcosystem = f.validateLiveResult({ summary: '', feedback: [shortestEcosystemRepair], modelRevision: bareEcosystemDraft, overview: [], meaningRisk: '' }, bareEcosystemDraft, 'coach', 0, false).feedback.find(item => item.quote === 'aquatic ecosystem');
+const normalisedShortestEcosystem = f.validateLiveResult({ summary: '', feedback: [shortestEcosystemRepair], modelRevision: bareEcosystemDraft, overview: [], meaningRisk: '' }, bareEcosystemDraft, 'coach', 0, false).feedback.find(item => /aquatic ecosystem/i.test(item.quote));
 assert.equal(normalisedShortestEcosystem?.category, '语言准确性 · 名词单复数', 'A concrete ecosystem plural repair must use the noun-number category');
 assert.ok(f.isStructurallyBareAquaticEcosystem(normalisedShortestEcosystem, bareEcosystemDraft), 'The shortest safe ecosystem repair must keep reviewer protection');
 for (const correctEcosystemDraft of [
@@ -121,6 +121,11 @@ assert.equal(
   duplicatedEcosystemReplay.feedback.filter(item => /aquatic ecosystem/i.test(item.quote)).length,
   1,
   'A short model ecosystem repair and the deterministic longer repair must collapse into one finding',
+);
+assert.equal(
+  duplicatedEcosystemReplay.feedback.find(item => /aquatic ecosystem/i.test(item.quote))?.quote,
+  'influence aquatic ecosystem',
+  'Deduplication must retain the structurally protected ecosystem repair for independent review',
 );
 const original = 'Many students is using AI to review their writing. They notice teh feedback.';
 const revised = original.replace('students is', 'students are');

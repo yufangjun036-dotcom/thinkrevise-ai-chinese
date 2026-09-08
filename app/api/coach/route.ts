@@ -514,6 +514,11 @@ function dedupeFeedback(items: FeedbackItem[]) {
   // Prefer a precise span over a whole-sentence duplicate, except when the
   // complete two-sentence span is what proves a narrowly detected topic shift.
   const candidates = items.map(normaliseFeedbackCategory).sort((a, b) => {
+    const aProtectedEcosystem = /^(?:influence|affect|protect|damage|restore|monitor)\s+aquatic ecosystem$/i.test(a.quote.trim())
+      && /\b(?:aquatic ecosystems|an aquatic ecosystem|the aquatic ecosystem)\b/i.test(a.correction ?? "");
+    const bProtectedEcosystem = /^(?:influence|affect|protect|damage|restore|monitor)\s+aquatic ecosystem$/i.test(b.quote.trim())
+      && /\b(?:aquatic ecosystems|an aquatic ecosystem|the aquatic ecosystem)\b/i.test(b.correction ?? "");
+    if (aProtectedEcosystem !== bProtectedEcosystem) return aProtectedEcosystem ? -1 : 1;
     const aAbrupt = a.category === "学术建议 · 衔接与连贯" && hasStructurallyAbruptTopicShift(a.quote);
     const bAbrupt = b.category === "学术建议 · 衔接与连贯" && hasStructurallyAbruptTopicShift(b.quote);
     if (aAbrupt !== bAbrupt) return aAbrupt ? -1 : 1;
