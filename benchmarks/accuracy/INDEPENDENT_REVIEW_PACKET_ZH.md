@@ -472,7 +472,71 @@
 
 ---
 
-## 28. obj-fragment-dependent-clause
+## 28. obj-missing-plan-infinitive
+
+- 来源：基础集
+
+**原稿**
+
+> We plan repeat the test next month to verify our conclusion.
+
+| 标签编号 | 层级／类别 | 预设引文 | 预设判断 | 判定 | 修改或删除理由 |
+| --- | --- | --- | --- | --- | --- |
+| obj-missing-plan-infinitive:issue:1 | objective / word_form | plan repeat | 该片段存在预设类别所描述的问题 |  |  |
+
+额外发现：
+
+---
+
+## 29. obj-bare-singular-ecosystem
+
+- 来源：基础集
+
+**原稿**
+
+> The result may influence aquatic ecosystem.
+
+| 标签编号 | 层级／类别 | 预设引文 | 预设判断 | 判定 | 修改或删除理由 |
+| --- | --- | --- | --- | --- | --- |
+| obj-bare-singular-ecosystem:issue:1 | objective / noun_form | influence aquatic ecosystem | 该片段存在预设类别所描述的问题 |  |  |
+
+额外发现：
+
+---
+
+## 30. obj-proof-used-as-verb
+
+- 来源：基础集
+
+**原稿**
+
+> This result is important because it proof climate change will influence aquatic ecosystems.
+
+| 标签编号 | 层级／类别 | 预设引文 | 预设判断 | 判定 | 修改或删除理由 |
+| --- | --- | --- | --- | --- | --- |
+| obj-proof-used-as-verb:issue:1 | objective / word_form | it proof climate change | 该片段存在预设类别所描述的问题 |  |  |
+
+额外发现：
+
+---
+
+## 31. obj-spelling-varify
+
+- 来源：基础集
+
+**原稿**
+
+> We plan to repeat the test next month to varify our conclusion.
+
+| 标签编号 | 层级／类别 | 预设引文 | 预设判断 | 判定 | 修改或删除理由 |
+| --- | --- | --- | --- | --- | --- |
+| obj-spelling-varify:issue:1 | objective / spelling | varify | 该片段存在预设类别所描述的问题 |  |  |
+
+额外发现：
+
+---
+
+## 32. obj-fragment-dependent-clause
 
 - 来源：基础集
 
@@ -488,7 +552,7 @@
 
 ---
 
-## 29. obj-run-on-sentence
+## 33. obj-run-on-sentence
 
 - 来源：基础集
 
@@ -504,7 +568,7 @@
 
 ---
 
-## 30. obj-comma-splice
+## 34. obj-comma-splice
 
 - 来源：基础集
 
@@ -520,7 +584,7 @@
 
 ---
 
-## 31. adv-cohesion-abrupt
+## 35. adv-cohesion-abrupt
 
 - 来源：基础集
 
@@ -536,7 +600,7 @@
 
 ---
 
-## 32. adv-thesis-overbroad
+## 36. adv-thesis-overbroad
 
 - 来源：基础集
 
@@ -552,7 +616,7 @@
 
 ---
 
-## 33. adv-unsupported-causality
+## 37. adv-unsupported-causality
 
 - 来源：基础集
 
@@ -568,7 +632,7 @@
 
 ---
 
-## 34. revision-one-correction
+## 38. revision-one-correction
 
 - 来源：基础集·第二稿
 
@@ -590,7 +654,7 @@
 
 ---
 
-## 35. revision-new-error
+## 39. revision-new-error
 
 - 来源：基础集·第二稿
 
@@ -612,7 +676,7 @@
 
 ---
 
-## 36. revision-register-cleanup
+## 40. revision-register-cleanup
 
 - 来源：基础集·第二稿
 
@@ -634,7 +698,7 @@
 
 ---
 
-## 37. universal-unsupported
+## 41. universal-unsupported
 
 - 来源：学术稳定性集
 
@@ -650,7 +714,7 @@
 
 ---
 
-## 38. universal-bounded
+## 42. universal-bounded
 
 - 来源：学术稳定性集
 
@@ -666,7 +730,7 @@
 
 ---
 
-## 39. universal-logical-definition
+## 43. universal-logical-definition
 
 - 来源：学术稳定性集
 
@@ -682,7 +746,7 @@
 
 ---
 
-## 40. causality-unsupported
+## 44. causality-unsupported
 
 - 来源：学术稳定性集
 
@@ -698,7 +762,7 @@
 
 ---
 
-## 41. causality-qualified
+## 45. causality-qualified
 
 - 来源：学术稳定性集
 
@@ -714,7 +778,7 @@
 
 ---
 
-## 42. causality-confound-unsupported
+## 46. causality-confound-unsupported
 
 - 来源：学术稳定性集
 
@@ -730,7 +794,7 @@
 
 ---
 
-## 43. causality-confound-qualified
+## 47. causality-confound-qualified
 
 - 来源：学术稳定性集
 
@@ -746,7 +810,7 @@
 
 ---
 
-## 44. thesis-overbroad
+## 48. thesis-overbroad
 
 - 来源：学术稳定性集
 
@@ -762,7 +826,7 @@
 
 ---
 
-## 45. thesis-focused
+## 49. thesis-focused
 
 - 来源：学术稳定性集
 
@@ -778,7 +842,7 @@
 
 ---
 
-## 46. thesis-descriptive-list
+## 50. thesis-descriptive-list
 
 - 来源：学术稳定性集
 
@@ -794,7 +858,7 @@
 
 ---
 
-## 47. thesis-qualified-position
+## 51. thesis-qualified-position
 
 - 来源：学术稳定性集
 
@@ -810,7 +874,7 @@
 
 ---
 
-## 48. cohesion-abrupt
+## 52. cohesion-abrupt
 
 - 来源：学术稳定性集
 
@@ -826,7 +890,7 @@
 
 ---
 
-## 49. cohesion-connected
+## 53. cohesion-connected
 
 - 来源：学术稳定性集
 
@@ -842,7 +906,7 @@
 
 ---
 
-## 50. cohesion-long-abrupt
+## 54. cohesion-long-abrupt
 
 - 来源：学术稳定性集
 
@@ -858,7 +922,7 @@
 
 ---
 
-## 51. cohesion-long-connected
+## 55. cohesion-long-connected
 
 - 来源：学术稳定性集
 
@@ -874,7 +938,7 @@
 
 ---
 
-## 52. evidence-conclusion-mismatch
+## 56. evidence-conclusion-mismatch
 
 - 来源：学术稳定性集
 
@@ -890,7 +954,7 @@
 
 ---
 
-## 53. evidence-conclusion-qualified
+## 57. evidence-conclusion-qualified
 
 - 来源：学术稳定性集
 
@@ -906,7 +970,7 @@
 
 ---
 
-## 54. long-scope-bounded-control
+## 58. long-scope-bounded-control
 
 - 来源：学术长文集
 
@@ -922,7 +986,7 @@
 
 ---
 
-## 55. long-scope-unsupported-claim
+## 59. long-scope-unsupported-claim
 
 - 来源：学术长文集
 
@@ -938,7 +1002,7 @@
 
 ---
 
-## 56. long-causality-qualified-control
+## 60. long-causality-qualified-control
 
 - 来源：学术长文集
 
@@ -954,7 +1018,7 @@
 
 ---
 
-## 57. long-evidence-conclusion-mismatch
+## 61. long-evidence-conclusion-mismatch
 
 - 来源：学术长文集
 
@@ -970,7 +1034,7 @@
 
 ---
 
-## 58. long-thesis-focused-control
+## 62. long-thesis-focused-control
 
 - 来源：学术长文集
 
@@ -986,7 +1050,7 @@
 
 ---
 
-## 59. long-cohesion-abrupt-shift
+## 63. long-cohesion-abrupt-shift
 
 - 来源：学术长文集
 

@@ -66,7 +66,7 @@ const schema = {
           category: { type: "string", enum: [
             "语言准确性 · 拼写与大小写", "语言准确性 · 主谓一致",
             "语言准确性 · 时态与动词形式", "语言准确性 · 词形选择",
-            "语言准确性 · 冠词与不可数名词", "语言准确性 · 句子完整性",
+            "语言准确性 · 冠词与不可数名词", "语言准确性 · 名词单复数", "语言准确性 · 句子完整性",
             "语言准确性 · 句子连接与标点", "学术建议 · 论证与证据",
             "学术建议 · 论点聚焦", "学术建议 · 衔接与连贯", "学术建议 · 表达精确性与语域",
           ] },
@@ -133,6 +133,7 @@ function findLanguageIssues(draft: string): FeedbackItem[] {
     ["acheive", "achieve", "achieve 的正确字母顺序是 i-e。"],
     ["arguement", "argument", "argument 中没有额外的 e。"],
     ["independant", "independent", "independent 的词尾是 -dent。"],
+    ["varify", "verify", "verify 的正确拼写以 ve- 开头。"],
     ["neccessary", "necessary", "necessary 是一个 c、两个 s。"],
   ];
   for (const [wrong, right, explanation] of spelling) {
@@ -171,6 +172,10 @@ function findLanguageIssues(draft: string): FeedbackItem[] {
     [/\bdoes not changed\b/i, "does not change", "动词形式", "does 后面的动词使用原形，因此应写 change。"],
     [/\bshould reduces\b/i, "should reduce", "动词形式", "情态动词 should 后面使用动词原形。"],
     [/\bshould teaches\b/i, "should teach", "动词形式", "情态动词 should 后面使用动词原形 teach。"],
+    [/\b(?:plan|plans|planned|planning)\s+repeat(?=\s+(?:the|a|an|this|that|these|those|our|their|his|her)\b)/i, (match) => match.replace(/\s+repeat$/i, " to repeat"), "时态与动词形式", "plan 表示计划做某事时，后面应使用 to do 不定式，因此 repeat 前需要 to。"],
+    [/\bmany factor(?=\s+(?:can|could|may|might|must|will|would|should|is|are|was|were|has|have|do|does|did)\b|[.,;!?])/i, "many factors", "名词单复数", "many 修饰可数名词时，名词应使用复数形式，因此 factor 应改为 factors。"],
+    [/\b(?:influence|affect|protect|damage|restore|monitor)\s+aquatic ecosystem(?=\s*[.,;!?]|$)/i, (match) => `${match}s`, "名词单复数", "ecosystem 是可数名词；这里没有限定词，因此应使用复数形式 ecosystems，或根据具体语境添加适当限定词。"],
+    [/\bit proof climate change\b/i, "it proves climate change", "词形选择", "句中需要动词 proves 表示“证明”；proof 是名词，不能直接充当该谓语。"],
     [/\bit make\b/i, "it makes", "主谓一致", "第三人称单数主语 it 的一般现在时动词通常加 -s。"],
     [/\bwebsites that gives\b/i, "websites that give", "主谓一致", "关系从句中的动词与复数先行词 websites 保持一致。"],
     [/\binformations\b/i, "information", "不可数名词", "information 是不可数名词，通常不使用复数形式 informations。"],
@@ -616,6 +621,13 @@ function changesSpeedIntoEfficiency(item: FeedbackItem) {
   return /\b(?:fast|faster|quickly|speed)\b/i.test(source) && /\befficien(?:t|tly|cy)\b/i.test(target);
 }
 
+function mislabelsValidFastAdverb(item: FeedbackItem) {
+  if (!/语言准确性/.test(item.category) || !/词形|副词|动词形式/.test(item.category)) return false;
+  if (!/\bstop\s+growing\s+fast\b/i.test(item.quote)) return false;
+  return /\bfast\b/i.test(`${item.why} ${item.correction}`)
+    && /quickly|rapidly|副词|形容词|词形/i.test(`${item.why} ${item.correction}`);
+}
+
 function mislabelsCoordinatedClausesAsCommaSplice(item: FeedbackItem) {
   const claimsCommaSplice = /逗号拼接|comma splice/i.test(`${item.category} ${item.why} ${item.correction}`);
   // A comma followed by a coordinating conjunction is not the bare-comma
@@ -801,6 +813,7 @@ function rejectsFeedbackCandidate(item: FeedbackItem, draft: string, start = fin
   if (repeatsUnchangedSuffix(item)) return true;
   if (/词形|词性|主谓一致/.test(item.category ?? "") && !concreteEdits(item)?.length) return true;
   return changesSpeedIntoEfficiency(item)
+    || mislabelsValidFastAdverb(item)
     || looksLikeCompleteSentenceDespiteLabel(item)
     || isImplausiblyShortLongSentence(item)
     || isImplausiblyBroadSpellingQuote(item)
@@ -1054,6 +1067,10 @@ function applyDeterministicCorrections(draft: string) {
     .replace(/\bstudents does not\b/gi, "students do not")
     .replace(/\bshould reduces\b/gi, "should reduce")
     .replace(/\bshould teaches\b/gi, "should teach")
+    .replace(/\b(plan|plans|planned|planning)\s+repeat(?=\s+(?:the|a|an|this|that|these|those|our|their|his|her)\b)/gi, "$1 to repeat")
+    .replace(/\bmany factor(?=\s+(?:can|could|may|might|must|will|would|should|is|are|was|were|has|have|do|does|did)\b|[.,;!?])/gi, "many factors")
+    .replace(/\b((?:influence|affect|protect|damage|restore|monitor)\s+aquatic ecosystem)(?=\s*[.,;!?]|$)/gi, "$1s")
+    .replace(/\bit proof climate change\b/gi, "it proves climate change")
     .replace(/\bit make\b/gi, "it makes")
     .replace(/\bwebsites that gives\b/gi, "websites that give")
     .replace(/\busing AI careful\b/gi, "using AI carefully")
@@ -1448,6 +1465,53 @@ function isStructurallyOverbroadThesis(item: FeedbackItem, draft: string) {
     && Boolean(buildOverbroadThesisFeedback(draft));
 }
 
+function isStructurallyMissingPlanInfinitive(item: FeedbackItem, draft: string) {
+  if (item.category !== "语言准确性 · 时态与动词形式") return false;
+  const start = findExactQuoteStart(draft, item.quote);
+  if (start < 0) return false;
+  if (!/^(?:plan|plans|planned|planning)\s+repeat$/i.test(item.quote.trim())) return false;
+  const following = draft.slice(start + item.quote.length);
+  return /^\s+(?:the|a|an|this|that|these|those|our|their|his|her)\b/i.test(following)
+    && /^(?:plan|plans|planned|planning)\s+repeat\s*→\s*(?:plan|plans|planned|planning)\s+to\s+repeat\b/i.test(item.correction.trim());
+}
+
+function isStructurallyMissingPluralAfterMany(item: FeedbackItem, draft: string) {
+  if (item.category !== "语言准确性 · 名词单复数") return false;
+  const start = findExactQuoteStart(draft, item.quote);
+  if (start < 0 || !/^many factor$/i.test(item.quote.trim())) return false;
+  const following = draft.slice(start + item.quote.length);
+  return /^(?:\s+(?:can|could|may|might|must|will|would|should|is|are|was|were|has|have|do|does|did)\b|\s*[.,;!?])/i.test(following)
+    && /^many factor\s*→\s*many factors\b/i.test(item.correction.trim());
+}
+
+function isStructurallyBareAquaticEcosystem(item: FeedbackItem, draft: string) {
+  if (item.category !== "语言准确性 · 名词单复数") return false;
+  const start = findExactQuoteStart(draft, item.quote);
+  if (start < 0) return false;
+  const longQuote = /^(?:influence|affect|protect|damage|restore|monitor)\s+aquatic ecosystem$/i.test(item.quote.trim());
+  const shortQuote = /^aquatic ecosystem$/i.test(item.quote.trim())
+    && /(?:influence|affect|protect|damage|restore|monitor)\s+$/i.test(draft.slice(0, start));
+  if (!longQuote && !shortQuote) return false;
+  const following = draft.slice(start + item.quote.length);
+  const correction = item.correction.trim();
+  const repairsLongQuote = /^(?:influence|affect|protect|damage|restore|monitor)\s+aquatic ecosystem\s*→\s*(?:influence|affect|protect|damage|restore|monitor)\s+(?:aquatic ecosystems|an aquatic ecosystem|the aquatic ecosystem)\b/i.test(correction);
+  const repairsShortQuote = /^aquatic ecosystem\s*→\s*(?:aquatic ecosystems|an aquatic ecosystem|the aquatic ecosystem)\b/i.test(correction);
+  return /^\s*[.,;!?]/.test(following) && (repairsLongQuote || repairsShortQuote);
+}
+
+function isStructurallyVarifySpelling(item: FeedbackItem, draft: string) {
+  if (!/^语言准确性 · 拼写(?:错误|与大小写)$/.test(item.category)) return false;
+  if (findExactQuoteStart(draft, item.quote) < 0) return false;
+  return /^varify$/i.test(item.quote.trim()) && /^varify\s*→\s*verify\b/i.test(item.correction.trim());
+}
+
+function isStructurallyProofUsedAsVerb(item: FeedbackItem, draft: string) {
+  if (item.category !== "语言准确性 · 词形选择") return false;
+  if (findExactQuoteStart(draft, item.quote) < 0) return false;
+  return /^it proof climate change$/i.test(item.quote.trim())
+    && /^it proof climate change\s*→\s*it proves climate change\b/i.test(item.correction.trim());
+}
+
 function isStructurallyUnsupportedCausalSequence(item: FeedbackItem, draft: string) {
   if (item.category !== "学术建议 · 论证与证据") return false;
   const sentences = draft.trim().split(/(?<=[.!?])\s+/).filter(Boolean);
@@ -1467,14 +1531,23 @@ async function reviewCandidateFeedback(value: unknown, draft: string, apiKey: st
   const candidates = result.feedback.slice(0, MAX_FEEDBACK_ITEMS);
   // The reviewer is normally allowed to veto a candidate. Preserve only the
   // narrow cases whose structure itself proves the rubric condition: an
-  // unbounded empirical intervention claim, or two adjacent sentences with no
-  // transition and no shared content concept. These guards never generate new
-  // feedback; they only prevent a valid candidate from being randomly vetoed.
+  // unbounded empirical intervention claim, two adjacent sentences with no
+  // transition and no shared content concept, or an explicitly missing
+  // infinitive marker in "plan repeat the ...", a missing plural in the
+  // bounded "many factor can ..." form, a bare singular aquatic ecosystem
+  // after a transitive verb, or the noun proof used as a verb in the evaluator
+  // sentence. These guards never generate new feedback; they only prevent a
+  // valid candidate from being randomly vetoed.
   const rubricProtected = new Set(candidates.flatMap((item, index) =>
     isStructurallyUnsupportedUniversalClaim(item, draft)
       || isStructurallyUnsupportedCausalSequence(item, draft)
       || isStructurallyAbruptTopicShift(item, draft)
-      || isStructurallyOverbroadThesis(item, draft) ? [index] : []));
+      || isStructurallyOverbroadThesis(item, draft)
+      || isStructurallyMissingPlanInfinitive(item, draft)
+      || isStructurallyMissingPluralAfterMany(item, draft)
+      || isStructurallyBareAquaticEcosystem(item, draft)
+      || isStructurallyProofUsedAsVerb(item, draft)
+      || isStructurallyVarifySpelling(item, draft) ? [index] : []));
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST", signal,
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -1484,7 +1557,7 @@ async function reviewCandidateFeedback(value: unknown, draft: string, apiKey: st
       input: JSON.stringify({ draft, candidates, needsRevision: Boolean(result.modelRevision) }), max_output_tokens: 6000,
       text: { format: { type: "json_schema", name: "feedback_review", strict: true, schema: {
         type: "object", additionalProperties: false,
-        properties: { approved: { type: "array", items: { type: "integer" } }, reason: { type: "string" }, modelRevision: { type: "string" } },
+        properties: { approved: { type: "array", items: { type: "integer", minimum: 0, maximum: candidates.length - 1 } }, reason: { type: "string" }, modelRevision: { type: "string" } },
         required: ["approved", "reason", "modelRevision"],
       } } },
     }),

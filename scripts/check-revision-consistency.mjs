@@ -5,7 +5,7 @@ import ts from 'typescript';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 let source = fs.readFileSync(new URL('../app/api/coach/route.ts', import.meta.url), 'utf8').replace(/^import .*;\n/gm, '');
-source += '\nexport { validateLiveResult, ensureMinorRevisionConsistency, addRevisionComparison, explicitlySaysNoIssue, reviewCandidateFeedback, isStructurallyUnsupportedUniversalClaim, isStructurallyAbruptTopicShift, isStructurallyOverbroadThesis, schema };';
+source += '\nexport { validateLiveResult, ensureMinorRevisionConsistency, addRevisionComparison, explicitlySaysNoIssue, reviewCandidateFeedback, isStructurallyUnsupportedUniversalClaim, isStructurallyAbruptTopicShift, isStructurallyOverbroadThesis, isStructurallyMissingPlanInfinitive, isStructurallyMissingPluralAfterMany, isStructurallyBareAquaticEcosystem, isStructurallyProofUsedAsVerb, isStructurallyVarifySpelling, schema };';
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const sandbox = { exports: {} };
 new Function('exports', 'require', 'module', compiled)(sandbox.exports, require, sandbox);
@@ -30,12 +30,86 @@ for (const draft of [
   assert.equal(output.feedback.length, 0, `Correct construction must not be mechanically flagged: ${draft}`);
   assert.equal(output.modelRevision, draft);
 }
+const missingPlanToDraft = 'We plan repeat the test next month to verify our conclusion.';
+const missingPlanToOutput = f.validateLiveResult({ summary: '', feedback: [], modelRevision: missingPlanToDraft, overview: [], meaningRisk: '' }, missingPlanToDraft, 'coach', 0, true);
+const missingPlanToIssue = missingPlanToOutput.feedback.find(item => item.quote === 'plan repeat');
+assert.ok(missingPlanToIssue, 'Initial diagnosis must detect the missing infinitive marker in plan repeat the test');
+assert.equal(missingPlanToIssue.category, '语言准确性 · 时态与动词形式');
+assert.match(missingPlanToIssue.correction, /plan repeat → plan to repeat/);
+assert.ok(f.isStructurallyMissingPlanInfinitive(missingPlanToIssue, missingPlanToDraft), 'The proven plan-to repair must survive independent candidate review');
+for (const correctPlanDraft of [
+  'We plan to repeat the test next month.',
+  'We plan repeat measurements for each participant.',
+  'We plan the repeat test for next month.',
+]) {
+  const output = f.validateLiveResult({ summary: '', feedback: [], modelRevision: correctPlanDraft, overview: [], meaningRisk: '' }, correctPlanDraft, 'coach', 0, true);
+  assert.ok(!output.feedback.some(item => item.quote.toLowerCase().includes('plan repeat')), `Correct plan/repeat construction must not be flagged: ${correctPlanDraft}`);
+}
+const missingPluralDraft = 'Many factor can change the outcome.';
+const missingPluralOutput = f.validateLiveResult({ summary: '', feedback: [], modelRevision: missingPluralDraft, overview: [], meaningRisk: '' }, missingPluralDraft, 'coach', 0, true);
+const missingPluralIssue = missingPluralOutput.feedback.find(item => item.quote === 'Many factor');
+assert.ok(missingPluralIssue, 'Initial diagnosis must detect the missing plural after many');
+assert.equal(missingPluralIssue.category, '语言准确性 · 名词单复数');
+assert.ok(f.isStructurallyMissingPluralAfterMany(missingPluralIssue, missingPluralDraft), 'The proven many-factors repair must survive independent candidate review');
+for (const correctFactorDraft of [
+  'Many factors can change the outcome.',
+  'Many factor models can represent the outcome.',
+  'The many-factor model can represent the outcome.',
+]) {
+  const output = f.validateLiveResult({ summary: '', feedback: [], modelRevision: correctFactorDraft, overview: [], meaningRisk: '' }, correctFactorDraft, 'coach', 0, true);
+  assert.ok(!output.feedback.some(item => item.quote.toLowerCase() === 'many factor'), `Correct factor construction must not be flagged: ${correctFactorDraft}`);
+}
+const bareEcosystemDraft = 'The result may influence aquatic ecosystem.';
+const bareEcosystemOutput = f.validateLiveResult({ summary: '', feedback: [], modelRevision: bareEcosystemDraft, overview: [], meaningRisk: '' }, bareEcosystemDraft, 'coach', 0, true);
+const bareEcosystemIssue = bareEcosystemOutput.feedback.find(item => item.quote === 'influence aquatic ecosystem');
+assert.ok(bareEcosystemIssue, 'Initial diagnosis must detect the bare singular aquatic ecosystem');
+assert.equal(bareEcosystemIssue.category, '语言准确性 · 名词单复数');
+assert.ok(f.isStructurallyBareAquaticEcosystem(bareEcosystemIssue, bareEcosystemDraft), 'The proven aquatic-ecosystems repair must survive independent candidate review');
+const shortEcosystemIssue = { ...bareEcosystemIssue, quote: 'aquatic ecosystem', correction: 'aquatic ecosystem → aquatic ecosystems' };
+assert.ok(f.isStructurallyBareAquaticEcosystem(shortEcosystemIssue, bareEcosystemDraft), 'A safe shorter ecosystem quote must keep the same reviewer protection');
+for (const correctEcosystemDraft of [
+  'The result may influence aquatic ecosystems.',
+  'The result may influence an aquatic ecosystem.',
+  'The result may influence the aquatic ecosystem.',
+  'Aquatic ecosystem research requires careful sampling.',
+]) {
+  const output = f.validateLiveResult({ summary: '', feedback: [], modelRevision: correctEcosystemDraft, overview: [], meaningRisk: '' }, correctEcosystemDraft, 'coach', 0, true);
+  assert.ok(!output.feedback.some(item => item.quote.toLowerCase().includes('influence aquatic ecosystem')), `Correct ecosystem construction must not be flagged: ${correctEcosystemDraft}`);
+}
+const proofVerbDraft = 'This result is important because it proof climate change will influence aquatic ecosystems.';
+const proofVerbOutput = f.validateLiveResult({ summary: '', feedback: [], modelRevision: proofVerbDraft, overview: [], meaningRisk: '' }, proofVerbDraft, 'coach', 0, true);
+const proofVerbIssue = proofVerbOutput.feedback.find(item => item.quote === 'it proof climate change');
+assert.ok(proofVerbIssue, 'Initial diagnosis must detect proof used as a verb in the evaluator sentence');
+assert.equal(proofVerbIssue.category, '语言准确性 · 词形选择');
+assert.ok(f.isStructurallyProofUsedAsVerb(proofVerbIssue, proofVerbDraft), 'The proven proof-to-proves repair must survive independent candidate review');
+const varifyDraft = 'We plan to repeat the test next month to varify our conclusion.';
+const varifyOutput = f.validateLiveResult({ summary: '', feedback: [], modelRevision: varifyDraft, overview: [], meaningRisk: '' }, varifyDraft, 'coach', 0, true);
+const varifyIssue = varifyOutput.feedback.find(item => item.quote === 'varify');
+assert.ok(varifyIssue, 'Initial diagnosis must detect varify as a spelling error');
+assert.ok(f.isStructurallyVarifySpelling(varifyIssue, varifyDraft), 'The proven varify-to-verify repair must survive independent candidate review');
+const validFastDraft = 'When the water is too hot, algae stop growing fast.';
+const falseFastIssue = { quote: 'stop growing fast', correction: 'fast → quickly', category: '语言准确性 · 词形选择', why: 'fast 是形容词，修饰 growing 应使用副词 quickly。', suggestion: '', confidence: '高' };
+assert.equal(f.validateLiveResult({ summary: '测试', feedback: [falseFastIssue], modelRevision: validFastDraft, overview: [], meaningRisk: '' }, validFastDraft, 'coach', 0, false).feedback.length, 0, 'Fast is already a valid adverb in stop growing fast');
 const issue = (quote, correction, category = '主谓一致') => ({ quote, correction, category, why: '需要检查。', suggestion: '', confidence: '高' });
 const numberDraft='The number of students is increasing steadily.';
 assert.equal(f.validateLiveResult({feedback:[issue('students is','students is → students are')],modelRevision:numberDraft},numberDraft,'coach',0,false).feedback.length,0);
 const pluralNumberDraft='A number of students is waiting outside.';
 assert.ok(f.validateLiveResult({feedback:[],modelRevision:pluralNumberDraft},pluralNumberDraft,'coach',0,false).feedback.some(item=>item.quote==='students is'),'A number of takes plural agreement; do not suppress it like the number of');
 const result = (feedback, draft) => ({ summary: '测试', feedback, modelRevision: draft, overview: [], meaningRisk: '' });
+const evaluatorDraft = 'The experiment show that temperature affect the growth rate of algae. We collect data last week, but one sensor was broke. This result is important because it proof climate change will influence aquatic ecosystem. Many factor can change the outcome. When the water is too hot, algae stop growing fast. We plan repeat the test next month to varify our conclusion.';
+const evaluatorEightCandidates = [
+  issue('The experiment show', 'The experiment show → The experiment shows', '语言准确性 · 主谓一致'),
+  issue('temperature affect', 'temperature affect → temperature affects', '语言准确性 · 主谓一致'),
+  issue('We collect data last week', 'We collect data last week → We collected data last week', '语言准确性 · 时态与动词形式'),
+  issue('one sensor was broke', 'one sensor was broke → one sensor was broken', '语言准确性 · 时态与动词形式'),
+  issue('it proof climate change', 'it proof climate change → it proves climate change', '语言准确性 · 词形选择'),
+  issue('aquatic ecosystem', 'aquatic ecosystem → aquatic ecosystems', '语言准确性 · 冠词与不可数名词'),
+  issue('Many factor', 'Many factor → Many factors', '语言准确性 · 冠词与不可数名词'),
+  issue('varify', 'varify → verify', '语言准确性 · 拼写与大小写'),
+];
+const evaluatorReplay = f.validateLiveResult(result(evaluatorEightCandidates, evaluatorDraft), evaluatorDraft, 'coach', 0, true);
+assert.equal(evaluatorReplay.feedback.length, 9, 'The evaluator article must contain the eight model candidates plus the missing plan-to issue');
+assert.equal(evaluatorReplay.feedback.filter(item => item.quote === 'plan repeat').length, 1, 'The plan-to issue must be added exactly once');
 const original = 'Many students is using AI to review their writing. They notice teh feedback.';
 const revised = original.replace('students is', 'students are');
 const prior = [issue('students is', 'students is → students are'), issue('teh', 'teh → the', '拼写错误')];

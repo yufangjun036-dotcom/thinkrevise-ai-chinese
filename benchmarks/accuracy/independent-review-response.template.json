@@ -397,6 +397,38 @@
       "notes": ""
     },
     {
+      "caseId": "obj-missing-plan-infinitive",
+      "labelId": "obj-missing-plan-infinitive:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-bare-singular-ecosystem",
+      "labelId": "obj-bare-singular-ecosystem:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-proof-used-as-verb",
+      "labelId": "obj-proof-used-as-verb:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-spelling-varify",
+      "labelId": "obj-spelling-varify:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
       "caseId": "obj-fragment-dependent-clause",
       "labelId": "obj-fragment-dependent-clause:issue:1",
       "verdict": "pending",

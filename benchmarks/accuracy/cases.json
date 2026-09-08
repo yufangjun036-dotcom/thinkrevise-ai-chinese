@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.2.4",
   "language": "en",
   "description": "ThinkRevise AI Chinese-build accuracy benchmark. Objective language errors and academic-writing judgements are scored separately.",
   "acceptedCorrectionsByKey": {
@@ -23,7 +23,11 @@
     "should-teaches": ["should teach"],
     "it-make": ["it makes"],
     "ai-are": ["ai is"],
-    "students-does": ["students do not"]
+    "students-does": ["students do not"],
+    "plan-repeat": ["plan to repeat"],
+    "aquatic-ecosystem": ["aquatic ecosystems", "an aquatic ecosystem", "the aquatic ecosystem"],
+    "it-proof": ["it proves climate change"],
+    "varify": ["verify"]
   },
   "cases": [
     {
@@ -246,6 +250,34 @@
         { "key": "always", "tier": "advisory", "family": "register", "quote": "always" },
         { "key": "no-one", "tier": "advisory", "family": "register", "quote": "no one" }
       ]
+    },
+    {
+      "id": "obj-missing-plan-infinitive",
+      "kind": "initial",
+      "theme": "环境与未来",
+      "draft": "We plan repeat the test next month to verify our conclusion.",
+      "expectedIssues": [{ "key": "plan-repeat", "tier": "objective", "family": "word_form", "quote": "plan repeat" }]
+    },
+    {
+      "id": "obj-bare-singular-ecosystem",
+      "kind": "initial",
+      "theme": "环境与未来",
+      "draft": "The result may influence aquatic ecosystem.",
+      "expectedIssues": [{ "key": "aquatic-ecosystem", "tier": "objective", "family": "noun_form", "quote": "influence aquatic ecosystem" }]
+    },
+    {
+      "id": "obj-proof-used-as-verb",
+      "kind": "initial",
+      "theme": "环境与未来",
+      "draft": "This result is important because it proof climate change will influence aquatic ecosystems.",
+      "expectedIssues": [{ "key": "it-proof", "tier": "objective", "family": "word_form", "quote": "it proof climate change" }]
+    },
+    {
+      "id": "obj-spelling-varify",
+      "kind": "initial",
+      "theme": "环境与未来",
+      "draft": "We plan to repeat the test next month to varify our conclusion.",
+      "expectedIssues": [{ "key": "varify", "tier": "objective", "family": "spelling", "quote": "varify" }]
     },
     {
       "id": "obj-fragment-dependent-clause",

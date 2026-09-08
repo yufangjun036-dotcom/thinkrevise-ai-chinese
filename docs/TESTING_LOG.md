@@ -279,3 +279,18 @@ The automated portion is complete. This does not replace the outstanding manual 
 | Structural semantics | The active page keeps one main region, one level-one heading and the correct document language | Runtime inspection returned one `main`, one `h1` and `lang="zh-CN"` | Pass |
 
 This runtime audit used the locally built production version. It verifies actual rendered control sizes at the available browser viewport, but it does not replace the outstanding 390×844 and 430×932 visual screenshots or a fresh narrow-screen keyboard/touch walkthrough.
+
+## 2026-09-09 — External evaluator 1: missing `plan to` recall
+
+| Check | Expected result | Observed result | Status |
+| --- | --- | --- | --- |
+| Initial objective-error recall | `We plan repeat the test ...` is identified as missing the infinitive marker `to` | The first live diagnosis returned the evaluator's other eight listed language errors but omitted `plan repeat` | Failed |
+| Second-draft independence | An error missed initially can still be found when it remains in the second draft | The independent second-draft analysis returned `plan repeat → plan to repeat` as supplemental feedback | Pass, but too late |
+| Deterministic first-pass repair | A structurally unambiguous `plan repeat the ...` sequence is added once even if the model omits it | Offline replay of the complete evaluator article merged the same eight model candidates with one `plan repeat` item, producing nine distinct issues | Pass after fix |
+| False-positive boundary | Correct infinitive and noun-phrase uses of `plan` and `repeat` remain unflagged | `plan to repeat the test`, `plan repeat measurements`, and `plan the repeat test` produced no `plan repeat` feedback | Pass |
+| Related model-variance audit | The repair must not hide other fluctuating misses or introduce a replacement false positive | Repeated live runs exposed and then fixed unstable handling of `Many factor`, bare singular `aquatic ecosystem`, `it proof`, and `varify`; a false word-form warning for valid `stop growing fast` was rejected | Pass after fix |
+| Reviewer response bounds | A malformed reviewer index cannot downgrade the complete live result to a partial demo response | The reviewer JSON schema now restricts every approved index to the actual candidate range | Pass after fix |
+| Consecutive complete live runs | All nine evaluator-listed language errors appear independently, once each, without the `stop growing fast` false positive | Two consecutive OpenAI runs passed the phrase-and-category gate; the first also returned one separate argument recommendation, while the objective-language set was identical | Pass |
+| Independent-review coverage | The external incident becomes part of the persistent accuracy evidence | The benchmark now contains 40 cases, and the blind-review pack contains 63 cases and 90 labels | Pass |
+
+The added rules are intentionally narrow and are paired with correct counterexamples. The release claim is limited to this evaluator article and the maintained regression set; two consecutive passes are evidence of the fix, not a general 100% accuracy claim.
