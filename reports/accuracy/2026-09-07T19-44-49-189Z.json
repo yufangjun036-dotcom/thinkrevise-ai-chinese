@@ -1,0 +1,985 @@
+{
+  "summary": {
+    "datasetVersion": "0.2.0",
+    "generatedAt": "2026-09-07T19:44:49.189Z",
+    "baseUrl": "http://127.0.0.1:3002",
+    "selectedCases": 36,
+    "completedCases": 36,
+    "failedCases": 0,
+    "objectiveRecall": 1,
+    "objectivePrecisionAgainstGold": 1,
+    "objectiveCorrectionAcceptance": 1,
+    "advisoryCoverage": 0.9524,
+    "quoteLocatability": 1,
+    "duplicateRate": 0,
+    "objectiveFalsePositivesAgainstGold": 0,
+    "strongTextObjectiveFalsePositives": 0,
+    "revisionResolvedAccuracy": 1,
+    "revisionRemainingRecall": 1,
+    "revisionNewIssueRecall": 1,
+    "averageDurationMs": 2569
+  },
+  "results": [
+    {
+      "id": "obj-spelling-teh",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1660,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-spelling-becuase",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1968,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-spelling-recieve",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1488,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-agreement-students-is",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2959,
+      "score": {
+        "expected": 1,
+        "returned": 3,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [
+          {
+            "category": "词性选择",
+            "quote": "is responsible",
+            "why": "responsible 是形容词，后面通常需要搭配介词短语或名词结构来说明“对什么负责”；这里的结构不够完整。",
+            "correction": "补足 responsible 后面的搭配结构，明确说明责任所指对象。",
+            "suggestion": "",
+            "confidence": "高"
+          },
+          {
+            "category": "表达自然性",
+            "quote": "for checking every source used in the written assignment",
+            "why": "written assignment 和 checking every source 的搭配在学术英语中略显生硬，written assignment 也比较笼统，容易让意思不够明确。",
+            "correction": "根据实际意思，改成更具体、更自然的学术表达，明确检查的是参考来源、引文或资料。",
+            "suggestion": "",
+            "confidence": "中"
+          }
+        ],
+        "misses": [],
+        "locatable": 3,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-agreement-it-help",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1988,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-agreement-people-is",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1537,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-tense-did-understood",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2647,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-tense-have-went",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1855,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-noun-informations",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1591,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-wordform-careful",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1889,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-article-university",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1741,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-article-evidence",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2868,
+      "score": {
+        "expected": 1,
+        "returned": 2,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [
+          {
+            "category": "论证与解释",
+            "quote": "its central claim about online learning",
+            "why": "“中心观点”只被提到，没有任何证据或解释内容，论证还不完整。",
+            "correction": "补充具体证据、例子或分析，说明为什么该主张成立。",
+            "suggestion": "",
+            "confidence": "中"
+          }
+        ],
+        "misses": [],
+        "locatable": 2,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "adv-nowadays",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2150,
+      "score": {
+        "expected": 1,
+        "returned": 2,
+        "matched": 1,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 1,
+        "advisoryMatched": 1,
+        "unmatchedAdvisory": [
+          {
+            "category": "中心观点",
+            "quote": "Nowadays, digital platforms influence how university students obtain information.",
+            "why": "句子能表达主题，但只说明“有影响”，没有明确指出影响的方向、范围或作者的核心判断，论点不够具体，后文难以展开。",
+            "correction": "补充更明确的中心判断，并限定影响的具体方面，如获取速度、可靠性、筛选方式或学习习惯等。",
+            "suggestion": "",
+            "confidence": "高"
+          }
+        ],
+        "misses": [],
+        "locatable": 2,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "adv-personal-opinion",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 3992,
+      "score": {
+        "expected": 1,
+        "returned": 3,
+        "matched": 1,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 1,
+        "advisoryMatched": 1,
+        "unmatchedAdvisory": [
+          {
+            "category": "论证与解释",
+            "quote": "universities should reduce unnecessary packaging in campus shops",
+            "why": "这是观点句，但没有说明原因、影响或实施条件，因此论证基础还不够完整。",
+            "correction": "补充支持该观点的理由、影响或条件，例如环保、成本或校园管理方面的依据。",
+            "suggestion": "",
+            "confidence": "高"
+          },
+          {
+            "category": "限定条件",
+            "quote": "unnecessary packaging",
+            "why": "“unnecessary”是判断性很强的词，但标准没有界定，容易显得笼统。",
+            "correction": "明确什么样的包装算“unnecessary”，或给出判断标准，避免绝对化和模糊化。",
+            "suggestion": "",
+            "confidence": "中"
+          }
+        ],
+        "misses": [],
+        "locatable": 3,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "adv-really-good",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2149,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 1,
+        "advisoryMatched": 1,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "adv-a-lot-of",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2048,
+      "score": {
+        "expected": 1,
+        "returned": 2,
+        "matched": 1,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 1,
+        "advisoryMatched": 1,
+        "unmatchedAdvisory": [
+          {
+            "category": "论证与解释",
+            "quote": "a lot of feedback",
+            "why": "这是一个很模糊的表述，没有说明反馈的数量、类型或重点，学术写作中证据不够具体。",
+            "correction": "将笼统表述改为更具体、可衡量的内容，如说明反馈的主要类别、趋势或数量。",
+            "suggestion": "",
+            "confidence": "高"
+          }
+        ],
+        "misses": [],
+        "locatable": 2,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "adv-direct-reader",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1188,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 1,
+        "advisoryMatched": 1,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "adv-obviously",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1939,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 1,
+        "advisoryMatched": 1,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "adv-absolute-always",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2402,
+      "score": {
+        "expected": 1,
+        "returned": 2,
+        "matched": 1,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 1,
+        "advisoryMatched": 1,
+        "unmatchedAdvisory": [
+          {
+            "category": "论证与证据",
+            "quote": "the quality of student writing.",
+            "why": "这只是结论性判断，没有说明依据、适用范围或例外情况，论证力度不足。",
+            "correction": "补充支持这个判断的理由、条件或证据来源，避免只给出结论。",
+            "suggestion": "",
+            "confidence": "中"
+          }
+        ],
+        "misses": [],
+        "locatable": 2,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "adv-contraction",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1507,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 1,
+        "advisoryMatched": 1,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "strong-education-ai",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 3032,
+      "score": {
+        "expected": 0,
+        "returned": 2,
+        "matched": 0,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [
+          {
+            "category": "学术语气",
+            "quote": "help university writers",
+            "why": "这里的表达虽然自然，但在学术语境中略显宽泛，‘help’和‘writers’都比较概括，容易让论断显得不够严谨。",
+            "correction": "注意把功能对象和语气写得更具体、更学术，例如明确指出是“大学英语写作者”或“大学论文写作者”，并避免过于口语化的功能描述。",
+            "suggestion": "",
+            "confidence": "中"
+          },
+          {
+            "category": "论证与解释",
+            "quote": "provided that they evaluate each suggestion against the intended meaning and available evidence",
+            "why": "这个条件很重要，但目前只是补充性从句，没有展开说明为什么需要这样做，论证力度较弱。",
+            "correction": "可以补充一句解释这一条件的必要性，例如说明生成式反馈可能与写作者意图或证据不完全一致，因此需要人工判断。",
+            "suggestion": "",
+            "confidence": "中"
+          }
+        ],
+        "misses": [],
+        "locatable": 2,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "strong-environment",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2339,
+      "score": {
+        "expected": 0,
+        "returned": 1,
+        "matched": 0,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [
+          {
+            "category": "论证与解释",
+            "quote": "Universities can reduce operational emissions by improving building efficiency, monitoring energy consumption, and publishing measurable progress toward clearly defined targets.",
+            "why": "句子提出了三个有效手段，但没有说明这些做法为什么能降低排放、适用于哪些学校、或在什么条件下效果更明显。学术写作中，结论性表述通常需要补充理由、机制或限定条件。",
+            "correction": "需要补充因果说明、适用范围或证据支持，避免只给出并列措施而缺少论证。",
+            "suggestion": "",
+            "confidence": "高"
+          }
+        ],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "strong-university",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2320,
+      "score": {
+        "expected": 0,
+        "returned": 1,
+        "matched": 0,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [
+          {
+            "category": "论证与解释",
+            "quote": "Project-based courses can promote independent learning",
+            "why": "这一判断成立，但表达较概括，缺少对“为什么能促进独立学习”的机制说明，论证力度偏弱。",
+            "correction": "可补充因果机制或具体表现，说明项目式课程如何通过任务设计、反馈或反思促进独立学习。",
+            "suggestion": "",
+            "confidence": "高"
+          }
+        ],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "mixed-education-ai",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 3840,
+      "score": {
+        "expected": 7,
+        "returned": 8,
+        "matched": 7,
+        "objectiveExpected": 5,
+        "objectiveMatched": 5,
+        "objectiveReturned": 5,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 5,
+        "objectiveCorrectionsAccepted": 5,
+        "advisoryExpected": 2,
+        "advisoryMatched": 2,
+        "unmatchedAdvisory": [
+          {
+            "category": "论证与解释",
+            "quote": "but I did not understood why every suggestion was appropriate.",
+            "why": "这里说明了“没有理解”，但没有解释原因，也没有提供具体例子来支撑判断。",
+            "correction": "补充为什么不理解、哪些建议不清楚，或说明判断依据。",
+            "suggestion": "",
+            "confidence": "中"
+          }
+        ],
+        "misses": [],
+        "locatable": 8,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "mixed-environment",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 3778,
+      "score": {
+        "expected": 6,
+        "returned": 6,
+        "matched": 6,
+        "objectiveExpected": 6,
+        "objectiveMatched": 6,
+        "objectiveReturned": 6,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 6,
+        "objectiveCorrectionsAccepted": 6,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 6,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "mixed-university",
+      "kind": "initial",
+      "provider": "demo",
+      "durationMs": 3506,
+      "score": {
+        "expected": 7,
+        "returned": 8,
+        "matched": 7,
+        "objectiveExpected": 5,
+        "objectiveMatched": 5,
+        "objectiveReturned": 5,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 5,
+        "objectiveCorrectionsAccepted": 5,
+        "advisoryExpected": 2,
+        "advisoryMatched": 2,
+        "unmatchedAdvisory": [
+          {
+            "category": "论证与解释",
+            "quote": "but they recieve many informations without guidance",
+            "why": "只有结论而没有原因或例子，会使论证显得像个人意见。建议为关键观点补充原因、例子或证据，并减少口语化的重复表达。",
+            "correction": "可以在关键观点后补充原因、例子或证据，并用清楚的连接词说明它们之间的关系。",
+            "question": "读者可能会追问哪一个“为什么”？",
+            "hints": [
+              "在主要观点后标记需要解释的位置。",
+              "尝试加入 because、therefore 或一个简短例子。",
+              "例如：This support is valuable because it helps learners identify patterns in their own errors."
+            ],
+            "suggestion": "",
+            "confidence": "中"
+          }
+        ],
+        "misses": [],
+        "locatable": 8,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "mixed-technology",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 4155,
+      "score": {
+        "expected": 8,
+        "returned": 8,
+        "matched": 8,
+        "objectiveExpected": 2,
+        "objectiveMatched": 2,
+        "objectiveReturned": 2,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 2,
+        "objectiveCorrectionsAccepted": 2,
+        "advisoryExpected": 6,
+        "advisoryMatched": 6,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 8,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-fragment-dependent-clause",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1942,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-run-on-sentence",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2411,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "obj-comma-splice",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 3087,
+      "score": {
+        "expected": 1,
+        "returned": 2,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [
+          {
+            "category": "学术语气",
+            "quote": "Online feedback is immediate",
+            "why": "immediate 是比较绝对的表述，容易显得过于笼统，因为在线反馈并不总是立刻出现。",
+            "correction": "学术写作中应避免绝对化判断，可加入限定条件或弱化语气。",
+            "suggestion": "",
+            "confidence": "中"
+          }
+        ],
+        "misses": [],
+        "locatable": 2,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "adv-cohesion-abrupt",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2896,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 1,
+        "advisoryMatched": 1,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "adv-thesis-overbroad",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 1862,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 0,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 1,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [
+          {
+            "category": "论证与解释",
+            "quote": "Digital tools influence study, work, and communication.",
+            "why": "这句话只有概括性的判断，没有说明“如何影响”或“影响体现在哪些方面”，因此论证较弱，信息量偏少。",
+            "correction": "需要补充具体影响、例子或限定条件，增强论点的可验证性和说服力。",
+            "suggestion": "",
+            "confidence": "高"
+          }
+        ],
+        "misses": [
+          {
+            "key": "overbroad-thesis",
+            "tier": "advisory",
+            "family": "thesis",
+            "quote": "Technology affects society in many ways."
+          }
+        ],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "adv-unsupported-causality",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2131,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 1,
+        "advisoryMatched": 1,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "revision-one-correction",
+      "kind": "revision",
+      "provider": "openai",
+      "durationMs": 4237,
+      "revision": {
+        "expectedResolved": 1,
+        "resolvedDetected": 1,
+        "expectedRemaining": 2,
+        "remainingDetected": 2,
+        "expectedNew": 0,
+        "newDetected": 0,
+        "locatable": 2,
+        "returned": 2
+      }
+    },
+    {
+      "id": "revision-new-error",
+      "kind": "revision",
+      "provider": "openai",
+      "durationMs": 4582,
+      "revision": {
+        "expectedResolved": 2,
+        "resolvedDetected": 2,
+        "expectedRemaining": 0,
+        "remainingDetected": 0,
+        "expectedNew": 1,
+        "newDetected": 1,
+        "locatable": 1,
+        "returned": 1
+      }
+    },
+    {
+      "id": "revision-register-cleanup",
+      "kind": "revision",
+      "provider": "openai",
+      "durationMs": 4799,
+      "revision": {
+        "expectedResolved": 3,
+        "resolvedDetected": 3,
+        "expectedRemaining": 0,
+        "remainingDetected": 0,
+        "expectedNew": 0,
+        "newDetected": 0,
+        "locatable": 2,
+        "returned": 2
+      }
+    }
+  ]
+}

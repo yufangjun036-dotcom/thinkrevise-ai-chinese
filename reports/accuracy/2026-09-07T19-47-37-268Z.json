@@ -1,0 +1,134 @@
+{
+  "summary": {
+    "datasetVersion": "0.2.0",
+    "generatedAt": "2026-09-07T19:47:37.268Z",
+    "baseUrl": "http://127.0.0.1:3002",
+    "selectedCases": 4,
+    "completedCases": 4,
+    "failedCases": 0,
+    "objectiveRecall": 1,
+    "objectivePrecisionAgainstGold": 0.5,
+    "objectiveCorrectionAcceptance": 1,
+    "advisoryCoverage": 1,
+    "quoteLocatability": 1,
+    "duplicateRate": 0,
+    "objectiveFalsePositivesAgainstGold": 1,
+    "strongTextObjectiveFalsePositives": 0,
+    "revisionResolvedAccuracy": null,
+    "revisionRemainingRecall": null,
+    "revisionNewIssueRecall": null,
+    "averageDurationMs": 2624
+  },
+  "results": [
+    {
+      "id": "obj-agreement-students-is",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2392,
+      "score": {
+        "expected": 1,
+        "returned": 2,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 2,
+        "objectiveUnmatched": [
+          {
+            "category": "词形与单复数",
+            "quote": "every source used in the written assignment",
+            "why": "every 后面通常接单数名词；这里 source 应保持单数形式，或改写为与复数结构一致。",
+            "correction": "检查限定词与名词单复数是否匹配。",
+            "suggestion": "",
+            "confidence": "中"
+          }
+        ],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 2,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "strong-education-ai",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2070,
+      "score": {
+        "expected": 0,
+        "returned": 0,
+        "matched": 0,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 0,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "strong-university",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2852,
+      "score": {
+        "expected": 0,
+        "returned": 0,
+        "matched": 0,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 0,
+        "duplicates": 0
+      }
+    },
+    {
+      "id": "adv-thesis-overbroad",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 3180,
+      "score": {
+        "expected": 1,
+        "returned": 2,
+        "matched": 1,
+        "objectiveExpected": 0,
+        "objectiveMatched": 0,
+        "objectiveReturned": 0,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 0,
+        "objectiveCorrectionsAccepted": 0,
+        "advisoryExpected": 1,
+        "advisoryMatched": 1,
+        "unmatchedAdvisory": [
+          {
+            "category": "段落衔接",
+            "quote": "Digital tools influence study, work, and communication.",
+            "why": "这一句与前一句之间只是重复性扩展，没有过渡、因果或例证支持，因此两句的逻辑连接偏弱。",
+            "correction": "补充连接关系，例如说明这些领域如何受到影响，或增加一个具体例子来支撑前一句。",
+            "suggestion": "",
+            "confidence": "高"
+          }
+        ],
+        "misses": [],
+        "locatable": 2,
+        "duplicates": 0
+      }
+    }
+  ]
+}

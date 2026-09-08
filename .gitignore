@@ -12,6 +12,13 @@
 
 # testing
 /coverage
+/reports/accuracy/*
+!/reports/accuracy/2026-09-07T19-44-49-189Z.json
+!/reports/accuracy/2026-09-07T19-44-49-189Z.md
+!/reports/accuracy/2026-09-07T19-47-37-268Z.json
+!/reports/accuracy/2026-09-07T19-47-37-268Z.md
+!/reports/accuracy/2026-09-07T19-49-07-216Z.json
+!/reports/accuracy/2026-09-07T19-49-07-216Z.md
 
 # next.js
 /.next/
@@ -32,6 +39,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel

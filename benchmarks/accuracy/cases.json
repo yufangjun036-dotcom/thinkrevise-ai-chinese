@@ -1,0 +1,335 @@
+{
+  "version": "0.2.0",
+  "language": "en",
+  "description": "ThinkRevise AI Chinese-build accuracy benchmark. Objective language errors and academic-writing judgements are scored separately.",
+  "acceptedCorrectionsByKey": {
+    "teh": ["the"],
+    "becuase": ["because"],
+    "recieve": ["receive"],
+    "students-is": ["students are"],
+    "it-help": ["it helps"],
+    "people-is": ["people are"],
+    "did-understood": ["did not understand"],
+    "have-went": ["have gone"],
+    "informations": ["information"],
+    "careful": ["carefully"],
+    "an-university": ["a university"],
+    "a-evidence": ["evidence", "a piece of evidence"],
+    "lowercase-i": ["→ I"],
+    "should-reduces": ["should reduce"],
+    "goverment": ["government"],
+    "enviroment": ["environment"],
+    "definately": ["definitely"],
+    "should-teaches": ["should teach"],
+    "it-make": ["it makes"],
+    "ai-are": ["ai is"],
+    "students-does": ["students do not"]
+  },
+  "cases": [
+    {
+      "id": "obj-spelling-teh",
+      "kind": "initial",
+      "theme": "教育与 AI",
+      "draft": "The university should evaluate teh feedback carefully before using it in a final essay.",
+      "expectedIssues": [{ "key": "teh", "tier": "objective", "family": "spelling", "quote": "teh" }]
+    },
+    {
+      "id": "obj-spelling-becuase",
+      "kind": "initial",
+      "theme": "大学生活",
+      "draft": "Students should compare multiple sources becuase automated answers can be inaccurate.",
+      "expectedIssues": [{ "key": "becuase", "tier": "objective", "family": "spelling", "quote": "becuase" }]
+    },
+    {
+      "id": "obj-spelling-recieve",
+      "kind": "initial",
+      "theme": "大学生活",
+      "draft": "Learners recieve detailed comments before revising their essays for the seminar.",
+      "expectedIssues": [{ "key": "recieve", "tier": "objective", "family": "spelling", "quote": "recieve" }]
+    },
+    {
+      "id": "obj-agreement-students-is",
+      "kind": "initial",
+      "theme": "大学生活",
+      "draft": "Students is responsible for checking every source used in the written assignment.",
+      "expectedIssues": [{ "key": "students-is", "tier": "objective", "family": "agreement", "quote": "Students is" }]
+    },
+    {
+      "id": "obj-agreement-it-help",
+      "kind": "initial",
+      "theme": "教育与 AI",
+      "draft": "The feedback is useful because it help writers identify unclear claims in their drafts.",
+      "expectedIssues": [{ "key": "it-help", "tier": "objective", "family": "agreement", "quote": "it help" }]
+    },
+    {
+      "id": "obj-agreement-people-is",
+      "kind": "initial",
+      "theme": "科技与社会",
+      "draft": "People is often uncertain about whether an automated recommendation is reliable.",
+      "expectedIssues": [{ "key": "people-is", "tier": "objective", "family": "agreement", "quote": "People is" }]
+    },
+    {
+      "id": "obj-tense-did-understood",
+      "kind": "initial",
+      "theme": "大学生活",
+      "draft": "Last year, many participants did not understood why evaluating sources mattered.",
+      "expectedIssues": [{ "key": "did-understood", "tier": "objective", "family": "tense", "quote": "did not understood" }]
+    },
+    {
+      "id": "obj-tense-have-went",
+      "kind": "initial",
+      "theme": "大学生活",
+      "draft": "Several students have went to the library to verify the evidence cited in class.",
+      "expectedIssues": [{ "key": "have-went", "tier": "objective", "family": "tense", "quote": "have went" }]
+    },
+    {
+      "id": "obj-noun-informations",
+      "kind": "initial",
+      "theme": "科技与社会",
+      "draft": "The university website provides many informations about its academic support services.",
+      "expectedIssues": [{ "key": "informations", "tier": "objective", "family": "noun_form", "quote": "informations" }]
+    },
+    {
+      "id": "obj-wordform-careful",
+      "kind": "initial",
+      "theme": "教育与 AI",
+      "draft": "Students should use AI careful when developing an argument for an academic essay.",
+      "expectedIssues": [{ "key": "careful", "tier": "objective", "family": "word_form", "quote": "use AI careful" }]
+    },
+    {
+      "id": "obj-article-university",
+      "kind": "initial",
+      "theme": "大学生活",
+      "draft": "An university should provide clear guidance on responsible technology use.",
+      "expectedIssues": [{ "key": "an-university", "tier": "objective", "family": "noun_form", "quote": "An university" }]
+    },
+    {
+      "id": "obj-article-evidence",
+      "kind": "initial",
+      "theme": "学术写作",
+      "draft": "The paragraph needs a evidence to support its central claim about online learning.",
+      "expectedIssues": [{ "key": "a-evidence", "tier": "objective", "family": "noun_form", "quote": "a evidence" }]
+    },
+    {
+      "id": "adv-nowadays",
+      "kind": "initial",
+      "theme": "科技与社会",
+      "draft": "Nowadays, digital platforms influence how university students obtain information.",
+      "expectedIssues": [{ "key": "nowadays", "tier": "advisory", "family": "register", "quote": "Nowadays" }]
+    },
+    {
+      "id": "adv-personal-opinion",
+      "kind": "initial",
+      "theme": "环境与未来",
+      "draft": "I think universities should reduce unnecessary packaging in campus shops.",
+      "expectedIssues": [{ "key": "i-think", "tier": "advisory", "family": "register", "quote": "I think" }]
+    },
+    {
+      "id": "adv-really-good",
+      "kind": "initial",
+      "theme": "教育与 AI",
+      "draft": "This approach is really good because students receive feedback before submitting an essay.",
+      "expectedIssues": [{ "key": "really-good", "tier": "advisory", "family": "register", "quote": "really good" }]
+    },
+    {
+      "id": "adv-a-lot-of",
+      "kind": "initial",
+      "theme": "大学生活",
+      "draft": "The survey generated a lot of feedback from first-year students about library access.",
+      "expectedIssues": [{ "key": "a-lot-of", "tier": "advisory", "family": "register", "quote": "a lot of" }]
+    },
+    {
+      "id": "adv-direct-reader",
+      "kind": "initial",
+      "theme": "学术写作",
+      "draft": "You should verify each citation before including it in an academic paper.",
+      "expectedIssues": [{ "key": "you", "tier": "advisory", "family": "register", "quote": "You" }]
+    },
+    {
+      "id": "adv-obviously",
+      "kind": "initial",
+      "theme": "大学生活",
+      "draft": "Obviously, the policy will improve learning outcomes across the institution.",
+      "expectedIssues": [{ "key": "obviously", "tier": "advisory", "family": "register", "quote": "Obviously" }]
+    },
+    {
+      "id": "adv-absolute-always",
+      "kind": "initial",
+      "theme": "教育与 AI",
+      "draft": "Automated feedback always improves the quality of student writing.",
+      "expectedIssues": [{ "key": "always", "tier": "advisory", "family": "register", "quote": "always" }]
+    },
+    {
+      "id": "adv-contraction",
+      "kind": "initial",
+      "theme": "教育与 AI",
+      "draft": "Students don't understand why a suggested revision is necessary.",
+      "expectedIssues": [{ "key": "contraction", "tier": "advisory", "family": "register", "quote": "don't" }]
+    },
+    {
+      "id": "strong-education-ai",
+      "kind": "initial",
+      "theme": "教育与 AI",
+      "draft": "Generative feedback may help university writers identify unclear phrasing, provided that they evaluate each suggestion against the intended meaning and available evidence.",
+      "expectedIssues": []
+    },
+    {
+      "id": "strong-environment",
+      "kind": "initial",
+      "theme": "环境与未来",
+      "draft": "Universities can reduce operational emissions by improving building efficiency, monitoring energy consumption, and publishing measurable progress toward clearly defined targets.",
+      "expectedIssues": []
+    },
+    {
+      "id": "strong-university",
+      "kind": "initial",
+      "theme": "大学生活",
+      "draft": "Project-based courses can promote independent learning when students make substantive decisions, receive timely feedback, and reflect on the consequences of their choices.",
+      "expectedIssues": []
+    },
+    {
+      "id": "mixed-education-ai",
+      "kind": "initial",
+      "theme": "教育与 AI",
+      "draft": "Last semester, i used an AI tutor because it help me finish work fast. The system gave a lot of feedback, but I did not understood why every suggestion was appropriate. Students is responsible for checking teh evidence before revising an assignment.",
+      "expectedIssues": [
+        { "key": "lowercase-i", "tier": "objective", "family": "spelling", "quote": "i" },
+        { "key": "it-help", "tier": "objective", "family": "agreement", "quote": "it help" },
+        { "key": "finish-fast", "tier": "advisory", "family": "register", "quote": "finish work fast" },
+        { "key": "a-lot-of", "tier": "advisory", "family": "register", "quote": "a lot of" },
+        { "key": "did-understood", "tier": "objective", "family": "tense", "quote": "did not understood" },
+        { "key": "students-is", "tier": "objective", "family": "agreement", "quote": "Students is" },
+        { "key": "teh", "tier": "objective", "family": "spelling", "quote": "teh" }
+      ]
+    },
+    {
+      "id": "mixed-environment",
+      "kind": "initial",
+      "theme": "环境与未来",
+      "draft": "The goverment should reduces plastic waste becuase the enviroment is damaged by unnecessary packaging. People is often unsure about which alternatives are effective, and the proposal needs a evidence to justify its cost.",
+      "expectedIssues": [
+        { "key": "goverment", "tier": "objective", "family": "spelling", "quote": "goverment" },
+        { "key": "should-reduces", "tier": "objective", "family": "word_form", "quote": "should reduces" },
+        { "key": "becuase", "tier": "objective", "family": "spelling", "quote": "becuase" },
+        { "key": "enviroment", "tier": "objective", "family": "spelling", "quote": "enviroment" },
+        { "key": "people-is", "tier": "objective", "family": "agreement", "quote": "People is" },
+        { "key": "a-evidence", "tier": "objective", "family": "noun_form", "quote": "a evidence" }
+      ]
+    },
+    {
+      "id": "mixed-university",
+      "kind": "initial",
+      "theme": "大学生活",
+      "draft": "Students is given a bunch of online materials, but they recieve many informations without guidance. I think the course should teaches students how to compare sources careful before using them in assignments.",
+      "expectedIssues": [
+        { "key": "students-is", "tier": "objective", "family": "agreement", "quote": "Students is" },
+        { "key": "a-bunch-of", "tier": "advisory", "family": "register", "quote": "a bunch of" },
+        { "key": "recieve", "tier": "objective", "family": "spelling", "quote": "recieve" },
+        { "key": "informations", "tier": "objective", "family": "noun_form", "quote": "informations" },
+        { "key": "i-think", "tier": "advisory", "family": "register", "quote": "I think" },
+        { "key": "should-teaches", "tier": "objective", "family": "word_form", "quote": "should teaches" },
+        { "key": "careful", "tier": "objective", "family": "word_form", "quote": "sources careful" }
+      ]
+    },
+    {
+      "id": "mixed-technology",
+      "kind": "initial",
+      "theme": "科技与社会",
+      "draft": "In my opinion, a recommendation system is definately very useful because it make online searches faster. Users can finish tasks fast, but obviously the first result is always reliable and no one needs to verify it.",
+      "expectedIssues": [
+        { "key": "in-my-opinion", "tier": "advisory", "family": "register", "quote": "In my opinion" },
+        { "key": "definately", "tier": "objective", "family": "spelling", "quote": "definately" },
+        { "key": "very-useful", "tier": "advisory", "family": "register", "quote": "very useful" },
+        { "key": "it-make", "tier": "objective", "family": "agreement", "quote": "it make" },
+        { "key": "finish-fast", "tier": "advisory", "family": "register", "quote": "finish tasks fast" },
+        { "key": "obviously", "tier": "advisory", "family": "register", "quote": "obviously" },
+        { "key": "always", "tier": "advisory", "family": "register", "quote": "always" },
+        { "key": "no-one", "tier": "advisory", "family": "register", "quote": "no one" }
+      ]
+    },
+    {
+      "id": "obj-fragment-dependent-clause",
+      "kind": "initial",
+      "theme": "大学生活",
+      "draft": "Although the university introduced a new writing centre.",
+      "expectedIssues": [{ "key": "dependent-fragment", "tier": "objective", "family": "sentence_structure", "quote": "Although the university introduced a new writing centre." }]
+    },
+    {
+      "id": "obj-run-on-sentence",
+      "kind": "initial",
+      "theme": "大学生活",
+      "draft": "The library extended its opening hours students still could not access specialist support.",
+      "expectedIssues": [{ "key": "run-on", "tier": "objective", "family": "sentence_structure", "quote": "The library extended its opening hours students still could not access specialist support." }]
+    },
+    {
+      "id": "obj-comma-splice",
+      "kind": "initial",
+      "theme": "教育与 AI",
+      "draft": "Online feedback is immediate, the guidance may still fail to explain why a change is necessary.",
+      "expectedIssues": [{ "key": "comma-splice", "tier": "objective", "family": "sentence_structure", "quote": "Online feedback is immediate, the guidance may still fail to explain why a change is necessary." }]
+    },
+    {
+      "id": "adv-cohesion-abrupt",
+      "kind": "initial",
+      "theme": "环境与未来",
+      "draft": "Campus recycling can reduce waste. Artificial intelligence systems require transparent data governance.",
+      "expectedIssues": [{ "key": "abrupt-topic-shift", "tier": "advisory", "family": "cohesion", "quote": "Artificial intelligence systems require transparent data governance." }]
+    },
+    {
+      "id": "adv-thesis-overbroad",
+      "kind": "initial",
+      "theme": "科技与社会",
+      "draft": "Technology affects society in many ways. Digital tools influence study, work, and communication.",
+      "expectedIssues": [{ "key": "overbroad-thesis", "tier": "advisory", "family": "thesis", "quote": "Technology affects society in many ways." }]
+    },
+    {
+      "id": "adv-unsupported-causality",
+      "kind": "initial",
+      "theme": "教育与 AI",
+      "draft": "The university introduced an online feedback platform. Consequently, the platform improved students' critical reasoning.",
+      "expectedIssues": [{ "key": "unsupported-causality", "tier": "advisory", "family": "argument", "quote": "Consequently, the platform improved students' critical reasoning." }]
+    },
+    {
+      "id": "revision-one-correction",
+      "kind": "revision",
+      "theme": "教育与 AI",
+      "originalDraft": "People is often unsure about automated feedback. Last year, I did not understood why it mattered. The final paragraph contains teh central claim.",
+      "revisedDraft": "People are often unsure about automated feedback. Last year, I did not understood why it mattered. The final paragraph contains teh central claim.",
+      "originalIssues": [
+        { "key": "people-is", "tier": "objective", "family": "agreement", "quote": "People is" },
+        { "key": "did-understood", "tier": "objective", "family": "tense", "quote": "did not understood" },
+        { "key": "teh", "tier": "objective", "family": "spelling", "quote": "teh" }
+      ],
+      "expectedRevision": { "resolved": ["people-is"], "remaining": ["did-understood", "teh"], "newIssues": [] }
+    },
+    {
+      "id": "revision-new-error",
+      "kind": "revision",
+      "theme": "教育与 AI",
+      "originalDraft": "AI are useful when students evaluate the output carefully. It help writers identify unclear claims.",
+      "revisedDraft": "AI is useful when students evaluate the output carefully. It helps writers identify unclear claims. However, students does not verify every source.",
+      "originalIssues": [
+        { "key": "ai-are", "tier": "objective", "family": "agreement", "quote": "AI are" },
+        { "key": "it-help", "tier": "objective", "family": "agreement", "quote": "It help" }
+      ],
+      "expectedRevision": {
+        "resolved": ["ai-are", "it-help"],
+        "remaining": [],
+        "newIssues": [{ "key": "students-does", "tier": "objective", "family": "agreement", "quote": "students does not" }]
+      }
+    },
+    {
+      "id": "revision-register-cleanup",
+      "kind": "revision",
+      "theme": "大学生活",
+      "originalDraft": "I think the programme is really good because it gives students a lot of useful feedback.",
+      "revisedDraft": "The programme is beneficial because it provides students with substantial, actionable feedback.",
+      "originalIssues": [
+        { "key": "i-think", "tier": "advisory", "family": "register", "quote": "I think" },
+        { "key": "really-good", "tier": "advisory", "family": "register", "quote": "really good" },
+        { "key": "a-lot-of", "tier": "advisory", "family": "register", "quote": "a lot of" }
+      ],
+      "expectedRevision": { "resolved": ["i-think", "really-good", "a-lot-of"], "remaining": [], "newIssues": [] }
+    }
+  ]
+}

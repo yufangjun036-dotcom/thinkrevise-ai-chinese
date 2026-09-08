@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import { demoCategories, ensureDemoGrammar, ensureDemoIssueCoverage, ensureDemoTypo, validateDemo } from '../app/demo-validation.ts';
+
+const draft = 'Universities should evaluate AI feedback because one lesson can solve every problem. The idea is really good and works everywhere, even when there is no evidence. A student may accept advice simply because it looks clear, so a confident answer must be reliable. Teachers should discuss different views in class and let students explain a decision in their own words.\n\nHowever, privacy also matters. Better classroom access can help students engage with these questions. The impact is huge and participation will improve immediately. Students need support for independent thinking.';
+const issueQuote = 'Teachers should discuss different views in class and let students explain a decision in their own words.\n\nHowever, privacy also matters.';
+const value = { draft, mainPoint: '大学应该教学生评估 AI 反馈。', issues: demoCategories.map((category) => ({ category, quote: issueQuote, correction: '测试用修改方向' })) };
+const words = ['evaluate', 'privacy', 'access', 'engage', 'impact', 'participation', 'support', 'independent'];
+const processed = ensureDemoGrammar(ensureDemoTypo(structuredClone(value), words));
+const result = validateDemo(processed, words);
+assert.match(result.draft, /teh/);
+assert.match(result.draft, /People is/);
+assert.match(result.draft, /did not understood/);
+assert.throws(() => validateDemo(processed, [...words, 'missingword']), /missing exact target/);
+assert.throws(() => validateDemo(processed, words, result.draft), /too similar/);
+assert.throws(() => validateDemo({ ...processed, draft: 'short text' }, words), /length/);
+assert.throws(() => validateDemo({ ...processed, issues: [] }, words), /missing grounded/);
+assert.doesNotThrow(() => validateDemo(ensureDemoIssueCoverage({ ...processed, issues: [] }), words));
+assert.equal(ensureDemoTypo({ ...value, draft: 'the the', issues: [] }, ['the']).draft, 'the the');
+const denseDraft = `The article connects evaluate privacy access engage impact participation support independent in one sentence. This second sentence adds enough explanation for readers to understand the issue and its possible consequences. A third sentence acknowledges uncertainty and asks how different groups may respond to the proposal. A fourth sentence notes that evidence should guide the conclusion rather than a simple personal opinion. The final paragraph returns to the central claim and explains why careful reflection matters for university students. It also notes that responsible decisions require context, comparison, and a clear explanation of possible limitations.`;
+assert.throws(() => validateDemo({ ...processed, draft: denseDraft }, words), /concentrated/);
+const repeatedFrameDraft = `We consider the role of evaluate in the debate. We consider the role of privacy in the debate. Access affects the proposal, while engage describes participation. Impact matters for support, and independent judgement remains necessary. Evidence can clarify the issue, although the conclusion is still limited. Students should compare these factors before making a final decision, because a careful explanation is more reliable than a simple opinion. The final paragraph should connect the examples to the central claim and acknowledge uncertainty.`;
+assert.throws(() => validateDemo({ ...processed, draft: repeatedFrameDraft }, words), /repetitive|same sentence frame/);
+console.log('Demo checks passed: target preservation, inserted errors, cross-paragraph quotes, rejection of missing words, recycled drafts, invalid length, ungrounded categories, dense target-word lists and repeated sentence frames.');

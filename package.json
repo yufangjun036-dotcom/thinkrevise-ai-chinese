@@ -1,12 +1,28 @@
 {
-  "name": "revisioncoach-ai",
+  "name": "thinkrevise-ai-chinese",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:data": "NODE_NO_WARNINGS=1 node --experimental-strip-types scripts/check-learning-data.mjs",
+    "check:limits": "NODE_NO_WARNINGS=1 node --experimental-strip-types scripts/check-text-limits.mjs",
+    "check:copy": "node scripts/check-chinese-ui.mjs",
+    "check:safeguards": "node scripts/check-safeguards.mjs",
+    "check:security": "NODE_NO_WARNINGS=1 node --experimental-strip-types scripts/check-security-controls.mjs",
+    "check:release": "node scripts/check-release-readiness.mjs",
+    "benchmark:validate": "node scripts/benchmark-accuracy.mjs",
+    "benchmark:live": "node scripts/benchmark-accuracy.mjs",
+    "test:demo": "node --experimental-strip-types scripts/check-demo-validation.mjs",
+    "test:demo:live": "node scripts/check-demo-live.mjs",
+    "test:api": "node scripts/check-api.mjs",
+    "test:recovery": "node scripts/check-boundary-recovery.mjs",
+    "test:live-ai": "node scripts/check-live-ai.mjs",
+    "verify": "npm run lint && npm run check:data && npm run check:limits && npm run check:copy && npm run check:safeguards && npm run check:security && npm run benchmark:validate && npm run build",
+    "verify:release": "npm run verify && node scripts/run-local-release-suite.mjs && npm run check:release"
   },
   "dependencies": {
     "next": "16.3.4",

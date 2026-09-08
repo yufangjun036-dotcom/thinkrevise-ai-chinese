@@ -1,0 +1,47 @@
+{
+  "summary": {
+    "datasetVersion": "0.2.0",
+    "generatedAt": "2026-09-07T19:49:07.216Z",
+    "baseUrl": "http://127.0.0.1:3002",
+    "selectedCases": 1,
+    "completedCases": 1,
+    "failedCases": 0,
+    "objectiveRecall": 1,
+    "objectivePrecisionAgainstGold": 1,
+    "objectiveCorrectionAcceptance": 1,
+    "advisoryCoverage": null,
+    "quoteLocatability": 1,
+    "duplicateRate": 0,
+    "objectiveFalsePositivesAgainstGold": 0,
+    "strongTextObjectiveFalsePositives": 0,
+    "revisionResolvedAccuracy": null,
+    "revisionRemainingRecall": null,
+    "revisionNewIssueRecall": null,
+    "averageDurationMs": 2611
+  },
+  "results": [
+    {
+      "id": "obj-agreement-students-is",
+      "kind": "initial",
+      "provider": "openai",
+      "durationMs": 2611,
+      "score": {
+        "expected": 1,
+        "returned": 1,
+        "matched": 1,
+        "objectiveExpected": 1,
+        "objectiveMatched": 1,
+        "objectiveReturned": 1,
+        "objectiveUnmatched": [],
+        "objectiveCorrectionsChecked": 1,
+        "objectiveCorrectionsAccepted": 1,
+        "advisoryExpected": 0,
+        "advisoryMatched": 0,
+        "unmatchedAdvisory": [],
+        "misses": [],
+        "locatable": 1,
+        "duplicates": 0
+      }
+    }
+  ]
+}
