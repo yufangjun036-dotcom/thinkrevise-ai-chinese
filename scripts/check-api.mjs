@@ -11,7 +11,7 @@ function categoryFamily(value) {
   if (/词形|副词|动词形式/.test(value)) return "word-form";
   if (/冠词|单复数|不可数/.test(value)) return "noun-form";
   if (/学术|口语|非正式|个人化|绝对化|宽泛|强调/.test(value)) return "register";
-  if (/句子完整|过长句|句法结构/.test(value)) return "sentence-structure";
+  if (/句子完整|过长句|句法结构|连写句|标点|句子连接|逗号拼接/.test(value)) return "sentence-structure";
   return `other:${value.toLocaleLowerCase().trim()}`;
 }
 
@@ -128,6 +128,34 @@ try {
     for (const expected of ["alot", "useing", "becuase", "many student is", "did not understood", "have went", "informations", "in my opinion", "obviously", "research proves", "should teaches", "use ai careful"]) {
       assert.ok(returnedQuotes.includes(expected), `stress test did not identify: ${expected}`);
     }
+  }
+
+  const peerReflectionDraft = "I take this course about AI in education this semester, and it change my mind a lot. Before, I just think AI is only for chat and write homework quickly. But after many class discussion, I know AI is not a simple tool to finish assignment.\n\nIn class, we talk about how teacher can use AI to make different exercise for student. Some student learn slow, some learn fast, AI can give them different material. But I also find a big problem: if student depend too much on AI, they will lose the ability to think by themself. Many people just copy AI answer without reading, this make learning no meaning.\n\nI try to use AI to help me prepare lesson plan in our project. It save a lot time, but AI sometimes give wrong information. I need check every point carefully, can not trust all things it say. This is the most important thing I learn.\n\nAI will not replace teachers. Teacher can see student’s emotion, encourage them and guide their thinking. AI only help. In future, I want learn more to use AI wisely, not overuse it. We should control AI, not let AI control our study.";
+  const peerReflection = await post({
+    phase: "initial",
+    draft: peerReflectionDraft,
+    mode: "coach",
+    goal: "优先检查明确的语法、词汇和句子结构错误，再检查实质学术问题",
+    taskPrompt: "当前主题：AI 与教育课程反思",
+    selfCheck: { mainPoint: "反思 AI 在教育中的用途与风险。", weakness: "需要全面核对语言准确性。", help: "全面检查" },
+  });
+  assert.equal(peerReflection.response.status, 200, "peer reflection request failed");
+  assert.ok(peerReflection.data.feedback.every((item) => peerReflectionDraft.toLocaleLowerCase().includes(item.quote.toLocaleLowerCase())), "peer reflection contains an unlocatable quote");
+  assertNoSameErrorDuplicates(peerReflection.data.feedback, "peer reflection diagnosis");
+  if (peerReflection.data.provider === "demo") {
+    const returnedQuotes = peerReflection.data.feedback.map((item) => item.quote.toLocaleLowerCase());
+    for (const expected of [
+      "it change", "before, i just think", "for chat and write homework", "many class discussion", "finish assignment",
+      "teacher can use ai to make different exercise for student", "some student learn slow, some learn fast, ai can",
+      "if student depend too much on ai", "by themself",
+      "many people just copy ai answer without reading, this make learning no meaning", "prepare lesson plan",
+      "it save", "a lot time", "ai sometimes give",
+      "i need check every point carefully, can not trust all things it say",
+      "teacher can see student’s emotion", "ai only help", "this is the most important thing i learn", "i want learn",
+    ]) assert.ok(returnedQuotes.includes(expected), `peer reflection did not identify: ${expected}`);
+    const languageFeedback = peerReflection.data.feedback.filter((item) => item.category.startsWith("语言"));
+    assert.ok(languageFeedback.length >= 19, "peer reflection returned too few objective-language findings");
+    assert.equal(languageFeedback.filter((item) => /\bit say\b/i.test(item.quote)).length, 1, "it say was reported more than once");
   }
 
   const secondDraft = "AI feedback can support university writers when learners evaluate each suggestion. However, many student is still accepting vague claims without evidence.";

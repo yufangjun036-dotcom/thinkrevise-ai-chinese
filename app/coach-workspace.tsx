@@ -815,7 +815,7 @@ export default function CoachWorkspace() {
 }
 
 function ProviderBadge({ response }: { response: CoachResponse }) {
-  const languageCount = response.feedback.filter(item => /拼写|大小写|主谓|时态|词形|词性|冠词|单复数|动词形式|标点|句子完整/.test(item.category) && !/学术|建议|替换/.test(item.category)).length;
+  const languageCount = response.feedback.filter(item => item.category.startsWith("语言")).length;
   return <><div className={`provider-status ${response.provider}`}><span /><strong>{response.provider === "openai" ? "实时 AI 反馈" : "演示反馈模式"}</strong><p>{response.fallbackNotice || (response.provider === "openai" ? "AI 判断可能出错，请由学习者核对。" : "无需 API 密钥，适合现场试用与故障备用。")}</p></div>
     <p className="second-check-note">本轮反馈分为语言检查 {languageCount} 项、学术与表达建议 {response.feedback.length - languageCount} 项。学术建议不是已证实的语法错误；是否采纳取决于原意、证据和写作要求。下方总数包含两类反馈，不代表错误总数。</p></>;
 }

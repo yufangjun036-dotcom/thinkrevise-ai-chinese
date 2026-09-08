@@ -33,6 +33,22 @@ const cases=[
     languageCount:0,
     academicCount:1,
   },
+  {
+    id:'peer-ai-course-reflection',
+    draft:'I take this course about AI in education this semester, and it change my mind a lot. Before, I just think AI is only for chat and write homework quickly. But after many class discussion, I know AI is not a simple tool to finish assignment.\n\nIn class, we talk about how teacher can use AI to make different exercise for student. Some student learn slow, some learn fast, AI can give them different material. But I also find a big problem: if student depend too much on AI, they will lose the ability to think by themself. Many people just copy AI answer without reading, this make learning no meaning.\n\nI try to use AI to help me prepare lesson plan in our project. It save a lot time, but AI sometimes give wrong information. I need check every point carefully, can not trust all things it say. This is the most important thing I learn.\n\nAI will not replace teachers. Teacher can see student’s emotion, encourage them and guide their thinking. AI only help. In future, I want learn more to use AI wisely, not overuse it. We should control AI, not let AI control our study.',
+    expected:[
+      'it change', 'Before, I just think', 'for chat and write homework', 'many class discussion', 'finish assignment',
+      'teacher can use AI to make different exercise for student', 'Some student learn slow, some learn fast, AI can',
+      'if student depend too much on AI', 'by themself',
+      'Many people just copy AI answer without reading, this make learning no meaning', 'prepare lesson plan',
+      'It save', 'a lot time', 'AI sometimes give',
+      'I need check every point carefully, can not trust all things it say',
+      'Teacher can see student’s emotion', 'AI only help', 'This is the most important thing I learn', 'I want learn', 'AI will not replace teachers.',
+    ],
+    languageCount:19,
+    academicCount:1,
+    forbidden:['different material','In future','I take this course','we talk about','I try to use AI'],
+  },
 ];
 let failures=0;
 const results=[];
