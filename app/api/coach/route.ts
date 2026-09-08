@@ -291,6 +291,18 @@ function findExactQuoteStart(source: string, quote: string) {
   return -1;
 }
 
+function normaliseFeedbackCategory(item: FeedbackItem): FeedbackItem {
+  const advice = `${item.why ?? ""} ${item.correction ?? ""}`;
+  const styleAdvice = /学术|正式|口语|术语|措辞|表达.{0,6}(?:自然|准确|精确)|academic|formal/i.test(advice);
+  const formEvidence = /副词|形容词|名词|动词|词尾|词缀|修饰|单复数|adverb|adjective|suffix/i.test(advice);
+  // Reclassify only a supported style recommendation, never infer a grammar
+  // error from the heading alone or overwrite concrete word-form evidence.
+  if (/词性|词形|表达用语/.test(item.category ?? "") && styleAdvice && !formEvidence) {
+    return { ...item, category: "学术表达 · 用语建议" };
+  }
+  return item;
+}
+
 function feedbackCategoryFamily(value: string) {
   if (/拼写|大小写/.test(value)) return "spelling";
   if (/主谓一致/.test(value)) return "agreement";
@@ -346,9 +358,11 @@ function sameRevisionFinding(old: FeedbackItem, current: FeedbackItem) {
 
 function dedupeFeedback(items: FeedbackItem[]) {
   const unique: FeedbackItem[] = [];
-  for (const item of items) {
+  // Prefer a precise span over a whole-sentence duplicate, independent of order.
+  const candidates = items.map(normaliseFeedbackCategory).sort((a, b) => a.quote.length - b.quote.length);
+  for (const item of candidates) {
     if (unique.some((existing) => {
-      if (feedbackQuotesOverlap(existing.quote, item.quote, existing.category, item.category)) return true;
+      if (sameRevisionFinding(existing, item)) return true;
       const existingQuote = normaliseFeedbackQuote(existing.quote);
       const itemQuote = normaliseFeedbackQuote(item.quote);
       const existingFamily = feedbackCategoryFamily(existing.category);
@@ -366,7 +380,7 @@ function dedupeFeedback(items: FeedbackItem[]) {
     })) continue;
     unique.push(item);
   }
-  return unique;
+  return unique.sort((a, b) => items.findIndex(item => item.quote === a.quote) - items.findIndex(item => item.quote === b.quote));
 }
 
 function looksLikeCompleteSentenceDespiteLabel(item: FeedbackItem) {
@@ -427,6 +441,7 @@ function quoteSentence(draft: string, quote: string) {
 }
 
 function mayCarryPriorIssue(item: FeedbackItem, original: string, revised: string) {
+  item = normaliseFeedbackCategory(item);
   if (explicitlySaysNoIssue(item) || findExactQuoteStart(revised, item.quote) < 0) return false;
   if (original === revised) return true;
   // Formatting or a stray terminal character is not new evidence or argument.
@@ -504,7 +519,7 @@ function addRevisionComparison(
   originalDraft: string,
   priorFeedback: NonNullable<RequestBody["priorFeedback"]>,
 ) {
-  const prior = priorFeedback.flatMap((item) => {
+  const prior = dedupeFeedback(priorFeedback.flatMap((item) => {
     const category = item.category?.trim() ?? "";
     const quote = item.quote?.trim() ?? "";
     const correction = item.correction?.trim() ?? "";
@@ -517,7 +532,7 @@ function addRevisionComparison(
       suggestion: "",
       confidence: item.confidence === "高" || item.confidence === "低" ? item.confidence : "中" as const,
     } satisfies FeedbackItem];
-  });
+  }));
   const matchedPrior = new Set<number>();
   const remainingPrior = new Set<number>();
   const current = dedupeFeedback(result.feedback.filter((item) => !explicitlySaysNoIssue(item) && findExactQuoteStart(revisedDraft, item.quote) >= 0));

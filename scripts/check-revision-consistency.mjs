@@ -87,4 +87,30 @@ const many = Array.from({ length: 45 }, (_, i) => issue(`Token${i}`, '需要补�
 const limited = f.addRevisionComparison(result([...many, many[0]], manyDraft), manyDraft, '', []);
 assert.equal(limited.feedback.length, 36);
 assert.equal(limited.revisionComparison.changedCount, 36);
-console.log(`Revision regression passed: ${checks} pipeline cases, verdict negatives, duplicate/cap accounting. No network or API usage.`);
+const styleDraft = 'AI is really good for university students. They may also accept invented information.';
+const broadStyle = issue('AI is really good for university students', '改用更准确的学术表达，说明具体益处。', '表达用语');
+const preciseStyle = issue('really good', 'really good → beneficial。表达不够精确。', '学术表达 · 口语化且不精确');
+const broadTerm = issue('They may also accept invented information.', '使用更自然的学术表达来说明 AI 可能生成虚假或错误信息。', '词性选择');
+const preciseTerm = issue('invented information', 'invented information → fabricated information。术语更准确。', '学术表达 · 术语不够精确');
+for (const previous of [[broadStyle, preciseStyle], [preciseStyle, broadStyle], [broadStyle]]) {
+  const matched = f.addRevisionComparison(result([preciseStyle], styleDraft), styleDraft, styleDraft, previous);
+  assert.equal(matched.revisionComparison.initialCount, 1);
+  assert.equal(matched.revisionComparison.resolved.length, 0);
+  assert.equal(matched.revisionComparison.remainingCount, 1);
+}
+for (const suggestions of [[broadTerm, preciseTerm], [preciseTerm, broadTerm]]) {
+  const merged = f.validateLiveResult(result(suggestions, styleDraft), styleDraft, 'coach', 0, true);
+  const related = merged.feedback.filter(item => item.quote.includes('invented information'));
+  assert.equal(related.length, 1);
+  assert.equal(related[0].quote, 'invented information');
+  assert.ok(!related.some(item => /词性/.test(item.category)));
+}
+const relabeled = f.addRevisionComparison(result([broadTerm], styleDraft), styleDraft, styleDraft, []);
+assert.equal(relabeled.feedback[0].category, '学术表达 · 用语建议');
+const genuineForm = issue('answer careful', '正式写作应使用副词修饰动作：careful → carefully。', '词性选择');
+const formOutput = f.addRevisionComparison(result([genuineForm], 'They answer careful.'), 'They answer careful.', '', []);
+assert.equal(formOutput.feedback[0].category, '词性选择');
+const differentIssue = issue(preciseTerm.quote, '需要补充研究证据。', '论证与解释');
+const distinctAdvice = f.addRevisionComparison(result([preciseTerm, differentIssue], styleDraft), styleDraft, '', []);
+assert.equal(distinctAdvice.feedback.length, 2);
+console.log(`Revision regression passed: ${checks} pipeline cases plus span/category/order regressions. No network or API usage.`);
