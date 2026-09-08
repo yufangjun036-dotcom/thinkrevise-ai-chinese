@@ -312,11 +312,12 @@ function feedbackQuotesOverlap(first: string, second: string, firstCategory = ""
   const longer = a.length <= b.length ? b : a;
   if (shorter.length < 3) return false;
   const shorterWords = shorter.split(/\s+/).length;
+  const containsPhrase = ` ${longer} `.includes(` ${shorter} `);
   if (
-    longer.includes(shorter)
+    containsPhrase
     && feedbackCategoryFamily(firstCategory) === feedbackCategoryFamily(secondCategory)
   ) return true;
-  if (longer.includes(shorter) && shorter.length / longer.length >= 0.6) return true;
+  if (containsPhrase && shorter.length / longer.length >= 0.6) return true;
   // Keep a short language error inside a sentence-level structure diagnosis,
   // but do not show two cards for the same long sentence.
   if (shorterWords < 8) {
@@ -386,7 +387,38 @@ function isPreferencePresentedAsError(item: FeedbackItem) {
 }
 
 function explicitlySaysNoIssue(item: FeedbackItem) {
-  return /基本正确|本身正确|本身成立|不构成明确.{0,8}错误|不单独处理|可保持不变|无需修改/.test(`${item.why} ${item.correction}`);
+  // Check the verdict about the current text, not words inside a proposed fix.
+  // A mixed verdict ("grammar is correct, but spelling is wrong") is not a clearance.
+  if (/→|改为|替换为/.test(item.correction ?? "")) return false;
+  const verdicts = [item.why, item.correction].filter((value): value is string => typeof value === "string");
+  return verdicts.some((value) => {
+    const verdict = value.trim();
+    if (/→|但是|但仍|但存在|但需要|然而|\bbut\b|\bhowever\b/i.test(verdict)) return false;
+    return /^(?:无[；;，,。\s]*)?(?:(?:此处|这里|该处|原文|本句|该句|表达|语法|主谓一致)\s*)?(?:已(?:经)?正确|没有错误|无错误|无需(?:再)?修改|不需要修改|已修正|已经修正|正确)[。.!！\s]*$/.test(verdict)
+      || /基本正确|本身正确|本身成立|不构成明确.{0,8}错误|不单独处理|可保持不变|无需修改/.test(verdict)
+      || /^(?:(?:this|the (?:sentence|expression)) (?:is )?)?(?:already correct|correct|no (?:correction|change|revision)s? (?:is |are )?(?:needed|required)|no (?:error|issue)s?(?: found)?)[.!\s]*$/i.test(verdict);
+  });
+}
+
+function quoteSentence(draft: string, quote: string) {
+  const start = findExactQuoteStart(draft, quote);
+  if (start < 0) return "";
+  const left = Math.max(draft.lastIndexOf(".", start - 1), draft.lastIndexOf("!", start - 1), draft.lastIndexOf("?", start - 1), draft.lastIndexOf("\n", start - 1)) + 1;
+  const ends = [".", "!", "?", "\n"].map((mark) => draft.indexOf(mark, start + quote.length)).filter((index) => index >= 0);
+  return draft.slice(left, ends.length ? Math.min(...ends) + 1 : draft.length).trim();
+}
+
+function mayCarryPriorIssue(item: FeedbackItem, original: string, revised: string) {
+  if (explicitlySaysNoIssue(item) || findExactQuoteStart(revised, item.quote) < 0) return false;
+  if (original === revised) return true;
+  // Formatting or a stray terminal character is not new evidence or argument.
+  const before = original.trim().replace(/\s+/g, " ");
+  const after = revised.trim().replace(/\s+/g, " ");
+  if (before === after || (after.startsWith(before) && /^[\s]*[a-z]$/i.test(after.slice(before.length)))) return true;
+  // Discourse-level findings depend on the whole argument, not an unchanged phrase.
+  if (!new Set(["spelling", "agreement", "tense", "word-form", "noun-form"]).has(feedbackCategoryFamily(item.category))) return false;
+  const sentence = quoteSentence(original, item.quote);
+  return Boolean(sentence) && sentence === quoteSentence(revised, item.quote);
 }
 
 function contradictsVisibleNounForm(item: FeedbackItem) {
@@ -469,42 +501,53 @@ function addRevisionComparison(
     } satisfies FeedbackItem];
   });
   const matchedPrior = new Set<number>();
-  let changedCount = 0;
-  let supplementalCount = 0;
-  const remainingPrior = new Set(prior.map((_, index) => index).filter((index) => findExactQuoteStart(revisedDraft, prior[index].quote) >= 0));
-  const feedback = result.feedback.map((item) => {
-    const priorIndex = prior.findIndex((old, index) => remainingPrior.has(index) && !matchedPrior.has(index) && feedbackQuotesOverlap(old.quote, item.quote, old.category, item.category));
+  const remainingPrior = new Set<number>();
+  const current = dedupeFeedback(result.feedback.filter((item) => !explicitlySaysNoIssue(item) && findExactQuoteStart(revisedDraft, item.quote) >= 0));
+  const feedback = current.map((item) => {
+    const priorIndex = prior.findIndex((old, index) => !matchedPrior.has(index) && findExactQuoteStart(revisedDraft, old.quote) >= 0 && feedbackCategoryFamily(old.category) === feedbackCategoryFamily(item.category) && feedbackQuotesOverlap(old.quote, item.quote, old.category, item.category));
     if (priorIndex >= 0) {
       matchedPrior.add(priorIndex);
+      remainingPrior.add(priorIndex);
       return { ...item, revisionStatus: "remaining" as const };
     }
+    // A changed sentence can still contain the same kind of error. Do not
+    // simultaneously call that original finding resolved.
+    const changedPrior = prior.findIndex((old, index) => !matchedPrior.has(index)
+      && feedbackCategoryFamily(old.category) === feedbackCategoryFamily(item.category)
+      && approximatelyExistsInOriginal(quoteSentence(originalDraft, old.quote), quoteSentence(revisedDraft, item.quote)));
+    if (changedPrior >= 0) {
+      matchedPrior.add(changedPrior);
+      remainingPrior.add(changedPrior);
+      return { ...item, revisionStatus: "changed" as const };
+    }
     if (findExactQuoteStart(originalDraft, item.quote) >= 0 || approximatelyExistsInOriginal(originalDraft, item.quote)) {
-      supplementalCount += 1;
       return { ...item, revisionStatus: "supplemental" as const };
     }
-    changedCount += 1;
     return { ...item, revisionStatus: "changed" as const };
   });
-  for (const priorIndex of remainingPrior) {
+  for (let priorIndex = 0; priorIndex < prior.length; priorIndex += 1) {
     if (matchedPrior.has(priorIndex)) continue;
+    if (!mayCarryPriorIssue(prior[priorIndex], originalDraft, revisedDraft)) continue;
     matchedPrior.add(priorIndex);
+    remainingPrior.add(priorIndex);
     const item = prior[priorIndex];
     const start = findExactQuoteStart(revisedDraft, item.quote);
     feedback.push({ ...item, quote: revisedDraft.slice(start, start + item.quote.length), revisionStatus: "remaining" });
   }
-  const resolved = prior.filter((_, index) => !remainingPrior.has(index));
-  const revisionComparison: RevisionComparison = {
-    initialCount: prior.length,
-    resolved,
-    remainingCount: remainingPrior.size,
-    changedCount,
-    supplementalCount,
-  };
+  const resolved = prior.filter((item, index) => !remainingPrior.has(index) && !explicitlySaysNoIssue(item));
   const statusPriority = { changed: 0, remaining: 1, supplemental: 2 } as const;
   const orderedFeedback = [...feedback].sort((a, b) => (
     statusPriority[a.revisionStatus ?? "supplemental"] - statusPriority[b.revisionStatus ?? "supplemental"]
   ));
-  return { ...result, feedback: dedupeFeedback(orderedFeedback).slice(0, MAX_FEEDBACK_ITEMS), revisionComparison };
+  const finalFeedback = dedupeFeedback(orderedFeedback).slice(0, MAX_FEEDBACK_ITEMS);
+  const revisionComparison: RevisionComparison = {
+    initialCount: prior.length,
+    resolved,
+    remainingCount: finalFeedback.filter((item) => item.revisionStatus === "remaining").length,
+    changedCount: finalFeedback.filter((item) => item.revisionStatus === "changed").length,
+    supplementalCount: finalFeedback.filter((item) => item.revisionStatus === "supplemental").length,
+  };
+  return { ...result, summary: `第二稿复检定位到 ${finalFeedback.length} 项仍需注意的问题。前后比较仅供参考，未再检出不等于保证已经修正。`, feedback: finalFeedback, revisionComparison };
 }
 
 function applyModeSuggestion(item: FeedbackItem, mode: HelpMode): FeedbackItem {
@@ -550,7 +593,7 @@ function ensureMinorRevisionConsistency(
     if (!requestedQuote || !category || !correction) return [];
     const start = findExactQuoteStart(draft, requestedQuote);
     if (start < 0) return [];
-    return [{
+    const candidate: FeedbackItem = {
       category,
       quote: draft.slice(start, start + requestedQuote.length),
       why: raw.why?.trim() || "该问题位置与首次诊断相比没有发生变化，因此第二稿中仍需处理。",
@@ -559,7 +602,8 @@ function ensureMinorRevisionConsistency(
       hints: [],
       suggestion: "",
       confidence: raw.confidence === "高" || raw.confidence === "低" ? raw.confidence : "中" as const,
-    } satisfies FeedbackItem];
+    };
+    return mayCarryPriorIssue(candidate, originalDraft, draft) ? [candidate] : [];
   });
   const feedback = dedupeFeedback([...result.feedback, ...stillPresent]);
   return {

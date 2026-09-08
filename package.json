@@ -11,7 +11,7 @@
     "check:data": "NODE_NO_WARNINGS=1 node --experimental-strip-types scripts/check-learning-data.mjs",
     "check:limits": "NODE_NO_WARNINGS=1 node --experimental-strip-types scripts/check-text-limits.mjs",
     "check:copy": "node scripts/check-chinese-ui.mjs",
-    "check:safeguards": "node scripts/check-safeguards.mjs",
+    "check:safeguards": "node scripts/check-safeguards.mjs && node scripts/check-revision-consistency.mjs",
     "check:security": "NODE_NO_WARNINGS=1 node --experimental-strip-types scripts/check-security-controls.mjs",
     "check:release": "node scripts/check-release-readiness.mjs",
     "benchmark:validate": "node scripts/benchmark-accuracy.mjs",
