@@ -51,6 +51,33 @@ const contextual = compare('The student is using AI.', [], 'The students is usin
 assert.equal(contextual.feedback.length, 0);
 const clean = compare(revised.replace('teh', 'the'), []);
 assert.equal(clean.feedback.length, 0);
+// Incident: changing is -> are in another sentence must not drop word-class errors.
+const incident = original + ' They keep checking the answer careful.';
+const wordClass = issue('checking the answer careful', 'careful → carefully', '词性选择');
+const carriedWord = compare(incident.replace('students is', 'students are'), [], incident, [wordClass]);
+assert.equal(carriedWord.revisionComparison.remainingCount, 1);
+assert.equal(carriedWord.revisionComparison.resolved.length, 0);
+const correctedWord = compare(incident.replace('answer careful', 'answer carefully'), [], incident, [wordClass]);
+assert.ok(!correctedWord.feedback.some(item => item.quote === wordClass.quote));
+const passage = 'But sometimes students just use the answer and do not think about whether it is correct.';
+const fullPassage = passage + ' They may also accept invented information.';
+const argument = issue(fullPassage, '补充因果解释，说明为什么需要教学。', '论证与解释');
+const cohesion = issue(passage, '在后文补充因果或解释句。', '段落衔接');
+const incidentDraft = original + ' ' + fullPassage;
+const recategorized = compare(incidentDraft.replace('students is', 'students are'), [cohesion], incidentDraft, [argument]);
+assert.equal(recategorized.revisionComparison.remainingCount, 1);
+assert.equal(recategorized.feedback.find(item => item.quote === passage)?.revisionStatus, 'remaining');
+assert.equal(recategorized.revisionComparison.resolved.length, 0);
+const distinct = compare(incidentDraft.replace('students is', 'students are'), [issue(passage, '补充研究数据作为证据。', '段落衔接')], incidentDraft, [argument]);
+assert.equal(distinct.feedback.find(item => item.quote === passage)?.revisionStatus, 'supplemental');
+// Different, similarly long sentences must not be deduplicated merely by length.
+const otherPassage = 'Teachers can design structured classroom activities that encourage learners to evaluate competing claims with evidence.';
+const separate = f.addRevisionComparison(result([cohesion, issue(otherPassage, '补充因果解释。', '段落衔接')], incidentDraft + ' ' + otherPassage), incidentDraft + ' ' + otherPassage, incidentDraft, []);
+assert.equal(separate.feedback.length, 2);
+// A quote ending in a period must not swallow the changed following sentence.
+const sentenceQuote = issue('They keep checking the answer careful.', 'careful → carefully', '词性选择');
+const sentenceDraft = sentenceQuote.quote + ' ' + original;
+assert.equal(compare(sentenceDraft.replace('students is', 'students are'), [], sentenceDraft, [sentenceQuote]).revisionComparison.remainingCount, 1);
 const discourse = issue('students is', '需要补充证据。', '论证');
 assert.ok(compare(original + ' c', [], original, [discourse]).feedback.some(item => item.category === '论证'));
 const withEvidence = compare(original + ' A controlled comparison explains the reason.', [], original, [discourse]);

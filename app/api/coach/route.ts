@@ -295,7 +295,7 @@ function feedbackCategoryFamily(value: string) {
   if (/拼写|大小写/.test(value)) return "spelling";
   if (/主谓一致/.test(value)) return "agreement";
   if (/时态/.test(value)) return "tense";
-  if (/词形|副词|动词形式/.test(value)) return "word-form";
+  if (/词形|词性|副词|动词形式/.test(value)) return "word-form";
   if (/冠词|单复数|不可数/.test(value)) return "noun-form";
   if (/学术|口语|非正式|个人化|绝对化|宽泛|强调/.test(value)) return "register";
   if (/句子完整|过长句|句法结构|残句|连写句|标点|句子连接|逗号拼接/.test(value)) return "sentence-structure";
@@ -325,7 +325,23 @@ function feedbackQuotesOverlap(first: string, second: string, firstCategory = ""
     const isTemplateFragment = /\b(?:consider|explain|describe|discuss|show|present)\s+the\s+role\s+of\b/i.test(shorter);
     return repeatedTemplate && isTemplateFragment;
   }
-  return shorter.length / longer.length >= 0.78;
+  return containsPhrase && shorter.length / longer.length >= 0.78;
+}
+
+// Category names alone are not stable identities. Cross-category discourse
+// matching additionally requires the same passage and the same advice intent.
+function sameRevisionFinding(old: FeedbackItem, current: FeedbackItem) {
+  const sameFamily = feedbackCategoryFamily(old.category) === feedbackCategoryFamily(current.category);
+  if (sameFamily) return feedbackQuotesOverlap(old.quote, current.quote, old.category, current.category);
+  const discourse = /论证|解释|衔接|连贯|逻辑/;
+  if (!discourse.test(old.category) || !discourse.test(current.category)) return false;
+  const a = normaliseFeedbackQuote(old.quote);
+  const b = normaliseFeedbackQuote(current.quote);
+  const shorter = a.length <= b.length ? a : b;
+  const longer = a.length <= b.length ? b : a;
+  if (shorter.split(/\s+/).length < 8 || !` ${longer} `.includes(` ${shorter} `)) return false;
+  const intents = [/因果|原因|为什么|机制|解释|because|causal/i, /证据|数据|研究|evidence|data/i, /例子|举例|example/i];
+  return intents.some((intent) => intent.test(`${old.why} ${old.correction}`) && intent.test(`${current.why} ${current.correction}`));
 }
 
 function dedupeFeedback(items: FeedbackItem[]) {
@@ -404,7 +420,9 @@ function quoteSentence(draft: string, quote: string) {
   const start = findExactQuoteStart(draft, quote);
   if (start < 0) return "";
   const left = Math.max(draft.lastIndexOf(".", start - 1), draft.lastIndexOf("!", start - 1), draft.lastIndexOf("?", start - 1), draft.lastIndexOf("\n", start - 1)) + 1;
-  const ends = [".", "!", "?", "\n"].map((mark) => draft.indexOf(mark, start + quote.length)).filter((index) => index >= 0);
+  const quoteEnd = start + quote.length;
+  if (/[.!?\n]$/.test(quote)) return draft.slice(left, quoteEnd).trim();
+  const ends = [".", "!", "?", "\n"].map((mark) => draft.indexOf(mark, quoteEnd)).filter((index) => index >= 0);
   return draft.slice(left, ends.length ? Math.min(...ends) + 1 : draft.length).trim();
 }
 
@@ -504,7 +522,7 @@ function addRevisionComparison(
   const remainingPrior = new Set<number>();
   const current = dedupeFeedback(result.feedback.filter((item) => !explicitlySaysNoIssue(item) && findExactQuoteStart(revisedDraft, item.quote) >= 0));
   const feedback = current.map((item) => {
-    const priorIndex = prior.findIndex((old, index) => !matchedPrior.has(index) && findExactQuoteStart(revisedDraft, old.quote) >= 0 && feedbackCategoryFamily(old.category) === feedbackCategoryFamily(item.category) && feedbackQuotesOverlap(old.quote, item.quote, old.category, item.category));
+    const priorIndex = prior.findIndex((old, index) => !matchedPrior.has(index) && findExactQuoteStart(revisedDraft, old.quote) >= 0 && sameRevisionFinding(old, item));
     if (priorIndex >= 0) {
       matchedPrior.add(priorIndex);
       remainingPrior.add(priorIndex);
