@@ -210,6 +210,15 @@ const quotedDuplicate = issue('without checking the answer careful', '改为“w
 const exactForm = issue('answer careful', 'answer careful → answer carefully', '词形选择');
 assert.equal(f.addRevisionComparison(result([quotedDuplicate, exactForm], replayDraft), replayDraft, '', []).feedback.length, 1);
 console.log('Accuracy boundary checks passed: valid style keywords and quoted duplicate suggestions.');
+const adjacentConclusionDraft='Many students are using AI without checking the answer carefully, and the feedback can be confusing. I think universities should teach students how to evaluate AI feedback because it is important.';
+const adjacentConclusionCandidate={...issue('Many students are using AI without checking the answer carefully, and the feedback can be confusing.','Many students are using AI without checking the answer carefully, and the feedback can be confusing. → Many students may use AI without checking carefully, so universities should teach them how to evaluate AI feedback.','学术建议 · 论证与证据'),why:'建议补充一个结论。'};
+const duplicateFinal='Many students may use AI without checking carefully, so universities should teach them how to evaluate AI feedback. I think universities should teach students how to evaluate AI feedback because it is important.';
+const adjacentFiltered=f.validateLiveResult(result([adjacentConclusionCandidate],duplicateFinal),adjacentConclusionDraft,'coach',0,true,false);
+assert.equal(adjacentFiltered.feedback.length,0,'A correction must not restate the adjacent sentence conclusion');
+const adjacentReviewed=await f.reviewCandidateFeedback(adjacentFiltered,adjacentConclusionDraft,'test-placeholder',new AbortController().signal);
+assert.equal(adjacentReviewed.modelRevision,adjacentConclusionDraft,'Rejecting the duplicate advice must preserve the learner draft');
+const nonDuplicateCandidate={...adjacentConclusionCandidate,correction:'Many students are using AI without checking the answer carefully, and the feedback can be confusing. → Some students may use AI feedback without checking its accuracy.'};
+assert.equal(f.validateLiveResult(result([nonDuplicateCandidate],adjacentConclusionDraft),adjacentConclusionDraft,'coach',0,true,false).feedback.length,1,'A distinct local correction must remain eligible');
 const nounDraft='The university website provides many informations about its academic support services.';
 for (const feedback of [
   [issue('informations','informations → information','不可数名词'),issue('many informations','many informations → much information','不可数名词')],

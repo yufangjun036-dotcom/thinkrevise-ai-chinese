@@ -30,3 +30,9 @@ Both images were captured from `THINKREVISE_DEMO_MODE=1` with synthetic classroo
 - These checks support an internal candidate claim, not a universal accuracy percentage.
 - The current production deployment does not include this uncommitted local candidate.
 - Commit, push, remote repository changes and redeployment require separate user approval.
+
+## Production follow-up
+
+The first pushed candidate, commit `01dffdd`, deployed successfully and passed the initial three-error diagnosis. Its second-draft check correctly marked all three language errors as no longer detected, but an approved academic suggestion repeated the conclusion already present in the following sentence. This run is retained as a failed production check rather than counted as a pass.
+
+The follow-up repair rejects an academic correction when its proposed wording substantially restates an adjacent sentence. It also instructs both generation and independent feedback review not to introduce adjacent-sentence conclusion, recommendation or reason duplication. A regression fixture reproduces the production wording and verifies that rejection preserves the learner's second draft.
