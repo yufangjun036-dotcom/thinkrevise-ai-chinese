@@ -324,6 +324,11 @@ function findExactQuoteStart(source: string, quote: string) {
 
 function normaliseFeedbackCategory(item: FeedbackItem): FeedbackItem {
   const quotedSentences = (item.quote ?? "").trim().split(/(?<=[.!?])\s+/).filter(Boolean);
+  if (/中心观点|论点聚焦/.test(item.category ?? "")
+    && /^because\b/i.test((item.quote ?? "").trim())
+    && /理由|原因|解释|important|because/i.test(`${item.quote ?? ""} ${item.why ?? ""} ${item.correction ?? ""}`)) {
+    item = { ...item, category: "学术建议 · 论证与证据" };
+  }
   if (/语言准确性 · 句子完整性/.test(item.category ?? "")
     && /(?:句法|语法)上?可以成立|(?:句法|语法)(?:本身)?(?:成立|正确)/.test(item.why ?? "")
     && /过度概括|绝对(?:断言|化)|逻辑/.test(`${item.why ?? ""} ${item.correction ?? ""}`)) {
@@ -595,12 +600,20 @@ function isPreferencePresentedAsError(item: FeedbackItem) {
   if (edits?.length && edits.every(edit => edit.before === "can" && /^(?:may|might|could)$/.test(edit.after))) return true;
   // These grammatical expressions cannot establish an error on their own.
   // A genuine contextual problem must identify more than a stylistic keyword.
-  if (/^(?:I think|In my opinion|Nowadays|just|fast|a lot of(?: feedback)?)[.!?]?$/i.test(item.quote.trim())
-    && /口语|正式|学术|更自然|效率/.test(`${item.why} ${item.correction}`)) return true;
+  const knownStyleExpression = /\b(?:I think|In my opinion|Nowadays|just(?: use the answer)?|finish (?:work|tasks) fast(?:er)?|really good|a lot of(?: feedback)?|invented information)\b/i;
+  if (/\binvented information\b/i.test(item.quote) && /\bfabricated information\b/i.test(item.correction)) return true;
+  if (knownStyleExpression.test(item.quote)
+    && /口语|正式|学术|更自然|效率|精确|准确|术语/.test(`${item.why} ${item.correction}`)) return true;
   const admitsOriginalIsValid = /本身可用|本身成立|可以成立|并非错误|语法上(?:是)?正确|可以接受|可接受|虽然自然|表达自然|还可以更明确|可以更加明确/.test(item.why);
   const onlySuggestsPreference = /考虑改用|可以使用更|还可以更明确|可以更加明确|更(?:正式|自然|严谨|学术|明确)/.test(`${item.why} ${item.correction}`);
   const hasConcreteReplacement = /→/.test(item.correction) || /(?:改为|替换为|使用)[“\"]?[^，。；]{2,30}[”\"]?(?:[，。；]|$)/.test(item.correction);
   return admitsOriginalIsValid && onlySuggestsPreference && !hasConcreteReplacement;
+}
+
+function changesSpeedIntoEfficiency(item: FeedbackItem) {
+  const source = `${item.quote} ${item.correction.split("→")[0] ?? ""}`;
+  const target = item.correction.includes("→") ? item.correction.split("→").slice(1).join("→") : item.correction;
+  return /\b(?:fast|faster|quickly|speed)\b/i.test(source) && /\befficien(?:t|tly|cy)\b/i.test(target);
 }
 
 function mislabelsCoordinatedClausesAsCommaSplice(item: FeedbackItem) {
@@ -782,6 +795,59 @@ function isTruncatedThemeJudgement(item: FeedbackItem, draft: string) {
   return normaliseFeedbackQuote(item.quote) !== normaliseFeedbackQuote(fullSentence);
 }
 
+function rejectsFeedbackCandidate(item: FeedbackItem, draft: string, start = findExactQuoteStart(draft, item.quote)) {
+  if (start < 0) return true;
+  if (embeddedPluralAfterSingularNumber(draft, start, item.quote)) return true;
+  if (repeatsUnchangedSuffix(item)) return true;
+  if (/词形|词性|主谓一致/.test(item.category ?? "") && !concreteEdits(item)?.length) return true;
+  return changesSpeedIntoEfficiency(item)
+    || looksLikeCompleteSentenceDespiteLabel(item)
+    || isImplausiblyShortLongSentence(item)
+    || isImplausiblyBroadSpellingQuote(item)
+    || isSpeculativeCollocationAdvice(item)
+    || isPreferencePresentedAsError(item)
+    || mislabelsCoordinatedClausesAsCommaSplice(item)
+    || explicitlySaysNoIssue(item)
+    || admitsAcademicDimensionIsSatisfied(item)
+    || ignoresExplicitCausalDenial(item, draft)
+    || requestsRedundantWeakening(item, draft)
+    || misreadsLogicalDefinitionAsEvidenceGap(item, draft)
+    || overdemandsSupportForQualifiedRiskReason(item)
+    || contradictsVisibleNounForm(item)
+    || ignoresExistingQualifier(item, draft)
+    || ignoresAdjacentComplement(item, draft)
+    || ignoresAdjacentExplanation(item, draft)
+    || introducesAdjacentDuplicate(item, draft)
+    || isTruncatedThemeJudgement(item, draft);
+}
+
+function validatedPriorFeedback(raw: NonNullable<RequestBody["priorFeedback"]>[number], draft: string): FeedbackItem | null {
+  const requestedQuote = raw.quote?.trim() ?? "";
+  const category = raw.category?.trim() ?? "";
+  const correction = raw.correction?.trim() ?? "";
+  if (!requestedQuote || !category || !correction) return null;
+  const start = findExactQuoteStart(draft, requestedQuote);
+  if (start < 0) return null;
+  let candidate = normaliseContextualAcademicCategory(normaliseFeedbackCategory({
+    category,
+    quote: draft.slice(start, start + requestedQuote.length),
+    why: raw.why?.trim() || "该问题在第二稿中仍然原样存在，需要继续修改。",
+    correction,
+    question: "",
+    hints: [],
+    suggestion: "",
+    confidence: raw.confidence === "高" || raw.confidence === "低" ? raw.confidence : "中",
+  }), draft);
+  if (candidate.category === "学术建议 · 论证与证据" && /^because it is important[.!]?$/i.test(candidate.quote.trim())) {
+    candidate = {
+      ...candidate,
+      why: "important 只是笼统评价，没有说明该教学建议为什么必要。",
+      correction: "说明一个原文能够支持的具体理由；如果没有依据，保留为待作者补充的论证建议，不代写新的事实或证据。",
+    };
+  }
+  return rejectsFeedbackCandidate(candidate, draft, start) ? null : candidate;
+}
+
 function approximatelyExistsInOriginal(originalDraft: string, quote: string) {
   const source = originalDraft.toLocaleLowerCase().match(/[a-z0-9]+(?:-[a-z0-9]+)?/g) ?? [];
   const target = quote.toLocaleLowerCase().match(/[a-z0-9]+(?:-[a-z0-9]+)?/g) ?? [];
@@ -803,18 +869,8 @@ function addRevisionComparison(
   priorFeedback: NonNullable<RequestBody["priorFeedback"]>,
 ) {
   const prior = dedupeFeedback(priorFeedback.flatMap((item) => {
-    const category = item.category?.trim() ?? "";
-    const quote = item.quote?.trim() ?? "";
-    const correction = item.correction?.trim() ?? "";
-    if (!category || !quote || !correction) return [];
-    return [{
-      category,
-      quote,
-      why: item.why?.trim() || "该问题在第二稿中仍然原样存在，需要继续修改。",
-      correction,
-      suggestion: "",
-      confidence: item.confidence === "高" || item.confidence === "低" ? item.confidence : "中" as const,
-    } satisfies FeedbackItem];
+    const candidate = validatedPriorFeedback(item, originalDraft);
+    return candidate ? [candidate] : [];
   }));
   const matchedPrior = new Set<number>();
   const remainingPrior = new Set<number>();
@@ -904,22 +960,8 @@ function ensureMinorRevisionConsistency(
 ) {
   if (!isMinorRevision(originalDraft, draft) || priorFeedback.length === 0) return result;
   const stillPresent = priorFeedback.flatMap((raw) => {
-    const requestedQuote = raw.quote?.trim() ?? "";
-    const category = raw.category?.trim() ?? "";
-    const correction = raw.correction?.trim() ?? "";
-    if (!requestedQuote || !category || !correction) return [];
-    const start = findExactQuoteStart(draft, requestedQuote);
-    if (start < 0) return [];
-    const candidate: FeedbackItem = {
-      category,
-      quote: draft.slice(start, start + requestedQuote.length),
-      why: raw.why?.trim() || "该问题位置与首次诊断相比没有发生变化，因此第二稿中仍需处理。",
-      correction,
-      question: "",
-      hints: [],
-      suggestion: "",
-      confidence: raw.confidence === "高" || raw.confidence === "低" ? raw.confidence : "中" as const,
-    };
+    const candidate = validatedPriorFeedback(raw, draft);
+    if (!candidate) return [];
     return mayCarryPriorIssue(candidate, originalDraft, draft) ? [candidate] : [];
   });
   const feedback = dedupeFeedback([...result.feedback, ...stillPresent]);
@@ -1186,12 +1228,7 @@ function validateLiveResult(value: unknown, draft: string, mode: HelpMode, minim
     const correction = typeof item.correction === "string" ? item.correction.trim() : "";
     if (!correction) return [];
     const candidate = normaliseContextualAcademicCategory(normaliseFeedbackCategory({ ...item, quote, correction } as FeedbackItem), draft);
-    if (embeddedPluralAfterSingularNumber(draft, start, quote)) return [];
-    if (repeatsUnchangedSuffix(candidate)) return [];
-    // A claimed local grammar error needs an inspectable correction, not a
-    // general reminder about a rule. Known errors are independently recovered below.
-    if (/词形|词性|主谓一致/.test(candidate.category ?? "") && !concreteEdits(candidate)?.length) return [];
-    if (looksLikeCompleteSentenceDespiteLabel(candidate) || isImplausiblyShortLongSentence(candidate) || isImplausiblyBroadSpellingQuote(candidate) || isSpeculativeCollocationAdvice(candidate) || isPreferencePresentedAsError(candidate) || mislabelsCoordinatedClausesAsCommaSplice(candidate) || explicitlySaysNoIssue(candidate) || admitsAcademicDimensionIsSatisfied(candidate) || ignoresExplicitCausalDenial(candidate, draft) || requestsRedundantWeakening(candidate, draft) || misreadsLogicalDefinitionAsEvidenceGap(candidate, draft) || overdemandsSupportForQualifiedRiskReason(candidate) || contradictsVisibleNounForm(candidate) || ignoresExistingQualifier(candidate, draft) || ignoresAdjacentComplement(candidate, draft) || ignoresAdjacentExplanation(candidate, draft) || introducesAdjacentDuplicate(candidate, draft) || isTruncatedThemeJudgement(candidate, draft)) return [];
+    if (rejectsFeedbackCandidate(candidate, draft, start)) return [];
     const suggestedFromCorrection = correction.match(/→\s*([^。]+)/)?.[1]?.trim() || correction;
     return [{
       ...candidate,

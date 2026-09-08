@@ -116,21 +116,14 @@ const broadStyle = issue('AI is really good for university students', '改用更
 const preciseStyle = issue('really good', 'really good → beneficial。表达不够精确。', '学术表达 · 口语化且不精确');
 const broadTerm = issue('They may also accept invented information.', '使用更自然的学术表达来说明 AI 可能生成虚假或错误信息。', '词性选择');
 const preciseTerm = issue('invented information', 'invented information → fabricated information。术语更准确。', '学术表达 · 术语不够精确');
-for (const previous of [[broadStyle, preciseStyle], [preciseStyle, broadStyle], [broadStyle]]) {
-  const matched = f.addRevisionComparison(result([preciseStyle], styleDraft), styleDraft, styleDraft, previous);
-  assert.equal(matched.revisionComparison.initialCount, 1);
-  assert.equal(matched.revisionComparison.resolved.length, 0);
-  assert.equal(matched.revisionComparison.remainingCount, 1);
-}
 for (const suggestions of [[broadTerm, preciseTerm], [preciseTerm, broadTerm]]) {
   const merged = f.validateLiveResult(result(suggestions, styleDraft), styleDraft, 'coach', 0, true);
   const related = merged.feedback.filter(item => item.quote.includes('invented information'));
-  assert.equal(related.length, 1);
-  assert.equal(related[0].quote, 'invented information');
-  assert.ok(!related.some(item => /词性/.test(item.category)));
+  assert.equal(related.length, 0, 'A preference between invented and fabricated is not an objective error');
 }
-const relabeled = f.addRevisionComparison(result([broadTerm], styleDraft), styleDraft, styleDraft, []);
-assert.equal(relabeled.feedback[0].category, '学术表达 · 用语建议');
+const filteredPriorStyle = f.addRevisionComparison(result([], styleDraft), styleDraft, styleDraft, [broadStyle, preciseStyle, broadTerm, preciseTerm]);
+assert.equal(filteredPriorStyle.revisionComparison.initialCount, 0, 'Previously accepted style preferences must be revalidated before reuse');
+assert.equal(filteredPriorStyle.feedback.length, 0);
 const genuineForm = issue('answer careful', '正式写作应使用副词修饰动作：careful → carefully。', '词性选择');
 const formOutput = f.addRevisionComparison(result([genuineForm], 'They answer careful.'), 'They answer careful.', '', []);
 assert.equal(formOutput.feedback[0].category, '词性选择');
@@ -145,13 +138,54 @@ const combinedQuote = 'It gives a lot of feedback and students can finish work f
 const combined = issue(combinedQuote, '可改为：It gives substantial feedback and students can complete tasks more efficiently.', '措辞精确性');
 const extra = issue(combinedQuote, '可改为：It provides substantial feedback and helps students complete tasks more efficiently.', '措辞精确性');
 for (const feedback of [[preciseTerm, termSentence], [termSentence, preciseTerm]]) {
-  const output = f.addRevisionComparison(result(feedback, styleDraft), styleDraft, styleDraft, [preciseTerm]);
-  assert.equal(output.feedback.length, 1);
-  assert.equal(output.revisionComparison.supplementalCount, 0);
+  const validated = f.validateLiveResult(result(feedback, styleDraft), styleDraft, 'coach', 0, true);
+  const output = f.addRevisionComparison(validated, styleDraft, styleDraft, [preciseTerm]);
+  assert.equal(output.feedback.length, 0);
+  assert.equal(output.revisionComparison.initialCount, 0);
 }
-const crossRun = f.addRevisionComparison(result([termSentence], styleDraft), styleDraft, styleDraft, [preciseTerm]);
-assert.equal(crossRun.revisionComparison.remainingCount, 1);
-assert.equal(crossRun.revisionComparison.resolved.length, 0);
+const crossRun = f.addRevisionComparison(f.validateLiveResult(result([termSentence], styleDraft), styleDraft, 'coach', 0, true), styleDraft, styleDraft, [preciseTerm]);
+assert.equal(crossRun.feedback.length, 0);
+const screenshotOriginal = 'Nowadays, AI is really good for university students. It gives a lot of feedback and students can finish work fast. For example, a student can ask a chatbot to improve an essay in a few seconds. But sometimes students just use the answer and do not think about whether it is correct. They may also accept invented information. Many students is using AI without checking the answer careful, and teh feedback can be confusing. I think universities should teach students how to evaluate AI feedback because it is important. This teaching can help students use technology in a responsible way and still develop their own judgement.';
+const screenshotRevision = screenshotOriginal
+  .replace('finish work fast', 'finish work faster')
+  .replace('students is', 'students are')
+  .replace('teh feedback', 'the feedback');
+const screenshotPrior = [
+  issue('finish work fast', 'finish work fast → complete tasks more efficiently。偏日常口语。', '学术表达 · 口语化表达'),
+  issue('answer careful', 'answer careful → answer carefully。', '语言准确性 · 词形选择'),
+  issue('I think', 'I think → This discussion suggests that。学术写作应避免个人化表达。', '学术表达 · 个人化表达'),
+  issue('really good', 'really good → beneficial / effective。口语且不够精确。', '学术表达 · 口语化且不精确'),
+  issue('a lot of', 'a lot of → many / substantial / a considerable amount of。口语化数量表达。', '学术表达 · 口语化数量表达'),
+  issue('Nowadays', 'Nowadays → In recent years。时间表达不够精确。', '学术表达 · 时间表达不精确'),
+  issue('just', 'just → a precise academic expression。该表达较口语化。', '学术表达 · 非正式用词'),
+  issue('invented information', 'invented information → fabricated information。术语更正式、准确。', '学术表达 · 术语不够精确'),
+  issue('students is', 'students is → students are。', '语言准确性 · 主谓一致'),
+  issue('teh', 'teh → the。', '语言准确性 · 拼写错误'),
+  issue('because it is important.', '补充具体理由，例如说明这样做有助于识别错误并保持独立判断。', '中心观点'),
+];
+const screenshotCandidates = [
+  issue('answer careful', 'answer careful → answer carefully。', '语言准确性 · 词形选择'),
+  issue('I think', 'I think → This essay argues that。使用更正式的学术语气。', '学术语气'),
+  issue('just use the answer', 'just use the answer → simply use the answer。使用更正式的学术语气。', '学术语气'),
+  issue('because it is important.', '说明一个原文能够支持的具体理由，不代写新的事实或证据。', '中心观点'),
+];
+const screenshotValidated = f.validateLiveResult(result(screenshotCandidates, screenshotRevision), screenshotRevision, 'coach', 0, true);
+const screenshotCompared = f.addRevisionComparison(
+  f.ensureMinorRevisionConsistency(screenshotValidated, screenshotRevision, screenshotOriginal, screenshotPrior),
+  screenshotRevision,
+  screenshotOriginal,
+  screenshotPrior,
+);
+assert.equal(screenshotCompared.revisionComparison.initialCount, 4, 'Only objective language errors and a real argument gap belong in the baseline');
+assert.deepEqual(screenshotCompared.revisionComparison.resolved.map(item => item.quote).sort(), ['students is', 'teh']);
+assert.deepEqual(screenshotCompared.feedback.map(item => item.quote).sort(), ['answer careful', 'because it is important.']);
+assert.equal(screenshotCompared.revisionComparison.remainingCount, 2);
+assert.equal(screenshotCompared.revisionComparison.changedCount, 0);
+assert.equal(screenshotCompared.revisionComparison.supplementalCount, 0);
+assert.ok(!screenshotCompared.feedback.some(item => /I think|just use the answer|really good|a lot of|Nowadays|invented information|finish work faster/i.test(item.quote)));
+assert.equal(screenshotCompared.feedback.find(item => item.quote.startsWith('because'))?.category, '学术建议 · 论证与证据');
+const semanticShift = issue('finish work faster', 'finish work faster → complete tasks more efficiently。', '语言准确性 · 词形选择');
+assert.equal(f.validateLiveResult(result([semanticShift], screenshotRevision), screenshotRevision, 'coach', 0, true).feedback.some(item => item.quote === semanticShift.quote), false, 'Speed must not be converted into efficiency under any category label');
 for (const feedback of [[quantity, speed, combined], [combined, speed, quantity]]) {
   const output = f.addRevisionComparison(result(feedback, combinedQuote), combinedQuote, '', []);
   assert.equal(output.feedback.length, 2);
