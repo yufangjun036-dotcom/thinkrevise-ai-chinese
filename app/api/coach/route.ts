@@ -292,6 +292,22 @@ function findExactQuoteStart(source: string, quote: string) {
 }
 
 function normaliseFeedbackCategory(item: FeedbackItem): FeedbackItem {
+  const edits = concreteEdits(item);
+  if (edits?.length) {
+    const adverbEdits = edits.every(edit => edit.before && edit.after === `${edit.before}ly` && !edit.before.includes(" "));
+    const agreementEdit = edits.some(edit => /\b(?:am|is|are|was|were|has|have|does|do)\b/.test(`${edit.before} ${edit.after}`)
+      || (edit.before.replace(/s$/, "") === edit.after.replace(/s$/, "") && edit.before !== edit.after));
+    if (/主谓一致/.test(item.category ?? "") && !agreementEdit) {
+      return { ...item, category: adverbEdits ? "语言准确性 · 词形选择" : "语言修改建议" };
+    }
+    // A local wording substitution is not evidence that an argument is missing.
+    // Keep additions, deletions and clause-sized changes in their original class.
+    if (/论证|论点|衔接/.test(item.category ?? "") && edits.every(edit => edit.before && edit.after
+      && edit.before.split(" ").length <= 2 && edit.after.split(" ").length <= 3)
+      && !/补充|证据|原因|因果|例子|解释|evidence|reason/i.test(item.why ?? "")) {
+      return { ...item, category: "表达用语 · 替换建议" };
+    }
+  }
   const advice = `${item.why ?? ""} ${item.correction ?? ""}`;
   const styleAdvice = /学术|正式|口语|术语|措辞|表达.{0,6}(?:自然|准确|精确)|academic|formal/i.test(advice);
   const formEvidence = /副词|形容词|名词|动词|词尾|词缀|修饰|单复数|adverb|adjective|suffix/i.test(advice);
@@ -366,7 +382,7 @@ function concreteEdits(item: FeedbackItem): ConcreteEdit[] | null {
   // Only parse explicit replacements, not explanations or invented paraphrases.
   const correction = item.correction ?? "";
   const arrow = correction.indexOf("→");
-  const lead = correction.match(/^(?:可)?(?:改为|修改为|替换为)[：:]\s*/);
+  const lead = correction.match(/^(?:可)?(?:改为|修改为|替换为)\s*[：:]?\s*/);
   if (arrow < 0 && !lead) return null;
   const source = arrow >= 0 ? correction.slice(0, arrow).trim() : item.quote;
   if (findExactQuoteStart(item.quote, source) < 0) return null;

@@ -139,3 +139,35 @@ assert.equal(f.addRevisionComparison(result([preciseTerm, conflicting], styleDra
 const negation = issue(termSentence.quote, '可改为：They may not accept fabricated information.', '措辞精确性');
 assert.equal(f.addRevisionComparison(result([preciseTerm, negation], styleDraft), styleDraft, '', []).feedback.length, 2);
 console.log('Concrete edit checks passed: cross-category, multi-edit coverage, alternatives, order, partial edits and negation.');
+// Screenshot replay: correct agreement must not inherit a same-sentence adverb error.
+const replayOriginal = 'Many students is using AI without checking the answer careful, and teh feedback can be confusing.';
+const replayDraft = replayOriginal.replace('students is', 'students are');
+const replayPrior = [issue('students is', 'students is → students are'), issue('answer careful', 'answer careful → answer carefully', '词形选择'), issue('teh', 'teh → the', '拼写错误')];
+for (const prefix of ['改为 ', '可改为：', '修改为: ']) {
+  const mislabeled = issue(replayDraft, prefix + replayDraft.replace('careful,', 'carefully,'), '主谓一致');
+  for (const mode of ['coach', 'model', 'rewrite']) {
+    const validated = f.validateLiveResult(result([mislabeled], replayDraft), replayDraft, mode, 0, true);
+    const output = f.addRevisionComparison(f.ensureMinorRevisionConsistency(validated, replayDraft, replayOriginal, replayPrior), replayDraft, replayOriginal, replayPrior);
+    assert.equal(output.revisionComparison.changedCount, 0);
+    assert.equal(output.revisionComparison.resolved.length, 1);
+    assert.equal(output.revisionComparison.resolved[0].quote, 'students is');
+    assert.equal(output.feedback.filter(item => item.quote.includes('careful')).length, 1);
+    assert.ok(!output.feedback.some(item => /主谓一致/.test(item.category)));
+    assert.equal(output.revisionComparison.remainingCount, 2);
+  }
+}
+const inaccurate = issue('They may also accept invented information.', '可改为 They may also accept fabricated or inaccurate information.', '论证与解释');
+const wording = f.addRevisionComparison(result([inaccurate], styleDraft), styleDraft, '', []);
+assert.equal(wording.feedback[0].category, '表达用语 · 替换建议');
+const realReason = issue(passage, '可改为 ' + passage + ' This causes overreliance.', '论证与解释');
+assert.equal(f.addRevisionComparison(result([realReason], incidentDraft), incidentDraft, '', []).feedback[0].category, '论证与解释');
+console.log('Screenshot replay passed in all three modes and three replacement formats.');
+const combinedGrammar = issue(replayDraft, '改为 ' + replayDraft.replace('careful,', 'carefully,').replace('teh', 'the'), '主谓一致');
+const combinedValidated = f.validateLiveResult(result([combinedGrammar], replayDraft), replayDraft, 'coach', 0, true);
+const combinedResult = f.addRevisionComparison(combinedValidated, replayDraft, replayOriginal, replayPrior);
+assert.equal(combinedResult.revisionComparison.changedCount, 0);
+assert.equal(combinedResult.revisionComparison.resolved[0].quote, 'students is');
+assert.equal(combinedResult.feedback.length, 2);
+const wrongAgreement = replayOriginal.replace('students is', 'students was');
+const stillAgreement = compare(wrongAgreement, [issue('students was', '改为 students were', '主谓一致')], replayOriginal, replayPrior);
+assert.ok(stillAgreement.feedback.some(item => /主谓一致/.test(item.category) && item.revisionStatus === 'changed'));
