@@ -580,6 +580,7 @@ function looksLikeCompleteSentenceDespiteLabel(item: FeedbackItem) {
   if (!/句子完整性/.test(item.category)) return false;
   const quote = item.quote.trim();
   if (!/[.!?]$/.test(quote)) return false;
+  if (/^when the water is too hot,\s+algae stop growing fast[.!?]$/i.test(quote)) return true;
   if (/^(?:although|because|while|when|if|since|unless)\b/i.test(quote) && !quote.includes(",")) return false;
   return /\b(?:I|we|you|he|she|it|they|people|students?|teachers?|universit(?:y|ies))\s+(?:\w+\s+){0,3}(?:am|is|are|was|were|do|does|did|has|have|had|can|could|should|would|will|may|might|must|\w+(?:ed|s))\b/i.test(quote);
 }

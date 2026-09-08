@@ -94,6 +94,8 @@ assert.ok(f.isStructurallyVarifySpelling(varifyIssue, varifyDraft), 'The proven 
 const validFastDraft = 'When the water is too hot, algae stop growing fast.';
 const falseFastIssue = { quote: 'stop growing fast', correction: 'fast → quickly', category: '语言准确性 · 词形选择', why: 'fast 是形容词，修饰 growing 应使用副词 quickly。', suggestion: '', confidence: '高' };
 assert.equal(f.validateLiveResult({ summary: '测试', feedback: [falseFastIssue], modelRevision: validFastDraft, overview: [], meaningRisk: '' }, validFastDraft, 'coach', 0, false).feedback.length, 0, 'Fast is already a valid adverb in stop growing fast');
+const falseFastCompleteness = { ...falseFastIssue, quote: validFastDraft, correction: '补充主句，使句子结构完整。', category: '语言准确性 · 句子完整性', why: 'When 引导的从句不能独立成句。' };
+assert.equal(f.validateLiveResult({ summary: '测试', feedback: [falseFastCompleteness], modelRevision: validFastDraft, overview: [], meaningRisk: '' }, validFastDraft, 'coach', 0, false).feedback.length, 0, 'The evaluator water-temperature sentence already has a subordinate clause and a main clause');
 const issue = (quote, correction, category = '主谓一致') => ({ quote, correction, category, why: '需要检查。', suggestion: '', confidence: '高' });
 const numberDraft='The number of students is increasing steadily.';
 assert.equal(f.validateLiveResult({feedback:[issue('students is','students is → students are')],modelRevision:numberDraft},numberDraft,'coach',0,false).feedback.length,0);
