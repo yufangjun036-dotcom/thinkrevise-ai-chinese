@@ -368,6 +368,9 @@ function normaliseFeedbackCategory(item: FeedbackItem): FeedbackItem {
     // the model-selected label (for example, careful -> carefully must never
     // appear under articles or uncountable nouns).
     if (adverbEdits) return { ...item, category: "语言准确性 · 词形选择" };
+    const knownCountPluralEdit = edits.some(edit => /^(?:factor|ecosystem)$/i.test(edit.before)
+      && edit.after.toLocaleLowerCase() === `${edit.before.toLocaleLowerCase()}s`);
+    if (knownCountPluralEdit) item = { ...item, category: "语言准确性 · 名词单复数" };
     const agreementEdit = edits.some(edit => /\b(?:am|is|are|was|were|has|have|does|do)\b/.test(`${edit.before} ${edit.after}`)
       || (edit.before.replace(/s$/, "") === edit.after.replace(/s$/, "") && edit.before !== edit.after));
     if (/主谓一致/.test(item.category ?? "") && !agreementEdit) {
@@ -1495,7 +1498,7 @@ function isStructurallyBareAquaticEcosystem(item: FeedbackItem, draft: string) {
   const following = draft.slice(start + item.quote.length);
   const correction = item.correction.trim();
   const repairsLongQuote = /^(?:influence|affect|protect|damage|restore|monitor)\s+aquatic ecosystem\s*→\s*(?:influence|affect|protect|damage|restore|monitor)\s+(?:aquatic ecosystems|an aquatic ecosystem|the aquatic ecosystem)\b/i.test(correction);
-  const repairsShortQuote = /^aquatic ecosystem\s*→\s*(?:aquatic ecosystems|an aquatic ecosystem|the aquatic ecosystem)\b/i.test(correction);
+  const repairsShortQuote = /^(?:aquatic ecosystem|ecosystem)\s*→\s*(?:aquatic ecosystems|ecosystems|an aquatic ecosystem|the aquatic ecosystem)\b/i.test(correction);
   return /^\s*[.,;!?]/.test(following) && (repairsLongQuote || repairsShortQuote);
 }
 

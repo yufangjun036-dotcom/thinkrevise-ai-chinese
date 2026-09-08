@@ -67,6 +67,10 @@ assert.equal(bareEcosystemIssue.category, '语言准确性 · 名词单复数');
 assert.ok(f.isStructurallyBareAquaticEcosystem(bareEcosystemIssue, bareEcosystemDraft), 'The proven aquatic-ecosystems repair must survive independent candidate review');
 const shortEcosystemIssue = { ...bareEcosystemIssue, quote: 'aquatic ecosystem', correction: 'aquatic ecosystem → aquatic ecosystems' };
 assert.ok(f.isStructurallyBareAquaticEcosystem(shortEcosystemIssue, bareEcosystemDraft), 'A safe shorter ecosystem quote must keep the same reviewer protection');
+const shortestEcosystemRepair = { ...shortEcosystemIssue, correction: 'ecosystem → ecosystems', category: '语言准确性 · 冠词与不可数名词' };
+const normalisedShortestEcosystem = f.validateLiveResult({ summary: '', feedback: [shortestEcosystemRepair], modelRevision: bareEcosystemDraft, overview: [], meaningRisk: '' }, bareEcosystemDraft, 'coach', 0, false).feedback.find(item => item.quote === 'aquatic ecosystem');
+assert.equal(normalisedShortestEcosystem?.category, '语言准确性 · 名词单复数', 'A concrete ecosystem plural repair must use the noun-number category');
+assert.ok(f.isStructurallyBareAquaticEcosystem(normalisedShortestEcosystem, bareEcosystemDraft), 'The shortest safe ecosystem repair must keep reviewer protection');
 for (const correctEcosystemDraft of [
   'The result may influence aquatic ecosystems.',
   'The result may influence an aquatic ecosystem.',
