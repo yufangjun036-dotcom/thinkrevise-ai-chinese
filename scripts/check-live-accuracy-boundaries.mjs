@@ -13,6 +13,26 @@ const cases=[
   {id:'clean-number-agreement', draft:'The number of students is increasing steadily.', expected:[]},
   {id:'clean-logical-always', draft:'Every square has four sides. A square therefore always has four vertices.', expected:[]},
   {id:'unsupported-universal', draft:"This tutoring method always improves every learner's performance.", expected:['always'], academic:true},
+  {
+    id:'peer-register-boundary',
+    draft:'We looked at how the drug works in liver cells. The thing we found is that low dose can slow down cell aging. Lots of earlier studies also got similar results. We think this finding is pretty useful. It tells us that natural compounds may help protect cells from damage. We will do more tests later to check if this idea holds.',
+    expected:['low dose','The thing we found','Lots of','got similar results','pretty useful','check if this idea holds'],
+    languageCount:1,
+    academicCount:5,
+    forbidden:['looked at','tells us'],
+  },
+  {
+    id:'peer-register-optional-clean',
+    draft:'We looked at how the drug works in liver cells, and the resulting measurements tell us which concentrations warrant further investigation.',
+    expected:[],
+  },
+  {
+    id:'peer-corrected-grammar-overclaim-remains',
+    draft:'The experiment shows that temperature affects the growth rate of algae. We collected data last week, but one sensor was broken. This result is important because it proves climate change will influence aquatic ecosystems. Many factors can change the outcome. When the water is too hot, algae stop growing fast. We plan to repeat the test next month to verify our conclusion.',
+    expected:['proves climate change will influence aquatic ecosystems'],
+    languageCount:0,
+    academicCount:1,
+  },
 ];
 let failures=0;
 const results=[];
@@ -37,6 +57,9 @@ for (const test of selected) {
       for (const quote of test.expected) assert.ok(data.feedback.some(item=>item.quote.includes(quote)),quote);
       if(test.academic) assert.ok(data.feedback.every(item=>item.category.startsWith('学术建议')),'Empirical claim advice is not a grammar error');
     }
+    if(Number.isInteger(test.languageCount)) assert.equal(data.feedback.filter(item=>item.category.startsWith('语言准确性')).length,test.languageCount,'Unexpected objective-language count');
+    if(Number.isInteger(test.academicCount)) assert.equal(data.feedback.filter(item=>item.category.startsWith('学术建议')).length,test.academicCount,'Unexpected academic-advice count');
+    for (const forbidden of test.forbidden ?? []) assert.ok(!data.feedback.some(item=>item.quote.toLocaleLowerCase().includes(forbidden.toLocaleLowerCase())),`Optional expression was over-reported: ${forbidden}`);
   } catch(e) {failures++;evidence.error=e.message;console.error(test.id,e.message);}
 }
 await mkdir('reports/accuracy',{recursive:true});

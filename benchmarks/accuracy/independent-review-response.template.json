@@ -477,6 +477,62 @@
       "notes": ""
     },
     {
+      "caseId": "peer-register-boundary",
+      "labelId": "peer-register-boundary:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "peer-register-boundary",
+      "labelId": "peer-register-boundary:issue:2",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "peer-register-boundary",
+      "labelId": "peer-register-boundary:issue:3",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "peer-register-boundary",
+      "labelId": "peer-register-boundary:issue:4",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "peer-register-boundary",
+      "labelId": "peer-register-boundary:issue:5",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "peer-register-boundary",
+      "labelId": "peer-register-boundary:issue:6",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "peer-corrected-grammar-overclaim-remains",
+      "labelId": "peer-corrected-grammar-overclaim-remains:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
       "caseId": "revision-one-correction",
       "labelId": "revision-one-correction:original:1",
       "verdict": "pending",

@@ -102,6 +102,38 @@ assert.equal(f.validateLiveResult({feedback:[issue('students is','students is �
 const pluralNumberDraft='A number of students is waiting outside.';
 assert.ok(f.validateLiveResult({feedback:[],modelRevision:pluralNumberDraft},pluralNumberDraft,'coach',0,false).feedback.some(item=>item.quote==='students is'),'A number of takes plural agreement; do not suppress it like the number of');
 const result = (feedback, draft) => ({ summary: '测试', feedback, modelRevision: draft, overview: [], meaningRisk: '' });
+const registerEvaluatorDraft = 'We looked at how the drug works in liver cells. The thing we found is that low dose can slow down cell aging. Lots of earlier studies also got similar results. We think this finding is pretty useful. It tells us that natural compounds may help protect cells from damage. We will do more tests later to check if this idea holds.';
+const registerEvaluatorReplay = f.validateLiveResult(result([], registerEvaluatorDraft), registerEvaluatorDraft, 'coach', 0, false);
+const lowDoseIssue = registerEvaluatorReplay.feedback.find(item => item.quote === 'low dose');
+assert.ok(lowDoseIssue, 'The evaluator register article contains an objective missing-determiner error in low dose can');
+assert.equal(lowDoseIssue.category, '语言准确性 · 冠词与名词形式');
+assert.match(lowDoseIssue.correction, /low dose → (?:a low dose|low doses)/);
+const strongRegisterQuotes = ['The thing we found', 'Lots of', 'got similar results', 'pretty useful', 'check if this idea holds'];
+for (const quote of strongRegisterQuotes) {
+  const advice = registerEvaluatorReplay.feedback.find(item => item.quote === quote);
+  assert.ok(advice, `Strong academic-register advice must be present: ${quote}`);
+  assert.ok(advice.category.startsWith('学术建议 · '), `${quote} is advice, not an objective language error`);
+  assert.equal(advice.confidence, '中');
+}
+assert.equal(registerEvaluatorReplay.feedback.filter(item => item.category.startsWith('语言准确性')).length, 1, 'Only low dose is an objective language error in the register evaluator article');
+assert.equal(registerEvaluatorReplay.feedback.filter(item => item.category.startsWith('学术建议')).length, 5, 'Optional wording preferences must not inflate the five strong register findings');
+const cautiousCellClaim = {...issue('It tells us that natural compounds may help protect cells from damage.', '将结论限定为当前结果所支持的范围，不扩展到更强的普遍性判断', '学术建议 · 论证与证据'), why:'前文只有一个实验发现和相似研究的概述，随后直接上升到更一般的保护作用判断，证据链略短。'};
+assert.equal(f.validateLiveResult(result([cautiousCellClaim], registerEvaluatorDraft), registerEvaluatorDraft, 'coach', 0, false).feedback.length, 6, 'A cautious may claim supported by the stated finding must not become a seventh speculative item');
+const cautiousCellClaimVariant = {...issue('It tells us that natural compounds may help protect cells from damage.', '将该句的结论范围收窄，或补充与“natural compounds”直接相关的证据后再作断言。', '学术建议 · 论证与证据'), why:'上一句只说“this finding”来自当前研究，但这里把结果推进为对“natural compounds”的一般性推断，超出了已给出的直接证据范围；需要明确这是基于本研究的提示，而不是已被证明的普遍结论。'};
+assert.equal(f.validateLiveResult(result([cautiousCellClaimVariant], registerEvaluatorDraft), registerEvaluatorDraft, 'coach', 0, false).feedback.length, 6, 'A cautious may claim must remain protected across reviewer wording variants');
+const optionalRegisterControl = 'We looked at how the drug works in liver cells, and the resulting measurements tell us which concentrations warrant further investigation.';
+const unnecessaryThresholdDemand = {...issue('the resulting measurements tell us which concentrations warrant further investigation', '说明该判断依据或限定其为初步判断；不要把结果直接写成最终判定。', '学术建议 · 论证与证据'), why:'若缺少后文对筛选标准、比较依据或统计阈值的说明，论证链条还不够完整。'};
+assert.equal(f.validateLiveResult(result([unnecessaryThresholdDemand], optionalRegisterControl), optionalRegisterControl, 'coach', 0, false).feedback.length, 0, 'Warrant further investigation is already a cautious next step, not a final unsupported conclusion');
+for (const correctDoseDraft of [
+  'A low dose can slow down cell aging.',
+  'Low doses can slow down cell aging.',
+  'The low dose can slow down cell aging.',
+  'The study examined a low-dose intervention.',
+]) {
+  assert.ok(!f.validateLiveResult(result([], correctDoseDraft), correctDoseDraft, 'coach', 0, false).feedback.some(item => /low dose/i.test(item.quote)), `Correct low-dose construction must not be flagged: ${correctDoseDraft}`);
+}
+const mislabeledLowDose = issue('low dose', 'low dose → a low dose of the drug', '语言准确性 · 词形选择');
+assert.equal(f.validateLiveResult(result([mislabeledLowDose], registerEvaluatorDraft), registerEvaluatorDraft, 'coach', 0, false).feedback.find(item => item.quote === 'low dose')?.category, '语言准确性 · 冠词与名词形式', 'A concrete determiner repair must not remain under word form');
 const evaluatorDraft = 'The experiment show that temperature affect the growth rate of algae. We collect data last week, but one sensor was broke. This result is important because it proof climate change will influence aquatic ecosystem. Many factor can change the outcome. When the water is too hot, algae stop growing fast. We plan repeat the test next month to varify our conclusion.';
 const evaluatorEightCandidates = [
   issue('The experiment show', 'The experiment show → The experiment shows', '语言准确性 · 主谓一致'),
@@ -114,21 +146,41 @@ const evaluatorEightCandidates = [
   issue('varify', 'varify → verify', '语言准确性 · 拼写与大小写'),
 ];
 const evaluatorReplay = f.validateLiveResult(result(evaluatorEightCandidates, evaluatorDraft), evaluatorDraft, 'coach', 0, true);
-assert.equal(evaluatorReplay.feedback.length, 9, 'The evaluator article must contain the eight model candidates plus the missing plan-to issue');
+assert.equal(evaluatorReplay.feedback.length, 10, 'The evaluator article must contain nine objective errors plus one evidence-based academic issue');
+assert.equal(evaluatorReplay.feedback.filter(item => item.category.startsWith('语言准确性')).length, 9, 'All nine planted objective errors must be detected');
+assert.equal(evaluatorReplay.feedback.filter(item => item.category.startsWith('学术建议')).length, 1, 'The valid experiment-to-climate overclaim must remain separate from the error count');
 assert.equal(evaluatorReplay.feedback.filter(item => item.quote === 'plan repeat').length, 1, 'The plan-to issue must be added exactly once');
+assert.ok(!evaluatorReplay.feedback.some(item => /stop growing fast/i.test(item.quote)), 'Valid adverb fast must not reappear as an academic wording suggestion');
+for (const correctEvaluatorGrammar of [
+  'The experiment shows that temperature affects the growth rate of algae.',
+  'The experiments show that temperatures affect the growth rate of algae.',
+  'We collect data every week.',
+  'One sensor broke last week, but it was repaired.',
+  'One sensor was broken during transport.',
+]) {
+  assert.equal(f.validateLiveResult(result([], correctEvaluatorGrammar), correctEvaluatorGrammar, 'coach', 0, false).feedback.length, 0, `Correct evaluator control must not be flagged: ${correctEvaluatorGrammar}`);
+}
 const duplicatedEcosystemReplay = f.validateLiveResult(result([
   issue('aquatic ecosystem', '建议添加限定词 an，或使用复数 ecosystems。', '语言准确性 · 冠词与不可数名词'),
 ], evaluatorDraft), evaluatorDraft, 'coach', 0, true);
 assert.equal(
-  duplicatedEcosystemReplay.feedback.filter(item => /aquatic ecosystem/i.test(item.quote)).length,
+  duplicatedEcosystemReplay.feedback.filter(item => item.category.startsWith('语言准确性') && /aquatic ecosystem/i.test(item.quote)).length,
   1,
   'A short model ecosystem repair and the deterministic longer repair must collapse into one finding',
 );
 assert.equal(
-  duplicatedEcosystemReplay.feedback.find(item => /aquatic ecosystem/i.test(item.quote))?.quote,
+  duplicatedEcosystemReplay.feedback.find(item => item.category.startsWith('语言准确性') && /aquatic ecosystem/i.test(item.quote))?.quote,
   'influence aquatic ecosystem',
   'Deduplication must retain the structurally protected ecosystem repair for independent review',
 );
+const correctedEvaluatorDraft = 'The experiment shows that temperature affects the growth rate of algae. We collected data last week, but one sensor was broken. This result is important because it proves climate change will influence aquatic ecosystems. Many factors can change the outcome. When the water is too hot, algae stop growing fast. We plan to repeat the test next month to verify our conclusion.';
+const priorOverclaim = issue('This result is important because it proof climate change will influence aquatic ecosystem.', 'Use more cautious wording and limit the claim to what the experiment supports.', '学术建议 · 论证与证据');
+const correctedEvaluatorReplay = f.validateLiveResult(result([], correctedEvaluatorDraft), correctedEvaluatorDraft, 'coach', 0, false);
+const correctedOverclaim = correctedEvaluatorReplay.feedback.find(item => item.category === '学术建议 · 论证与证据');
+assert.ok(correctedOverclaim, 'Correcting grammar must not erase the unsupported experiment-to-climate proof claim');
+const correctedCompared = f.addRevisionComparison(correctedEvaluatorReplay, correctedEvaluatorDraft, evaluatorDraft, [priorOverclaim]);
+assert.ok(correctedCompared.feedback.some(item => item.category === '学术建议 · 论证与证据'), 'The unchanged academic defect must remain visible in second-draft comparison');
+assert.equal(correctedCompared.revisionComparison.resolved.length, 0, 'A grammar repair must not mark the still-present argument defect as resolved');
 const original = 'Many students is using AI to review their writing. They notice teh feedback.';
 const revised = original.replace('students is', 'students are');
 const prior = [issue('students is', 'students is → students are'), issue('teh', 'teh → the', '拼写错误')];
@@ -395,6 +447,10 @@ try {
   const rejected=await f.reviewCandidateFeedback(result([issue('just one','删除 just','学术语气')],preservedMeaning),preservedMeaning,'test-placeholder',new AbortController().signal);
   assert.equal(rejected.feedback.length,0);
   assert.equal(rejected.modelRevision,preservedMeaning);
+  const protectedRegister=await f.reviewCandidateFeedback(registerEvaluatorReplay,registerEvaluatorDraft,'test-placeholder',new AbortController().signal);
+  assert.equal(protectedRegister.feedback.length,6,'Reviewer fluctuation cannot delete the objective low-dose issue or five bounded high-signal register advisories');
+  assert.equal(protectedRegister.feedback.filter(item=>item.category.startsWith('语言准确性')).length,1);
+  assert.equal(protectedRegister.feedback.filter(item=>item.category.startsWith('学术建议')).length,5);
   const unsupportedUniversal="This tutoring method always improves every learner's performance.";
   const universalCandidate={...issue("always improves every learner's performance",'保留为需限定范围或补充证据的表述','学术建议 · 论点聚焦'),why:'未提供条件、例外或证据来支持普遍断言。'};
   const protectedResult=await f.reviewCandidateFeedback(result([universalCandidate],unsupportedUniversal),unsupportedUniversal,'test-placeholder',new AbortController().signal);

@@ -1,5 +1,5 @@
 {
-  "version": "0.2.4",
+  "version": "0.2.5",
   "language": "en",
   "description": "ThinkRevise AI Chinese-build accuracy benchmark. Objective language errors and academic-writing judgements are scored separately.",
   "acceptedCorrectionsByKey": {
@@ -27,7 +27,8 @@
     "plan-repeat": ["plan to repeat"],
     "aquatic-ecosystem": ["aquatic ecosystems", "an aquatic ecosystem", "the aquatic ecosystem"],
     "it-proof": ["it proves climate change"],
-    "varify": ["verify"]
+    "varify": ["verify"],
+    "low-dose-determiner": ["a low dose", "low doses"]
   },
   "cases": [
     {
@@ -320,6 +321,36 @@
       "theme": "教育与 AI",
       "draft": "The university introduced an online feedback platform. Consequently, the platform improved students' critical reasoning.",
       "expectedIssues": [{ "key": "unsupported-causality", "tier": "advisory", "family": "argument", "quote": "Consequently, the platform improved students' critical reasoning." }]
+    },
+    {
+      "id": "peer-register-boundary",
+      "kind": "initial",
+      "theme": "科学研究",
+      "draft": "We looked at how the drug works in liver cells. The thing we found is that low dose can slow down cell aging. Lots of earlier studies also got similar results. We think this finding is pretty useful. It tells us that natural compounds may help protect cells from damage. We will do more tests later to check if this idea holds.",
+      "expectedIssues": [
+        { "key": "low-dose-determiner", "tier": "objective", "family": "noun_form", "quote": "low dose" },
+        { "key": "register-thing-found", "tier": "advisory", "family": "register", "quote": "The thing we found" },
+        { "key": "register-lots-of", "tier": "advisory", "family": "register", "quote": "Lots of" },
+        { "key": "register-got-results", "tier": "advisory", "family": "register", "quote": "got similar results" },
+        { "key": "register-pretty-useful", "tier": "advisory", "family": "register", "quote": "pretty useful" },
+        { "key": "register-check-idea", "tier": "advisory", "family": "register", "quote": "check if this idea holds" }
+      ]
+    },
+    {
+      "id": "peer-register-optional-clean",
+      "kind": "initial",
+      "theme": "科学研究",
+      "draft": "We looked at how the drug works in liver cells, and the resulting measurements tell us which concentrations warrant further investigation.",
+      "expectedIssues": []
+    },
+    {
+      "id": "peer-corrected-grammar-overclaim-remains",
+      "kind": "initial",
+      "theme": "科学研究",
+      "draft": "The experiment shows that temperature affects the growth rate of algae. We collected data last week, but one sensor was broken. This result is important because it proves climate change will influence aquatic ecosystems. Many factors can change the outcome. When the water is too hot, algae stop growing fast. We plan to repeat the test next month to verify our conclusion.",
+      "expectedIssues": [
+        { "key": "experiment-climate-overclaim", "tier": "advisory", "family": "argument", "quote": "proves climate change will influence aquatic ecosystems" }
+      ]
     },
     {
       "id": "revision-one-correction",

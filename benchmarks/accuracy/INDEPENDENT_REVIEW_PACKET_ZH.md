@@ -632,7 +632,60 @@
 
 ---
 
-## 38. revision-one-correction
+## 38. peer-register-boundary
+
+- 来源：基础集
+
+**原稿**
+
+> We looked at how the drug works in liver cells. The thing we found is that low dose can slow down cell aging. Lots of earlier studies also got similar results. We think this finding is pretty useful. It tells us that natural compounds may help protect cells from damage. We will do more tests later to check if this idea holds.
+
+| 标签编号 | 层级／类别 | 预设引文 | 预设判断 | 判定 | 修改或删除理由 |
+| --- | --- | --- | --- | --- | --- |
+| peer-register-boundary:issue:1 | objective / noun_form | low dose | 该片段存在预设类别所描述的问题 |  |  |
+| peer-register-boundary:issue:2 | advisory / register | The thing we found | 该片段存在预设类别所描述的问题 |  |  |
+| peer-register-boundary:issue:3 | advisory / register | Lots of | 该片段存在预设类别所描述的问题 |  |  |
+| peer-register-boundary:issue:4 | advisory / register | got similar results | 该片段存在预设类别所描述的问题 |  |  |
+| peer-register-boundary:issue:5 | advisory / register | pretty useful | 该片段存在预设类别所描述的问题 |  |  |
+| peer-register-boundary:issue:6 | advisory / register | check if this idea holds | 该片段存在预设类别所描述的问题 |  |  |
+
+额外发现：
+
+---
+
+## 39. peer-register-optional-clean
+
+- 来源：基础集
+
+**原稿**
+
+> We looked at how the drug works in liver cells, and the resulting measurements tell us which concentrations warrant further investigation.
+
+| 标签编号 | 层级／类别 | 预设引文 | 预设判断 | 判定 | 修改或删除理由 |
+| --- | --- | --- | --- | --- | --- |
+
+
+额外发现：
+
+---
+
+## 40. peer-corrected-grammar-overclaim-remains
+
+- 来源：基础集
+
+**原稿**
+
+> The experiment shows that temperature affects the growth rate of algae. We collected data last week, but one sensor was broken. This result is important because it proves climate change will influence aquatic ecosystems. Many factors can change the outcome. When the water is too hot, algae stop growing fast. We plan to repeat the test next month to verify our conclusion.
+
+| 标签编号 | 层级／类别 | 预设引文 | 预设判断 | 判定 | 修改或删除理由 |
+| --- | --- | --- | --- | --- | --- |
+| peer-corrected-grammar-overclaim-remains:issue:1 | advisory / argument | proves climate change will influence aquatic ecosystems | 该片段存在预设类别所描述的问题 |  |  |
+
+额外发现：
+
+---
+
+## 41. revision-one-correction
 
 - 来源：基础集·第二稿
 
@@ -654,7 +707,7 @@
 
 ---
 
-## 39. revision-new-error
+## 42. revision-new-error
 
 - 来源：基础集·第二稿
 
@@ -676,7 +729,7 @@
 
 ---
 
-## 40. revision-register-cleanup
+## 43. revision-register-cleanup
 
 - 来源：基础集·第二稿
 
@@ -698,7 +751,7 @@
 
 ---
 
-## 41. universal-unsupported
+## 44. universal-unsupported
 
 - 来源：学术稳定性集
 
@@ -714,7 +767,7 @@
 
 ---
 
-## 42. universal-bounded
+## 45. universal-bounded
 
 - 来源：学术稳定性集
 
@@ -730,7 +783,7 @@
 
 ---
 
-## 43. universal-logical-definition
+## 46. universal-logical-definition
 
 - 来源：学术稳定性集
 
@@ -746,7 +799,7 @@
 
 ---
 
-## 44. causality-unsupported
+## 47. causality-unsupported
 
 - 来源：学术稳定性集
 
@@ -762,7 +815,7 @@
 
 ---
 
-## 45. causality-qualified
+## 48. causality-qualified
 
 - 来源：学术稳定性集
 
@@ -778,7 +831,7 @@
 
 ---
 
-## 46. causality-confound-unsupported
+## 49. causality-confound-unsupported
 
 - 来源：学术稳定性集
 
@@ -794,7 +847,7 @@
 
 ---
 
-## 47. causality-confound-qualified
+## 50. causality-confound-qualified
 
 - 来源：学术稳定性集
 
@@ -810,7 +863,7 @@
 
 ---
 
-## 48. thesis-overbroad
+## 51. thesis-overbroad
 
 - 来源：学术稳定性集
 
@@ -826,7 +879,7 @@
 
 ---
 
-## 49. thesis-focused
+## 52. thesis-focused
 
 - 来源：学术稳定性集
 
@@ -842,7 +895,7 @@
 
 ---
 
-## 50. thesis-descriptive-list
+## 53. thesis-descriptive-list
 
 - 来源：学术稳定性集
 
@@ -858,7 +911,7 @@
 
 ---
 
-## 51. thesis-qualified-position
+## 54. thesis-qualified-position
 
 - 来源：学术稳定性集
 
@@ -874,7 +927,7 @@
 
 ---
 
-## 52. cohesion-abrupt
+## 55. cohesion-abrupt
 
 - 来源：学术稳定性集
 
@@ -890,7 +943,7 @@
 
 ---
 
-## 53. cohesion-connected
+## 56. cohesion-connected
 
 - 来源：学术稳定性集
 
@@ -906,7 +959,7 @@
 
 ---
 
-## 54. cohesion-long-abrupt
+## 57. cohesion-long-abrupt
 
 - 来源：学术稳定性集
 
@@ -922,7 +975,7 @@
 
 ---
 
-## 55. cohesion-long-connected
+## 58. cohesion-long-connected
 
 - 来源：学术稳定性集
 
@@ -938,7 +991,7 @@
 
 ---
 
-## 56. evidence-conclusion-mismatch
+## 59. evidence-conclusion-mismatch
 
 - 来源：学术稳定性集
 
@@ -954,7 +1007,7 @@
 
 ---
 
-## 57. evidence-conclusion-qualified
+## 60. evidence-conclusion-qualified
 
 - 来源：学术稳定性集
 
@@ -970,7 +1023,7 @@
 
 ---
 
-## 58. long-scope-bounded-control
+## 61. long-scope-bounded-control
 
 - 来源：学术长文集
 
@@ -986,7 +1039,7 @@
 
 ---
 
-## 59. long-scope-unsupported-claim
+## 62. long-scope-unsupported-claim
 
 - 来源：学术长文集
 
@@ -1002,7 +1055,7 @@
 
 ---
 
-## 60. long-causality-qualified-control
+## 63. long-causality-qualified-control
 
 - 来源：学术长文集
 
@@ -1018,7 +1071,7 @@
 
 ---
 
-## 61. long-evidence-conclusion-mismatch
+## 64. long-evidence-conclusion-mismatch
 
 - 来源：学术长文集
 
@@ -1034,7 +1087,7 @@
 
 ---
 
-## 62. long-thesis-focused-control
+## 65. long-thesis-focused-control
 
 - 来源：学术长文集
 
@@ -1050,7 +1103,7 @@
 
 ---
 
-## 63. long-cohesion-abrupt-shift
+## 66. long-cohesion-abrupt-shift
 
 - 来源：学术长文集
 

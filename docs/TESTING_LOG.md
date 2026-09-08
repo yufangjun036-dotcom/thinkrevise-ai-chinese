@@ -294,3 +294,18 @@ This runtime audit used the locally built production version. It verifies actual
 | Independent-review coverage | The external incident becomes part of the persistent accuracy evidence | The benchmark now contains 40 cases, and the blind-review pack contains 63 cases and 90 labels | Pass |
 
 The added rules are intentionally narrow and are paired with correct counterexamples. The release claim is limited to this evaluator article and the maintained regression set; two consecutive passes are evidence of the fix, not a general 100% accuracy claim.
+
+## 2026-09-09 — External evaluator calibration: register boundary and persistent academic findings
+
+| Check | Expected result | Observed result | Status |
+| --- | --- | --- | --- |
+| Objective `low dose` diagnosis | The bare singular count noun in `low dose can ...` is reported as an objective article/noun-form error | A narrow rule reports `low dose → a low dose`, while `a low dose`, `low doses`, `the low dose`, and `low-dose intervention` remain clear | Pass locally |
+| Register boundary | Only high-signal phrases that are both conversational and imprecise are automatically suggested | Five bounded phrases are academic advice with medium confidence; `looked at` and `tells us` alone are explicitly insufficient | Pass locally |
+| Error/advice separation | Register improvements do not inflate the objective-error count | The evaluator article produces one objective language item and five separate academic suggestions in deterministic replay | Pass locally |
+| Correct-text control | A concise, grammatically correct research sentence containing `looked at` and `tell us` is not forced to change | Two consecutive live-provider runs returned zero feedback | Pass live |
+| Persistent argument issue | Correcting grammar does not erase an unchanged experiment-to-climate overclaim | The corrected evaluator draft still receives one evidence-scope recommendation, and revision comparison does not mark it resolved | Pass locally |
+| Regression baseline | All reproducible external findings are retained for future releases | The benchmark contains 43 cases (40 initial, 3 revision), 38 objective and 27 advisory labels; the blind-review pack contains 66 cases and 97 labels | Pass locally |
+| Repeated register boundary | Model variation cannot add speculative evidence advice to the bounded register article | An early repeated run exposed two unsupported evidence suggestions; both were converted into negative regression cases. The two subsequent complete runs each returned exactly one objective item and five academic-register suggestions | Pass after fix |
+| Complete first-to-second-draft flow | All nine planted objective errors are resolved while the unchanged evidence problem remains visible | Two consecutive live-provider journeys returned 9 language + 1 academic item initially, then 0 language + 1 academic item; comparison reported 9 resolved, 1 changed-location academic item and 0 supplemental items | Pass live |
+
+These checks define a product boundary rather than a universal rule that every informal expression is wrong. Academic-register findings remain optional advice; objective grammar and spelling findings remain the primary correctness gate. The successful bounded live reports are `reports/accuracy/boundaries-2026-09-08T19-29-07-351Z.json` and `reports/accuracy/boundaries-2026-09-08T19-29-54-204Z.json`; earlier failed reports remain preserved and are not counted as passes. Production evidence is recorded only after deployment and production-endpoint checks pass.
