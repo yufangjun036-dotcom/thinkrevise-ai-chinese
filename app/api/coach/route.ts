@@ -526,6 +526,11 @@ function dedupeFeedback(items: FeedbackItem[]) {
     const coverage = editCoverage(item, unique);
     if (coverage?.covered.every(Boolean)) continue;
     if (unique.some((existing) => {
+      const sameBareEcosystemRepair = [existing, item].every(candidate =>
+        feedbackCategoryFamily(candidate.category) === "noun-form"
+        && /(?:^|\s)aquatic ecosystem$/i.test(normaliseFeedbackQuote(candidate.quote))
+        && /ecosystems|an aquatic ecosystem|the aquatic ecosystem/i.test(candidate.correction ?? ""));
+      if (sameBareEcosystemRepair) return true;
       if (existing.category === item.category
         && item.category.startsWith("学术建议 · ")
         && normaliseFeedbackQuote(existing.quote) === normaliseFeedbackQuote(item.quote)) return true;

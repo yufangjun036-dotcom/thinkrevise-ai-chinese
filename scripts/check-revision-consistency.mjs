@@ -114,6 +114,14 @@ const evaluatorEightCandidates = [
 const evaluatorReplay = f.validateLiveResult(result(evaluatorEightCandidates, evaluatorDraft), evaluatorDraft, 'coach', 0, true);
 assert.equal(evaluatorReplay.feedback.length, 9, 'The evaluator article must contain the eight model candidates plus the missing plan-to issue');
 assert.equal(evaluatorReplay.feedback.filter(item => item.quote === 'plan repeat').length, 1, 'The plan-to issue must be added exactly once');
+const duplicatedEcosystemReplay = f.validateLiveResult(result([
+  issue('aquatic ecosystem', '建议添加限定词 an，或使用复数 ecosystems。', '语言准确性 · 冠词与不可数名词'),
+], evaluatorDraft), evaluatorDraft, 'coach', 0, true);
+assert.equal(
+  duplicatedEcosystemReplay.feedback.filter(item => /aquatic ecosystem/i.test(item.quote)).length,
+  1,
+  'A short model ecosystem repair and the deterministic longer repair must collapse into one finding',
+);
 const original = 'Many students is using AI to review their writing. They notice teh feedback.';
 const revised = original.replace('students is', 'students are');
 const prior = [issue('students is', 'students is → students are'), issue('teh', 'teh → the', '拼写错误')];
