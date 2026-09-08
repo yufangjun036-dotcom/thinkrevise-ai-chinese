@@ -1,0 +1,15 @@
+{
+  "version": "0.1.0",
+  "status": "template_only",
+  "samples": [
+    {
+      "id": "real-001",
+      "sourceType": "voluntary_student_draft",
+      "proficiencyBand": "",
+      "discipline": "",
+      "consentConfirmed": false,
+      "anonymised": false,
+      "draft": ""
+    }
+  ]
+}

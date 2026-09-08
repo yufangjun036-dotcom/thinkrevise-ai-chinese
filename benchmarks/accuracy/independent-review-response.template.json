@@ -1,0 +1,705 @@
+{
+  "version": "0.1.0",
+  "reviewer": {
+    "anonymousId": "",
+    "background": "",
+    "reviewedAt": ""
+  },
+  "allowedVerdicts": [
+    "agree",
+    "modify",
+    "delete",
+    "uncertain"
+  ],
+  "judgments": [
+    {
+      "caseId": "obj-spelling-teh",
+      "labelId": "obj-spelling-teh:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-spelling-becuase",
+      "labelId": "obj-spelling-becuase:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-spelling-recieve",
+      "labelId": "obj-spelling-recieve:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-agreement-students-is",
+      "labelId": "obj-agreement-students-is:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-agreement-it-help",
+      "labelId": "obj-agreement-it-help:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-agreement-people-is",
+      "labelId": "obj-agreement-people-is:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-tense-did-understood",
+      "labelId": "obj-tense-did-understood:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-tense-have-went",
+      "labelId": "obj-tense-have-went:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-noun-informations",
+      "labelId": "obj-noun-informations:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-wordform-careful",
+      "labelId": "obj-wordform-careful:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-article-university",
+      "labelId": "obj-article-university:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-article-evidence",
+      "labelId": "obj-article-evidence:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "adv-nowadays",
+      "labelId": "adv-nowadays:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "adv-personal-opinion",
+      "labelId": "adv-personal-opinion:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "adv-really-good",
+      "labelId": "adv-really-good:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "adv-a-lot-of",
+      "labelId": "adv-a-lot-of:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "adv-direct-reader",
+      "labelId": "adv-direct-reader:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "adv-obviously",
+      "labelId": "adv-obviously:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "adv-absolute-always",
+      "labelId": "adv-absolute-always:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "adv-contraction",
+      "labelId": "adv-contraction:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-education-ai",
+      "labelId": "mixed-education-ai:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-education-ai",
+      "labelId": "mixed-education-ai:issue:2",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-education-ai",
+      "labelId": "mixed-education-ai:issue:3",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-education-ai",
+      "labelId": "mixed-education-ai:issue:4",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-education-ai",
+      "labelId": "mixed-education-ai:issue:5",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-education-ai",
+      "labelId": "mixed-education-ai:issue:6",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-education-ai",
+      "labelId": "mixed-education-ai:issue:7",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-environment",
+      "labelId": "mixed-environment:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-environment",
+      "labelId": "mixed-environment:issue:2",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-environment",
+      "labelId": "mixed-environment:issue:3",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-environment",
+      "labelId": "mixed-environment:issue:4",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-environment",
+      "labelId": "mixed-environment:issue:5",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-environment",
+      "labelId": "mixed-environment:issue:6",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-university",
+      "labelId": "mixed-university:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-university",
+      "labelId": "mixed-university:issue:2",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-university",
+      "labelId": "mixed-university:issue:3",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-university",
+      "labelId": "mixed-university:issue:4",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-university",
+      "labelId": "mixed-university:issue:5",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-university",
+      "labelId": "mixed-university:issue:6",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-university",
+      "labelId": "mixed-university:issue:7",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-technology",
+      "labelId": "mixed-technology:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-technology",
+      "labelId": "mixed-technology:issue:2",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-technology",
+      "labelId": "mixed-technology:issue:3",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-technology",
+      "labelId": "mixed-technology:issue:4",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-technology",
+      "labelId": "mixed-technology:issue:5",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-technology",
+      "labelId": "mixed-technology:issue:6",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-technology",
+      "labelId": "mixed-technology:issue:7",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "mixed-technology",
+      "labelId": "mixed-technology:issue:8",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-fragment-dependent-clause",
+      "labelId": "obj-fragment-dependent-clause:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-run-on-sentence",
+      "labelId": "obj-run-on-sentence:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "obj-comma-splice",
+      "labelId": "obj-comma-splice:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "adv-cohesion-abrupt",
+      "labelId": "adv-cohesion-abrupt:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "adv-thesis-overbroad",
+      "labelId": "adv-thesis-overbroad:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "adv-unsupported-causality",
+      "labelId": "adv-unsupported-causality:issue:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "revision-one-correction",
+      "labelId": "revision-one-correction:original:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "revision-one-correction",
+      "labelId": "revision-one-correction:original:2",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "revision-one-correction",
+      "labelId": "revision-one-correction:original:3",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "revision-new-error",
+      "labelId": "revision-new-error:original:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "revision-new-error",
+      "labelId": "revision-new-error:original:2",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "revision-new-error",
+      "labelId": "revision-new-error:new:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "revision-register-cleanup",
+      "labelId": "revision-register-cleanup:original:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "revision-register-cleanup",
+      "labelId": "revision-register-cleanup:original:2",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "revision-register-cleanup",
+      "labelId": "revision-register-cleanup:original:3",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "universal-unsupported",
+      "labelId": "universal-unsupported:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "universal-bounded",
+      "labelId": "universal-bounded:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "universal-logical-definition",
+      "labelId": "universal-logical-definition:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "causality-unsupported",
+      "labelId": "causality-unsupported:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "causality-qualified",
+      "labelId": "causality-qualified:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "causality-confound-unsupported",
+      "labelId": "causality-confound-unsupported:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "causality-confound-qualified",
+      "labelId": "causality-confound-qualified:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "thesis-overbroad",
+      "labelId": "thesis-overbroad:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "thesis-focused",
+      "labelId": "thesis-focused:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "thesis-descriptive-list",
+      "labelId": "thesis-descriptive-list:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "thesis-qualified-position",
+      "labelId": "thesis-qualified-position:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "cohesion-abrupt",
+      "labelId": "cohesion-abrupt:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "cohesion-connected",
+      "labelId": "cohesion-connected:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "cohesion-long-abrupt",
+      "labelId": "cohesion-long-abrupt:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "cohesion-long-connected",
+      "labelId": "cohesion-long-connected:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "evidence-conclusion-mismatch",
+      "labelId": "evidence-conclusion-mismatch:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "evidence-conclusion-qualified",
+      "labelId": "evidence-conclusion-qualified:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "long-scope-bounded-control",
+      "labelId": "long-scope-bounded-control:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "long-scope-unsupported-claim",
+      "labelId": "long-scope-unsupported-claim:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "long-causality-qualified-control",
+      "labelId": "long-causality-qualified-control:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "long-evidence-conclusion-mismatch",
+      "labelId": "long-evidence-conclusion-mismatch:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "long-thesis-focused-control",
+      "labelId": "long-thesis-focused-control:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    },
+    {
+      "caseId": "long-cohesion-abrupt-shift",
+      "labelId": "long-cohesion-abrupt-shift:judgement:1",
+      "verdict": "pending",
+      "correctedFamily": "",
+      "correctedQuote": "",
+      "notes": ""
+    }
+  ],
+  "additionalFindings": []
+}

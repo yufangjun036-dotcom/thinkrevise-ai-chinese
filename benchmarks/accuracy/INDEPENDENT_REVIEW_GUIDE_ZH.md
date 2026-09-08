@@ -9,6 +9,8 @@
 - `cases.json`：36 个基础准确率案例。
 - `academic-stability-cases.json`：17 个短篇学术判断正反例。
 - `academic-longform-cases.json`：6 个内部编写的长文边界案例。
+- `INDEPENDENT_REVIEW_PACKET_ZH.md`：自动生成、可直接填写的 59 案例评审表。
+- `independent-review-response.template.json`：完成后用于机器汇总的 86 标签空白模板。
 
 三套材料在完成独立复核前都不得用于宣称真实总体正确率。长文和稳定性案例当前状态均为 `internal_curated_pending_independent_review`。
 
@@ -35,3 +37,11 @@
 - 对学术语域、论点、衔接和论证保持“允许合理变体”的原则。
 - 只把拼写、主谓一致等可直接证明的语言问题标为确定错误。
 - 评审完成后保留原判定、修改理由、日期和评审者背景；若双方有分歧，单独记录，不用多数计数掩盖。
+
+## 完成后的处理
+
+1. 将空白结果模板复制为 `independent-review-response.local.json`；该文件已排除出 Git。
+2. 把“同意／修改／删除／不确定”分别填为 `agree`、`modify`、`delete`、`uncertain`。
+3. “修改”或“删除”必须填写 `notes`。
+4. 运行 `INDEPENDENT_REVIEW_FILE=benchmarks/accuracy/independent-review-response.local.json npm run review:score`。
+5. 所有 `delete`、`uncertain` 和新增发现必须人工裁决，不能自动覆盖原金标准。

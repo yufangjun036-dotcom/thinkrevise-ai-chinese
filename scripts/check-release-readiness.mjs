@@ -31,13 +31,15 @@ const [
 
 const scripts = JSON.parse(packageJson).scripts;
 assert.equal(JSON.parse(packageJson).name, "thinkrevise-ai-chinese", "The Chinese package name has drifted");
-for (const required of ["lint", "check:data", "check:limits", "check:copy", "check:safeguards", "check:security", "benchmark:validate", "build"]) {
+for (const required of ["lint", "check:data", "check:limits", "check:copy", "check:safeguards", "check:security", "benchmark:validate", "review:check", "samples:check-template", "build"]) {
   assert.match(scripts.verify, new RegExp(`npm run ${required.replace(":", "\\:")}`), `verify is missing ${required}`);
 }
 assert.match(scripts["verify:release"], /npm run verify/);
 assert.match(scripts["verify:release"], /npm run check:release/);
 
 assert.match(gitignore, /^\.env\*/m, "Environment files must remain excluded from Git");
+assert.match(gitignore, /external-samples\.local\.json/, "Private external essays must remain excluded from Git");
+assert.match(gitignore, /independent-review-response\.local\.json/, "Independent reviewer responses must remain excluded from Git");
 assert.match(layout, /lang="zh-CN"/, "The validated build must remain the Chinese version");
 assert.match(layout, /ThinkRevise AI \(Chinese\)/, "The Chinese candidate metadata name is missing");
 assert.match(workspace, /中文版候选版/, "The candidate-build label is missing");

@@ -17,6 +17,8 @@
 
 `academic-longform-cases.json` 增加 6 篇不少于 140 词的内部长文，检查学术判断在较长上下文中的范围限定、因果边界、证据—结论匹配、论点聚焦、跨段衔接、原文定位和完全重复反馈。独立评审方法见 [`INDEPENDENT_REVIEW_GUIDE_ZH.md`](INDEPENDENT_REVIEW_GUIDE_ZH.md)。
 
+`INDEPENDENT_REVIEW_PACKET_ZH.md` 与 `independent-review-response.template.json` 由 `npm run review:prepare` 生成；`npm run review:check` 确认评审包没有与三个内部数据集脱节。匿名真实文章的收集边界与本地模板见 [`EXTERNAL_SAMPLE_GUIDE_ZH.md`](EXTERNAL_SAMPLE_GUIDE_ZH.md)，真实文章文件不得提交到仓库。
+
 ## 指标含义
 
 - **客观错误召回率**：人工标注的拼写、语法、时态等错误中，系统找到了多少。

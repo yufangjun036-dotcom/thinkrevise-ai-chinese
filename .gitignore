@@ -13,6 +13,8 @@
 # testing
 /coverage
 /reports/accuracy/*
+benchmarks/accuracy/external-samples.local.json
+benchmarks/accuracy/independent-review-response.local.json
 !/reports/accuracy/2026-09-07T19-44-49-189Z.json
 !/reports/accuracy/2026-09-07T19-44-49-189Z.md
 !/reports/accuracy/2026-09-07T19-47-37-268Z.json
