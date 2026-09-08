@@ -343,6 +343,10 @@ function feedbackQuotesOverlap(first: string, second: string, firstCategory = ""
 // Category names alone are not stable identities. Cross-category discourse
 // matching additionally requires the same passage and the same advice intent.
 function sameRevisionFinding(old: FeedbackItem, current: FeedbackItem) {
+  const forward = editCoverage(current, [old]);
+  const reverse = editCoverage(old, [current]);
+  if (forward?.covered.every(Boolean) || reverse?.covered.every(Boolean)) return true;
+  if (concreteEdits(old)?.length && concreteEdits(current)?.length) return false;
   const sameFamily = feedbackCategoryFamily(old.category) === feedbackCategoryFamily(current.category);
   if (sameFamily) return feedbackQuotesOverlap(old.quote, current.quote, old.category, current.category);
   const discourse = /论证|解释|衔接|连贯|逻辑/;
@@ -356,12 +360,72 @@ function sameRevisionFinding(old: FeedbackItem, current: FeedbackItem) {
   return intents.some((intent) => intent.test(`${old.why} ${old.correction}`) && intent.test(`${current.why} ${current.correction}`));
 }
 
+type ConcreteEdit = { start: number; end: number; before: string; after: string };
+
+function concreteEdits(item: FeedbackItem): ConcreteEdit[] | null {
+  // Only parse explicit replacements, not explanations or invented paraphrases.
+  const correction = item.correction ?? "";
+  const arrow = correction.indexOf("→");
+  const lead = correction.match(/^(?:可)?(?:改为|修改为|替换为)[：:]\s*/);
+  if (arrow < 0 && !lead) return null;
+  const source = arrow >= 0 ? correction.slice(0, arrow).trim() : item.quote;
+  if (findExactQuoteStart(item.quote, source) < 0) return null;
+  const raw = correction.slice(arrow >= 0 ? arrow + 1 : lead![0].length).trim();
+  const replacement = raw.match(/^[A-Za-z0-9][A-Za-z0-9\s,'’\-/]*/)?.[0]?.trim();
+  if (!replacement || replacement.includes("/") || /\b(?:for example|e\.g)\b/i.test(replacement)) return null;
+  const a = source.toLowerCase().match(/[a-z0-9]+(?:['’][a-z]+)?|[^\w\s]/g) ?? [];
+  const b = replacement.toLowerCase().match(/[a-z0-9]+(?:['’][a-z]+)?|[^\w\s]/g) ?? [];
+  // Punctuation-only differences are not used to identify language edits.
+  const words = (tokens: string[]) => tokens.filter(token => /[a-z0-9]/.test(token));
+  const before = words(a), after = words(b);
+  if (!before.length || !after.length || before.length > 120 || after.length > 120) return null;
+  const lengths = Array.from({ length: before.length + 1 }, () => Array(after.length + 1).fill(0) as number[]);
+  for (let i = before.length - 1; i >= 0; i--) for (let j = after.length - 1; j >= 0; j--) {
+    lengths[i][j] = before[i] === after[j] ? lengths[i + 1][j + 1] + 1 : Math.max(lengths[i + 1][j], lengths[i][j + 1]);
+  }
+  const edits: ConcreteEdit[] = [];
+  let i = 0, j = 0;
+  while (i < before.length || j < after.length) {
+    if (i < before.length && j < after.length && before[i] === after[j]) { i++; j++; continue; }
+    const start = i, targetStart = j;
+    while ((i < before.length || j < after.length) && !(i < before.length && j < after.length && before[i] === after[j])) {
+      if (j < after.length && (i === before.length || lengths[i][j + 1] >= lengths[i + 1][j])) j++;
+      else i++;
+    }
+    edits.push({ start, end: i, before: before.slice(start, i).join(" "), after: after.slice(targetStart, j).join(" ") });
+  }
+  const prefix = item.quote.slice(0, findExactQuoteStart(item.quote, source));
+  const offset = (prefix.match(/[a-z0-9]+(?:['’][a-z]+)?/gi) ?? []).length;
+  return edits.map(edit => ({ ...edit, start: edit.start + offset, end: edit.end + offset }));
+}
+
+function editCoverage(item: FeedbackItem, existing: FeedbackItem[]) {
+  const edits = concreteEdits(item);
+  if (!edits?.length) return null;
+  const covered = edits.map(edit => existing.some(other => {
+    const start = findExactQuoteStart(item.quote, other.quote);
+    if (start < 0) return false;
+    const offset = (item.quote.slice(0, start).match(/[a-z0-9]+(?:['’][a-z]+)?/gi) ?? []).length;
+    const arrow = other.correction.indexOf("→");
+    const alternatives = arrow >= 0 && other.correction.includes("/")
+      ? other.correction.slice(arrow + 1).split(/[。；\n]/)[0].split("/").map(value => ({ ...other, correction: `${other.correction.slice(0, arrow)}→${value.trim()}` }))
+      : [other];
+    return alternatives.some(alternative => concreteEdits(alternative)?.some(known => known.start + offset === edit.start
+      && known.end + offset === edit.end && known.before === edit.before && known.after === edit.after));
+  }));
+  return { edits, covered };
+}
+
 function dedupeFeedback(items: FeedbackItem[]) {
   const unique: FeedbackItem[] = [];
   // Prefer a precise span over a whole-sentence duplicate, independent of order.
   const candidates = items.map(normaliseFeedbackCategory).sort((a, b) => a.quote.length - b.quote.length);
   for (const item of candidates) {
+    const coverage = editCoverage(item, unique);
+    if (coverage?.covered.every(Boolean)) continue;
     if (unique.some((existing) => {
+      // Concrete, conflicting or additional edits must survive a shared label.
+      if (concreteEdits(existing)?.length && concreteEdits(item)?.length) return false;
       if (sameRevisionFinding(existing, item)) return true;
       const existingQuote = normaliseFeedbackQuote(existing.quote);
       const itemQuote = normaliseFeedbackQuote(item.quote);

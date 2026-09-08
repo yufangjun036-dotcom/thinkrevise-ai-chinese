@@ -114,3 +114,28 @@ const differentIssue = issue(preciseTerm.quote, '需要补充研究证据。', '
 const distinctAdvice = f.addRevisionComparison(result([preciseTerm, differentIssue], styleDraft), styleDraft, '', []);
 assert.equal(distinctAdvice.feedback.length, 2);
 console.log(`Revision regression passed: ${checks} pipeline cases plus span/category/order regressions. No network or API usage.`);
+const termSentence = issue('They may also accept invented information.', '可改为：They may also accept fabricated information.', '措辞精确性');
+const quantity = issue('a lot of', 'a lot of → many / substantial / a considerable amount of。', '学术表达');
+const speed = issue('finish work fast', 'finish work fast → complete tasks more efficiently。', '学术表达');
+const combinedQuote = 'It gives a lot of feedback and students can finish work fast.';
+const combined = issue(combinedQuote, '可改为：It gives substantial feedback and students can complete tasks more efficiently.', '措辞精确性');
+const extra = issue(combinedQuote, '可改为：It provides substantial feedback and helps students complete tasks more efficiently.', '措辞精确性');
+for (const feedback of [[preciseTerm, termSentence], [termSentence, preciseTerm]]) {
+  const output = f.addRevisionComparison(result(feedback, styleDraft), styleDraft, styleDraft, [preciseTerm]);
+  assert.equal(output.feedback.length, 1);
+  assert.equal(output.revisionComparison.supplementalCount, 0);
+}
+const crossRun = f.addRevisionComparison(result([termSentence], styleDraft), styleDraft, styleDraft, [preciseTerm]);
+assert.equal(crossRun.revisionComparison.remainingCount, 1);
+assert.equal(crossRun.revisionComparison.resolved.length, 0);
+for (const feedback of [[quantity, speed, combined], [combined, speed, quantity]]) {
+  const output = f.addRevisionComparison(result(feedback, combinedQuote), combinedQuote, '', []);
+  assert.equal(output.feedback.length, 2);
+}
+const partial = f.addRevisionComparison(result([quantity, speed, extra], combinedQuote), combinedQuote, '', []);
+assert.equal(partial.feedback.length, 3, 'Additional edits must not be discarded');
+const conflicting = issue('invented information', 'invented information → verified information。', preciseTerm.category);
+assert.equal(f.addRevisionComparison(result([preciseTerm, conflicting], styleDraft), styleDraft, '', []).feedback.length, 2);
+const negation = issue(termSentence.quote, '可改为：They may not accept fabricated information.', '措辞精确性');
+assert.equal(f.addRevisionComparison(result([preciseTerm, negation], styleDraft), styleDraft, '', []).feedback.length, 2);
+console.log('Concrete edit checks passed: cross-category, multi-edit coverage, alternatives, order, partial edits and negation.');
