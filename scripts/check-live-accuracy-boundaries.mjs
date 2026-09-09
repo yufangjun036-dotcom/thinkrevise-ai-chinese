@@ -118,6 +118,32 @@ const cases=[
     expected:['Using AI for language learning bring big benefit but also hidden trap','I study English writing with AI chatbot for two month','The bot correct my grammar mistake and suggest better word choice quickly','But I soon find a problem','AI always write sentence in a similar style, so my own writing become less unique','When I submit assignment, my tutor notice the unnatural pattern in my paragraph','all subtle logic flaw','build deeper argument','Some of my classmate depend too heavily on AI','They ask AI rewrite every sentence, and no longer spend time revise by themself','This habit stop them from improve their real writing ability','student should set clear rule when using AI','brainstorm idea','The goal of learning language is to express our own thought'],
     minimumLanguageCount:14, academicCount:0,
   },
+  {
+    id:'blind-13', atLeast:true,
+    draft:'Nowadays, many student use AI tool to prepare presentation for class. I try AI to make slide content last week. It help me collect example and organize structure fast. But AI sometimes miss the course requirement, and the content not match our assignment brief. My tutor told me many learner copy AI output directly and skip critical check.\n\nIf we only let AI finish all work, we lose the chance to practice analysis skill. AI cannot understand our teacher expectation. It only response based on internet text. I think we can use AI as helper, but we must read and edit every sentence. Student should learn judge AI content before submit their work. Blind trust to AI will hurt our learning progress.',
+    expected:['many student use AI tool','prepare presentation for class','I try AI to make slide content last week','It help me collect example and organize structure fast','AI sometimes miss the course requirement','the content not match our assignment brief','many learner copy AI output directly and skip critical check','practice analysis skill','AI cannot understand our teacher expectation','It only response based on internet text','use AI as helper','Student should learn judge AI content before submit their work','Blind trust to AI'],
+    minimumLanguageCount:13, academicCount:0,
+    forbidden:['make slide → make slides','we lose → we will lose'],
+  },
+  {
+    id:'blind-14', atLeast:true,
+    draft:'AI bring big change to homework feedback. When I write short essay, I paste paragraph into AI and get comment quickly. But AI not know our course marking rubric. It focus mostly on grammar, and ignore deep logical problem. Last week my classmate use AI revise essay. The AI fix grammar mistake, but it miss weak argument. Teacher still give low score for that essay.\n\nMany people think AI can mark student writing well. In my experience, human teacher see more hidden problem. AI feedback save time, but it cannot replace human evaluation. Student need compare AI suggestion with teacher feedback, and think carefully. We should not fully depend on AI to judge our writing quality.',
+    expected:['AI bring big change to homework feedback','When I write short essay, I paste paragraph into AI and get comment quickly','AI not know our course marking rubric','It focus mostly on grammar, and ignore deep logical problem','Last week my classmate use AI revise essay','The AI fix grammar mistake, but it miss weak argument','Teacher still give low score for that essay','mark student writing well','human teacher see more hidden problem','AI feedback save time','Student need compare AI suggestion with teacher feedback'],
+    minimumLanguageCount:11, academicCount:0,
+    forbidden:['depend on AI'],
+  },
+  {
+    id:'blind-15',
+    draft:'AI serves as a practical auxiliary tool for undergraduate coursework, yet it has inherent limits. I experimented with AI to brainstorm outlines for my recent reflective assignment. It helped me list multiple perspectives efficiently, though I revised nearly all content to fit our module criteria.\n\nAI can identify surface-level grammatical issues, but it struggles to assess the depth of reasoning in academic writing. Course instructors evaluate arguments against subject-specific marking standards that automated systems cannot fully capture.\n\nIn practice, responsible AI use means treating outputs as starting points rather than final answers. Learners must verify facts, adjust arguments and keep their original ideas intact. This balanced approach maximizes the benefits of AI without sacrificing independent critical thinking.',
+    expected:[], languageCount:0, academicCount:0,
+  },
+  {
+    id:'blind-16', atLeast:true,
+    draft:'A famous 2024 study found AI tutoring raise exam pass rate by 55 percent for university students. The research test over 3000 learners and prove AI works better than in-person teaching. I found this result on a blog, but no original paper or author reference is available.\n\nI used an AI tutor for one month and my quiz scores improved. Therefore all university should buy this AI system and replace many lecture class. Students will learn faster and save tuition cost. This data clearly show human teacher become unnecessary in higher education soon.',
+    expected:['AI tutoring raise exam pass rate by 55 percent for university students','The research test over 3000 learners and prove AI works better than in-person teaching','all university should buy this AI system and replace many lecture class','This data clearly show human teacher become unnecessary in higher education soon'],
+    minimumLanguageCount:4, minimumAcademicCount:1,
+    requiredAcademicQuotes:['55 percent','no original paper'],
+  },
 ];
 let failures=0;
 const results=[];

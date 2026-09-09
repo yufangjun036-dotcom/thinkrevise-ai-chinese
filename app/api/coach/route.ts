@@ -153,6 +153,34 @@ function findLanguageIssues(draft: string): FeedbackItem[] {
     // Natural reflective-writing regressions: when one span contains several
     // objective errors, return one complete correction instead of fixing only
     // the first verb and leaving the rest of the span ungrammatical.
+    [/\bmany student use AI tool\b/i, "many students use AI tools", "名词单复数", "many 后使用复数 students；泛指多种 AI 工具时使用复数 tools。"],
+    [/\bprepare presentation for class\b/i, "prepare presentations for class", "冠词与名词形式", "presentation 是单数可数名词；泛指课堂展示时使用复数 presentations，若指一次展示则需要冠词 a。"],
+    [/\bI try AI to make slide content last week\b/i, "I tried AI to create slide content last week", "时态与动词形式", "last week 表示过去时间，谓语应使用过去式 tried；slide content 本身可以作为不可数名词短语。"],
+    [/\bIt help me collect example and organize structure fast\b/i, "It helped me collect examples and organize the structure quickly", "时态、名词形式与词形选择", "该句承接 last week 的过去经历，应使用 helped；泛指例子使用复数 examples；修饰动作应使用副词 quickly。"],
+    [/\bthe content not match our assignment brief\b/i, "the content does not match our assignment brief", "句子完整性与主谓一致", "否定谓语需要助动词 does not，助动词后使用原形 match。"],
+    [/\bAI sometimes miss the course requirement\b/i, "AI sometimes misses the course requirement", "主谓一致", "AI 是第三人称单数主语，一般现在时谓语应使用 misses。"],
+    [/\bmany learner copy AI output directly and skip critical check\b/i, "many learners copy AI output directly and skip critical checks", "名词单复数", "many 后使用复数 learners；泛指核查步骤时使用复数 checks。"],
+    [/\bpractice analysis skill\b/i, "practice analysis skills", "名词单复数", "泛指多方面的分析能力时使用复数 skills。"],
+    [/\bAI cannot understand our teacher expectation\b/i, "AI cannot understand our teacher’s expectations", "所有格与名词形式", "teacher 需要所有格标记；泛指多项要求时使用复数 expectations。"],
+    [/\bIt only response based on internet text\b/i, "It only responds based on internet text", "词形选择与主谓一致", "这里需要动词 responds；response 是名词。"],
+    [/\bStudent should learn judge AI content before submit their work\b/i, "Students should learn to judge AI content before submitting their work", "名词与动词形式", "泛指学生使用复数；learn 后接 to do；介词 before 后使用动名词。"],
+    [/\bBlind trust to AI\b/i, "Blind trust in AI", "介词搭配", "表示对某事物的信任时，名词 trust 通常与介词 in 搭配。"],
+    [/\buse AI as helper\b/i, "use AI as a helper", "冠词与名词形式", "helper 是单数可数名词，在 as 后需要冠词 a。"],
+    [/\bAI bring big change to homework feedback\b/i, "AI brings major changes to homework feedback", "主谓一致与名词形式", "AI 是单数主语，谓语使用 brings；泛指多方面变化时使用复数 changes。"],
+    [/\bWhen I write short essay, I paste paragraph into AI and get comment quickly\b/i, "When I write a short essay, I paste a paragraph into AI and get comments quickly", "冠词与名词形式", "单数可数名词 essay 和 paragraph 需要冠词；泛指获得的多条评语时使用复数 comments。"],
+    [/\bAI not know our course marking rubric\b/i, "AI does not know our course marking rubric", "句子完整性", "一般现在时否定句需要助动词 does not，后接动词原形 know。"],
+    [/\bIt focus mostly on grammar, and ignore deep logical problem\b/i, "It focuses mostly on grammar and ignores deep logical problems", "主谓一致与名词形式", "单数主语 It 的并列谓语应为 focuses 和 ignores；泛指问题时使用复数 problems。"],
+    [/\bLast week my classmate use AI revise essay\b/i, "Last week my classmate used AI to revise an essay", "时态与动词形式", "last week 要求过去式 used；use something to do something 中 revise 前需要 to；单数 essay 需要限定词。"],
+    [/\bThe AI fix grammar mistake, but it miss weak argument\b/i, "The AI fixed grammar mistakes, but it missed weak arguments", "时态与名词形式", "该句承接 last week 的过去事件，并列谓语使用 fixed 和 missed；泛指错误与论证时使用复数。"],
+    [/\bTeacher still give low score for that essay\b/i, "The teacher still gave that essay a low score", "时态与冠词", "该句继续叙述过去事件，应使用 gave；单数可数名词 score 需要冠词。"],
+    [/\bmark student writing well\b/i, "mark students’ writing well", "所有格与名词形式", "泛指多名学生的写作时，应使用复数所有格 students’。"],
+    [/\bhuman teacher see more hidden problem\b/i, "human teachers see more hidden problems", "名词单复数与主谓一致", "泛指教师和多种问题时使用复数 teachers 和 problems。"],
+    [/\bAI feedback save time\b/i, "AI feedback saves time", "主谓一致", "feedback 在这里是不可数单数概念，谓语使用 saves。"],
+    [/\bStudent need compare AI suggestion with teacher feedback\b/i, "Students need to compare AI suggestions with teacher feedback", "名词与动词形式", "泛指学生和建议时使用复数；need 后接 to do 不定式。"],
+    [/\bAI tutoring raise exam pass rate by 55 percent for university students\b/i, "AI tutoring raises the exam pass rate by 55 percent for university students", "主谓一致与冠词", "AI tutoring 是单数主语，谓语使用 raises；特指所讨论的通过率时使用 the。"],
+    [/\bThe research test over 3000 learners and prove AI works better than in-person teaching\b/i, "The study tested over 3,000 learners and claimed that AI worked better than in-person teaching", "时态、用词与句子结构", "已完成的研究使用过去时；study 比 research 更适合作可数主语；无法核实的比较结论应写成研究声称的内容。"],
+    [/\ball university should buy this AI system and replace many lecture class\b/i, "all universities should buy this AI system and replace many lecture classes", "名词单复数", "all 和 many 修饰可数名词时，名词应使用复数 universities 和 classes。"],
+    [/\bThis data clearly show human teacher become unnecessary in higher education soon\b/i, "These data clearly show that human teachers will soon become unnecessary in higher education", "主谓一致与名词形式", "data 按复数使用时搭配 These 和 show；泛指教师使用复数 teachers，并补充 that 和 will 使结构完整一致。"],
     [/\bMany educator now believe\b/i, "Many educators now believe", "名词单复数", "many 后应使用复数名词 educators。"],
     [/\bI join this AI education module this semester\b/i, "I joined this AI education module this semester", "时态与动词形式", "join 表示本学期已经发生的加入行为，应使用过去式 joined。"],
     [/\bit open my eyes about\b/i, "it opened my eyes to", "时态与介词搭配", "过去经历使用 opened；固定搭配是 open someone’s eyes to something。"],
@@ -491,7 +519,8 @@ function buildUnsupportedExperimentProofFeedback(draft: string): FeedbackItem | 
 function buildUnverifiableResearchClaimFeedback(draft: string): FeedbackItem | null {
   const groupSeven = draft.match(/I read a paper online:\s*[^.!?]*\b\d+(?:\.\d+)?%[^.!?]*[.!?]\s*But the paper[^.!?]*(?:sample size|reference)[^.!?]*[.!?]?/i);
   const groupTen = draft.match(/A famous research[^.!?]*\b\d+(?:\.\d+)?%[^.!?]*[.!?]\s*The researcher[^.!?]*\b\d+\s+student[^.!?]*cannot find the original paper[^.!?]*[.!?]?/i);
-  const match = groupSeven ?? groupTen;
+  const finalBlind = draft.match(/A famous 2024 study[^.!?]*\b\d+(?:\.\d+)?\s*percent[^.!?]*[.!?]\s*The research[^.!?]*\b\d+\s+learners?[^.!?]*[.!?]\s*I found this result on a blog, but no original paper or author reference is available[.!?]?/i);
+  const match = groupSeven ?? groupTen ?? finalBlind;
   if (!match) return null;
   return {
     category: "学术建议 · 论证与证据",
