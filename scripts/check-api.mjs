@@ -158,6 +158,65 @@ try {
     assert.equal(languageFeedback.filter((item) => /\bit say\b/i.test(item.quote)).length, 1, "it say was reported more than once");
   }
 
+  const blindCalibrationCases = [
+    {
+      id: "blind-2",
+      draft: "AI change the way we study. I use ChatGPT last month to finish my essay, and it help me write paragraph very fast. But my professor say many student just paste AI text and skip thinking. When I submit my first draft, my teacher tell me my idea is shallow. I find AI sometimes make fake reference, the source not exist at all. I think student should know AI can lie. We can use AI for brainstorm, but cannot let it write whole paper.",
+      expected: ["AI change the way", "I use ChatGPT last month", "it help me write paragraph", "my professor say", "many student", "my teacher tell me", "I find AI sometimes make fake reference, the source not exist at all", "student should know", "for brainstorm"],
+    },
+    {
+      id: "blind-3",
+      draft: "Many school start to use AI tutor in classroom. AI tutor can give quiz to student, and mark answer automatic. But there is a big risk: AI cannot notice student emotion. When student feel upset or confuse, AI will not comfort them. Last week, my classmate use AI to practice math. The AI give wrong answer for one hard question, and my class waste many time follow the wrong step. I believe AI can assist teaching, but human teacher still necessary.",
+      expected: ["Many school start", "use AI tutor in classroom", "give quiz to student", "mark answer automatic", "student emotion", "When student feel upset or confuse", "my classmate use AI to practice math", "The AI give wrong answer", "my class waste many time follow the wrong step", "human teacher still necessary"],
+    },
+    {
+      id: "blind-4",
+      draft: "Some people argue AI will replace teacher in 10 year. I disagree this opinion. AI can only process data, it cannot understand personal story of each student. When I was in high school, my English teacher help me build confidence. No AI can do that. Also, AI training data have bias. If we only rely on AI, student may receive unfair information. We should set rule to limit overuse of AI in school.",
+      expected: ["replace teacher in 10 year", "I disagree this opinion", "AI can only process data, it cannot understand", "personal story of each student", "my English teacher help me", "student may receive", "set rule to limit"],
+    },
+    {
+      id: "blind-5",
+      draft: "AI help teacher reduce boring work, like grade homework and make worksheet. But many student use AI to cheat on exam. Last semester, our school catch three student who copy AI answer during online quiz. The punishment is warning. I think school need clear rule about AI. Student must learn what is allowed and what is not. If student use AI properly, it become a good helper.",
+      expected: ["AI help teacher reduce boring work", "like grade homework and make worksheet", "many student", "cheat on exam", "our school catch three student who copy AI answer", "The punishment is warning", "school need clear rule about AI", "Student must learn", "If student use AI properly, it become"],
+    },
+    {
+      id: "blind-6",
+      draft: "Learning with AI have both advantage and risk. AI can give instant feedback when student finish exercise. This save waiting time. But feedback from AI sometimes too simple, it cannot explain deep logic. When I practice writing, AI tell me my sentence is wrong, but not explain why. I think AI work best when student already have basic knowledge, and use AI to check mistake.",
+      expected: ["Learning with AI have both advantage and risk", "when student finish exercise", "This save waiting time", "feedback from AI sometimes too simple, it cannot explain deep logic", "AI tell me", "but not explain why", "AI work best", "when student already have basic knowledge", "check mistake"],
+    },
+    {
+      id: "blind-7",
+      draft: "Many research prove AI improve student test score. I read a paper online: 80% student get higher score after using AI study tool. But the paper not list sample size, and no reference. I try AI tool to practice vocabulary, and my score raise 15 point in one month. So AI is good for all student.",
+      expected: ["Many research prove", "AI improve student test score", "80% student get higher score", "using AI study tool", "the paper not list", "my score raise 15 point", "all student"],
+    },
+    {
+      id: "blind-8",
+      draft: "Teacher need learn how to use AI before bring it to classroom. If teacher do not understand AI limit, they will give wrong guide to student. Last term, our teacher use AI make worksheet, and AI put wrong math formula inside. Many student finish homework based on that wrong content. After that incident, our school hold workshop to teach teacher AI basic knowledge.",
+      expected: ["Teacher need learn", "before bring it to classroom", "teacher do not understand AI limit", "wrong guide to student", "our teacher use AI make worksheet", "Many student", "our school hold workshop", "teach teacher AI basic knowledge"],
+    },
+    {
+      id: "blind-9",
+      draft: "AI can help student build self-learning skill. Student can ask AI question anytime, even at night. But AI can not judge whether student really understand the concept. Some student just ask AI give answer directly, and skip thinking process. I think school should teach digital literacy class, so student know how to use AI as learning partner, not answer machine.",
+      expected: ["help student build self-learning skill", "Student can ask AI question", "AI can not judge whether student really understand", "Some student just ask AI give answer directly, and skip thinking process", "school should teach digital literacy class, so student know", "as learning partner, not answer machine"],
+    },
+    {
+      id: "blind-10",
+      draft: "AI technology in education grow very fast. A famous research say AI can cut student study time by 40%. The researcher claim this experiment test 2000 student, but I cannot find the original paper anywhere. When I use AI for my language study, my reading speed improve a lot. Therefore, all school should buy expensive AI learning system immediately.",
+      expected: ["AI technology in education grow", "A famous research say", "cut student study time", "The researcher claim this experiment test 2000 student", "my reading speed improve a lot", "all school should buy expensive AI learning system"],
+    },
+  ];
+  for (const test of blindCalibrationCases) {
+    const checked = await post({ phase: "initial", draft: test.draft, mode: "coach" });
+    assert.equal(checked.response.status, 200, `${test.id} request failed`);
+    assert.ok(checked.data.feedback.every((item) => test.draft.toLocaleLowerCase().includes(item.quote.toLocaleLowerCase())), `${test.id} contains an unlocatable quote`);
+    assertNoSameErrorDuplicates(checked.data.feedback, `${test.id} diagnosis`);
+    if (checked.data.provider === "demo") {
+      for (const expected of test.expected) {
+        assert.ok(checked.data.feedback.some((item) => item.quote.toLocaleLowerCase() === expected.toLocaleLowerCase()), `${test.id} did not identify: ${expected}`);
+      }
+    }
+  }
+
   const secondDraft = "AI feedback can support university writers when learners evaluate each suggestion. However, many student is still accepting vague claims without evidence.";
   const revisionCheck = await post({
     phase: "revision",

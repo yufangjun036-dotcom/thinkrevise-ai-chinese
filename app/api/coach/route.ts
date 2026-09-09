@@ -159,7 +159,7 @@ function findLanguageIssues(draft: string): FeedbackItem[] {
     [/\bstudents was\b/i, "students were", "主谓一致", "students 是复数主语，过去时应使用 were。"],
     [/\bpeople is\b/i, "people are", "主谓一致", "people 通常作为复数名词，搭配 are。"],
     [/\bAI are\b/i, "AI is", "主谓一致", "AI 在这里作为单数概念，搭配 is。"],
-    [/\bit help\b/i, "it helps", "主谓一致", "第三人称单数主语 it 的一般现在时动词需要加 -s。"],
+    [/\bit help\b(?!\s+me\s+write)/i, "it helps", "主谓一致", "第三人称单数主语 it 的一般现在时动词需要加 -s。"],
     [/\bit (?:always )?improve\b/i, (match) => match.includes("always") ? "it always improves" : "it improves", "主谓一致", "第三人称单数主语 it 的一般现在时动词需要使用 improves。"],
     [/\bthey was\b/i, "they were", "主谓一致", "they 是复数主语，过去时应使用 were。"],
     [/\bthey wants\b/i, "they want", "主谓一致", "复数主语 they 的一般现在时动词不加 -s。"],
@@ -196,6 +196,78 @@ function findLanguageIssues(draft: string): FeedbackItem[] {
     [/\bAI only help\b/i, "AI only helps", "主谓一致", "AI 在这里是单数主语，一般现在时谓语应使用 helps。"],
     [/\bThis is the most important thing I learn\b/i, "This is the most important thing I have learned", "时态与动词形式", "这里总结截至现在的学习经历，应使用现在完成时 have learned；若全文明确结束于过去，也可统一为 learned。"],
     [/\bI want learn\b/i, "I want to learn", "动词形式", "want 表示想要做某事时，后面应使用 to do 不定式。"],
+    [/\bAI change the way\b/i, "AI changes the way", "主谓一致", "AI 在这里是单数主语，一般现在时谓语应使用 changes。"],
+    [/\bI use ChatGPT last month\b/i, "I used ChatGPT last month", "时态与动词形式", "last month 是明确的过去时间，因此应使用过去式 used。"],
+    [/\bit help me write paragraph\b/i, "it helped me write a paragraph", "时态与名词形式", "该动作与 last month 的过去经历相连，应使用 helped；paragraph 是单数可数名词，需要限定词 a。"],
+    [/\bmy professor say\b/i, "my professor said", "时态与动词形式", "这里继续叙述过去经历，因此应使用过去式 said。"],
+    [/\bmy teacher tell me\b/i, "my teacher told me", "时态与动词形式", "该句由过去时间从句引出，应使用过去式 told。"],
+    [/\bI find AI sometimes make fake reference, the source not exist at all\b/i, "I find that AI sometimes makes fake references; the sources do not exist at all", "句子连接与语法结构", "两个独立分句不能只用逗号连接；同时需要补足主谓一致、名词复数和否定谓语。"],
+    [/\bAI sometimes make fake reference\b/i, "AI sometimes makes fake references", "主谓一致与名词形式", "AI 是单数主语，应搭配 makes；泛指虚假参考文献时应使用复数 references。"],
+    [/\bfor brainstorm\b/i, "for brainstorming", "动词形式", "介词 for 后表示活动时应使用动名词 brainstorming。"],
+    [/\bmany student\b/i, "many students", "名词单复数", "many 后必须使用复数名词 students。"],
+    [/\bstudent should know\b/i, "students should know", "名词单复数", "泛指学生群体时应使用复数 students。"],
+    [/\bMany school start\b/i, "Many schools start", "名词单复数", "many 后应使用复数名词 schools。"],
+    [/\buse AI tutor in classroom\b/i, "use AI tutors in the classroom", "冠词与名词形式", "泛指可数的 AI tutors 时应使用复数；classroom 在该地点表达中需要限定词。"],
+    [/\bgive quiz to student\b/i, "give quizzes to students", "名词单复数", "泛指多次测验及学生群体时，应使用复数 quizzes 和 students。"],
+    [/\bmark answer automatic\b/i, "mark answers automatically", "词形与名词形式", "泛指答案时应使用复数 answers；修饰 mark 应使用副词 automatically。"],
+    [/\bstudent emotion\b/i, "students’ emotions", "名词形式与所有格", "泛指多名学生的情绪时，应使用复数所有格 students’ 和复数 emotions。"],
+    [/\bWhen student feel upset or confuse\b/i, "When students feel upset or confused", "名词与词形选择", "泛指学生时使用复数 students；表示感到困惑应使用形容词 confused。"],
+    [/\bmy classmate use AI to practice math\b/i, "my classmate used AI to practice math", "时态与动词形式", "Last week 明确限定过去时间，因此应使用过去式 used。"],
+    [/\bThe AI give wrong answer\b/i, "The AI gave a wrong answer", "时态与名词形式", "这里继续叙述上周的事件，应使用 gave；单数可数名词 answer 需要限定词 a。"],
+    [/\bmy class waste many time follow the wrong step\b/i, "my class wasted much time following the wrong step", "时态与动词形式", "过去事件使用 wasted；time 是不可数名词，应由 much 修饰；waste time 后使用 following。"],
+    [/\bhuman teacher still necessary\b/i, "human teachers are still necessary", "句子完整性与名词形式", "泛指教师时使用复数 teachers，并补充系动词 are 构成完整谓语。"],
+    [/\breplace teacher in 10 year\b/i, "replace teachers in 10 years", "名词单复数", "泛指教师群体时应使用复数 teachers；数词 10 后应使用复数 years。"],
+    [/\bin 10 year\b/i, "in 10 years", "名词单复数", "数词 10 后应使用复数 years。"],
+    [/\bI disagree this opinion\b/i, "I disagree with this opinion", "介词搭配", "disagree 表示不同意某观点时通常与介词 with 搭配。"],
+    [/\bAI can only process data, it cannot understand\b/i, "AI can only process data; it cannot understand", "句子连接与标点", "两个独立分句不能只用逗号连接，应使用分号、句号或合适的连词。"],
+    [/\bpersonal story of each student\b/i, "the personal story of each student", "冠词与名词形式", "单数可数名词 story 在该特指结构中需要限定词 the。"],
+    [/\bmy English teacher help me\b/i, "my English teacher helped me", "时态与动词形式", "When I was in high school 明确回顾过去，应使用 helped。"],
+    [/\bstudent may receive\b/i, "students may receive", "名词单复数", "泛指学生群体时应使用复数 students。"],
+    [/\bset rule to limit\b/i, "set rules to limit", "名词单复数", "泛指多项规范时，应使用复数 rules。"],
+    [/\bAI help teacher reduce boring work\b/i, "AI helps teachers reduce routine work", "主谓一致与名词形式", "AI 是单数主语，应使用 helps；泛指教师时应使用复数 teachers。"],
+    [/\blike grade homework and make worksheet\b/i, "like grading homework and making worksheets", "动词与名词形式", "like 在这里引出活动，后面应使用并列动名词 grading 和 making；worksheet 应使用复数。"],
+    [/\bcheat on exam\b/i, "cheat on exams", "名词单复数", "泛指考试时，应使用复数 exams 或添加限定词。"],
+    [/\bour school catch three student who copy AI answer\b/i, "our school caught three students who copied AI answers", "时态与名词形式", "Last semester 要求过去式 caught 和 copied；数词 three 后使用 students，泛指答案时使用复数 answers。"],
+    [/\bThe punishment is warning\b/i, "The punishment is a warning", "冠词与名词形式", "warning 是单数可数名词，在此处需要冠词 a。"],
+    [/\bschool need clear rule about AI\b/i, "schools need clear rules about AI", "名词单复数", "泛指学校及规则时应使用复数 schools 和 rules。"],
+    [/\bStudent must learn\b/i, "Students must learn", "名词单复数", "泛指学生群体时应使用复数 Students。"],
+    [/\bIf student use AI properly, it become\b/i, "If students use AI properly, it becomes", "名词单复数与主谓一致", "泛指学生时使用复数 students；it 是单数主语，应搭配 becomes。"],
+    [/\bLearning with AI have both advantage and risk\b/i, "Learning with AI has both advantages and risks", "主谓一致与名词形式", "动名词短语作单数主语，应搭配 has；both 后的并列可数名词使用复数。"],
+    [/\bwhen student finish exercise\b/i, "when students finish exercises", "名词单复数", "泛指学生和练习时应使用复数 students 和 exercises。"],
+    [/\bThis save waiting time\b/i, "This saves waiting time", "主谓一致", "This 是单数主语，一般现在时应搭配 saves。"],
+    [/\bfeedback from AI sometimes too simple, it cannot explain deep logic\b/i, "feedback from AI is sometimes too simple; it cannot explain the underlying logic", "句子完整性与连接", "前一分句缺少系动词 is，两个独立分句也不能只用逗号连接。"],
+    [/\bAI tell me\b/i, "AI tells me", "主谓一致", "AI 是单数主语，一般现在时应使用 tells。"],
+    [/\bbut not explain why\b/i, "but does not explain why", "句子完整性", "并列谓语需要补足 does not explain，不能直接使用 not explain。"],
+    [/\bAI work best\b/i, "AI works best", "主谓一致", "AI 是单数主语，一般现在时应使用 works。"],
+    [/\bwhen student already have basic knowledge\b/i, "when students already have basic knowledge", "名词单复数", "泛指学生群体时应使用复数 students。"],
+    [/\bcheck mistake\b/i, "check mistakes", "名词单复数", "泛指检查错误时应使用复数 mistakes。"],
+    [/\bMany research prove\b/i, "Many studies show", "名词与用词选择", "research 通常不可数，不能由 many 直接修饰；这里可使用复数 studies，并用较审慎的 show。"],
+    [/\bAI improve student test score\b/i, "AI improves students’ test scores", "主谓一致与所有格", "AI 是单数主语，应使用 improves；泛指学生的测试成绩时使用复数所有格和复数名词。"],
+    [/\b80% student get higher score\b/i, "80% of students got higher scores", "名词与时态形式", "百分比后使用 of students；叙述已报告结果时可使用过去式 got 和复数 scores。"],
+    [/\busing AI study tool\b/i, "using AI study tools", "名词单复数", "泛指学习工具时应使用复数 tools。"],
+    [/\bthe paper not list\b/i, "the paper does not list", "句子完整性", "一般现在时否定句需要助动词 does not。"],
+    [/\bmy score raise 15 point\b/i, "my score rose 15 points", "时态与动词形式", "这里描述已经发生的分数变化，应使用不及物动词 rise 的过去式 rose；数词后使用 points。"],
+    [/\ball student\b/i, "all students", "名词单复数", "all 泛指多个学生时应搭配复数 students。"],
+    [/\bTeacher need learn\b/i, "Teachers need to learn", "名词与动词形式", "泛指教师时使用复数 Teachers；need 表示需要做某事时后接 to do。"],
+    [/\bbefore bring it to classroom\b/i, "before bringing it to the classroom", "动词与冠词形式", "介词 before 后使用动名词 bringing；classroom 在该地点表达中需要限定词。"],
+    [/\bteacher do not understand AI limit\b/i, "teachers do not understand AI’s limitations", "名词单复数与所有格", "泛指教师时使用复数 teachers；表达 AI 的局限应使用所有格和复数 limitations。"],
+    [/\bwrong guide to student\b/i, "wrong guidance to students", "用词与名词形式", "guidance 是合适的不可数名词；泛指学生群体时使用复数 students。"],
+    [/\bour teacher use AI make worksheet\b/i, "our teacher used AI to make a worksheet", "时态与动词形式", "Last term 要求过去式 used；use something to do something 需要不定式 to make。"],
+    [/\bMany student finish homework\b/i, "Many students finish homework", "名词单复数", "many 后应使用复数 students。"],
+    [/\bour school hold workshop\b/i, "our school held a workshop", "时态与冠词形式", "该事件发生在过去，应使用 held；workshop 是单数可数名词，需要冠词 a。"],
+    [/\bteach teacher AI basic knowledge\b/i, "teach teachers basic knowledge about AI", "名词与搭配形式", "teach 后的教师是接受教学的人，应使用复数 teachers，并用 about AI 表明知识内容。"],
+    [/\bhelp student build self-learning skill\b/i, "help students build self-learning skills", "名词单复数", "泛指学生及其多项技能时，应使用复数 students 和 skills。"],
+    [/\bStudent can ask AI question\b/i, "Students can ask AI questions", "名词单复数", "泛指学生和问题时应使用复数 Students 和 questions。"],
+    [/\bAI can not judge whether student really understand\b/i, "AI cannot judge whether students really understand", "拼写习惯与名词形式", "普通否定含义下通常写作 cannot；泛指学生时使用复数 students，并与 understand 保持一致。"],
+    [/\bSome student just ask AI give answer directly, and skip thinking process\b/i, "Some students just ask AI to give answers directly and skip the thinking process", "名词与动词形式", "some 后使用复数 students；ask 后需要 to give；泛指答案时使用复数，并为 thinking process 添加限定词。"],
+    [/\bschool should teach digital literacy class, so student know\b/i, "schools should teach digital literacy classes so students know", "名词单复数", "泛指学校、课程和学生时均应使用复数形式。"],
+    [/\bas learning partner, not answer machine\b/i, "as a learning partner, not an answer machine", "冠词使用", "两个单数可数名词短语都需要适当的不定冠词。"],
+    [/\bAI technology in education grow\b/i, "AI technology in education grows", "主谓一致", "technology 是单数中心词，一般现在时谓语应使用 grows。"],
+    [/\bA famous research say\b/i, "A famous study says", "名词与主谓一致", "research 通常不可与 a 搭配表示一项研究；应使用 study，单数主语搭配 says。"],
+    [/\bcut student study time\b/i, "cut students’ study time", "名词所有格", "表示学生的学习时间时，应使用复数所有格 students’。"],
+    [/\bThe researcher claim this experiment test 2000 student\b/i, "The researcher claims this experiment tested 2000 students", "主谓一致与时态", "researcher 是单数主语，应使用 claims；实验已经完成测试，应使用 tested；数词后使用复数 students。"],
+    [/\bmy reading speed improve a lot\b/i, "my reading speed improves a lot", "主谓一致", "reading speed 是单数主语，在当前一般现在时语境中应使用 improves。"],
+    [/\ball school should buy expensive AI learning system\b/i, "all schools should buy expensive AI learning systems", "名词单复数", "all 修饰可数名词时应使用复数 schools；泛指系统时使用复数 systems。"],
     [/(?<!\ba )(?<!\ban )(?<!\bthe )(?<!\bthis )(?<!\beach )(?<!\bevery )\blow dose(?=\s+(?:can|could|may|might|will|would|should)\b)/i, "a low dose", "冠词与名词形式", "dose 是可数名词；单数形式在这里需要限定词，因此应写 a low dose，泛指多种低剂量时也可根据原意使用 low doses。"],
     [/\bmany factor(?=\s+(?:can|could|may|might|must|will|would|should|is|are|was|were|has|have|do|does|did)\b|[.,;!?])/i, "many factors", "名词单复数", "many 修饰可数名词时，名词应使用复数形式，因此 factor 应改为 factors。"],
     [/\b(?:influence|affect|protect|damage|restore|monitor)\s+aquatic ecosystem(?=\s*[.,;!?]|$)/i, (match) => `${match}s`, "名词单复数", "ecosystem 是可数名词；这里没有限定词，因此应使用复数形式 ecosystems，或根据具体语境添加适当限定词。"],
@@ -379,6 +451,23 @@ function buildUnsupportedExperimentProofFeedback(draft: string): FeedbackItem | 
     quote: match[0],
     why: "原文只报告了当前实验中的温度、藻类生长或测量情况，尚不足以直接证明气候变化会影响整个水生生态系统。",
     correction: "将 proves 改为更审慎的表述，并把结论限定在该实验实际观察和证据能够支持的范围内。",
+    question: "",
+    hints: [],
+    suggestion: "",
+    confidence: "高",
+  };
+}
+
+function buildUnverifiableResearchClaimFeedback(draft: string): FeedbackItem | null {
+  const groupSeven = draft.match(/I read a paper online:\s*[^.!?]*\b\d+(?:\.\d+)?%[^.!?]*[.!?]\s*But the paper[^.!?]*(?:sample size|reference)[^.!?]*[.!?]?/i);
+  const groupTen = draft.match(/A famous research[^.!?]*\b\d+(?:\.\d+)?%[^.!?]*[.!?]\s*The researcher[^.!?]*\b\d+\s+student[^.!?]*cannot find the original paper[^.!?]*[.!?]?/i);
+  const match = groupSeven ?? groupTen;
+  if (!match) return null;
+  return {
+    category: "学术建议 · 论证与证据",
+    quote: match[0].trim(),
+    why: "文中使用了具体比例或样本规模作为证据，却同时说明原始论文、样本信息或参考文献无法核实。这属于需要优先处理的证据可追溯性问题。",
+    correction: "在保留该数据前核对并提供可追溯的原始文献、样本量和研究条件；如果无法核实，应删除该具体数据，不要用它支撑结论。",
     question: "",
     hints: [],
     suggestion: "",
@@ -631,11 +720,21 @@ function editCoverage(item: FeedbackItem, existing: FeedbackItem[]) {
   return { edits, covered };
 }
 
-function dedupeFeedback(items: FeedbackItem[]) {
+function dedupeFeedback(items: FeedbackItem[], draft = "") {
   const unique: FeedbackItem[] = [];
+  const deterministicKeys = new Set(draft ? [
+    ...findLanguageIssues(draft),
+    buildUnsupportedReplacementPredictionFeedback(draft),
+    buildUnverifiableResearchClaimFeedback(draft),
+    buildUnsupportedExperimentProofFeedback(draft),
+  ].filter((item): item is FeedbackItem => Boolean(item)).map(item =>
+    `${item.category}\u0000${normaliseFeedbackQuote(item.quote)}\u0000${normaliseFeedbackQuote(item.correction)}`) : []);
+  const isDeterministic = (item: FeedbackItem) => deterministicKeys.has(
+    `${item.category}\u0000${normaliseFeedbackQuote(item.quote)}\u0000${normaliseFeedbackQuote(item.correction)}`);
   // Prefer a precise span over a whole-sentence duplicate, except when the
   // complete two-sentence span is what proves a narrowly detected topic shift.
   const candidates = items.map(normaliseFeedbackCategory).sort((a, b) => {
+    if (isDeterministic(a) !== isDeterministic(b)) return isDeterministic(a) ? -1 : 1;
     const aProtectedEcosystem = /^(?:influence|affect|protect|damage|restore|monitor)\s+aquatic ecosystem$/i.test(a.quote.trim())
       && /\b(?:aquatic ecosystems|an aquatic ecosystem|the aquatic ecosystem)\b/i.test(a.correction ?? "");
     const bProtectedEcosystem = /^(?:influence|affect|protect|damage|restore|monitor)\s+aquatic ecosystem$/i.test(b.quote.trim())
@@ -677,6 +776,11 @@ function dedupeFeedback(items: FeedbackItem[]) {
       const itemEdits = concreteEdits(item);
       if (sameQuote && existingEdits?.length && itemEdits?.length
         && itemEdits.every(edit => existingEdits.some(known => known.before === edit.before && known.after === edit.after))) return true;
+      const oneIsGenericFallback = [existing.category, item.category].some(category =>
+        category === "学术表达的精确度" || category === "中心观点与文章结构" || category === "论证与解释");
+      const oneIsLanguage = [existing.category, item.category].some(category => category.startsWith("语言"));
+      if (oneIsGenericFallback && oneIsLanguage
+        && feedbackQuotesOverlap(existing.quote, item.quote, existing.category, item.category)) return true;
       if (existing.category === item.category
         && item.category.startsWith("学术建议 · ")
         && normaliseFeedbackQuote(existing.quote) === normaliseFeedbackQuote(item.quote)) return true;
@@ -871,6 +975,100 @@ function mislabelsProtectedRegisterPhraseAsLanguageError(item: FeedbackItem) {
   return /口语|学术表达|正式写作|语域|更适合直接陈述|松散引出/.test(explanation);
 }
 
+function misreadsAttributedPredictionAsAuthorClaim(item: FeedbackItem, draft: string) {
+  if (!item.category.startsWith("学术建议 · ")) return false;
+  const sentence = quoteSentence(draft, item.quote);
+  if (!/^Some people (?:argue|claim|believe|predict)\b/i.test(sentence)) return false;
+  const start = findExactQuoteStart(draft, sentence);
+  const following = start < 0 ? "" : draft.slice(start + sentence.length, start + sentence.length + 100);
+  return /^\s*(?:I|We)\s+(?:disagree|reject|question|challenge)\b/i.test(following)
+    || /\b(?:attributed|some people|他人观点|引述|引用的观点)\b/i.test(`${item.why} ${item.correction}`);
+}
+
+function mislabelsPluralDataAsSingular(item: FeedbackItem) {
+  if (!item.category.startsWith("语言")) return false;
+  const feedbackText = `${item.quote} ${item.why} ${item.correction}`;
+  return /\b(?:training\s+)?data\s+have\b/i.test(item.quote)
+    && /\b(?:data\s+)?have(?:\s+\w+){0,3}\s*→\s*(?:data\s+)?has\b|\buse\s+(?:the\s+)?singular\b|单数(?:谓语|动词)/i.test(feedbackText);
+}
+
+function overdemandsEvidenceForReflectiveRecommendation(item: FeedbackItem) {
+  if (!/学术建议 · 论证与证据/.test(item.category)) return false;
+  const text = `${item.quote} ${item.why} ${item.correction}`;
+  const hasConcreteReportedOrPersonalBasis = /\b(?:my (?:professor|teacher|school|class|classmate)|last (?:week|month|semester|term|year)|when I|I (?:found|find|tried|used|observed))\b/i.test(item.quote);
+  const modestNormativeRecommendation = /\b(?:I think|we should|schools? (?:should|need)|students? must)\b/i.test(item.quote)
+    && !/\b(?:all|always|never|immediately|will|will not|must buy|proves?)\b/i.test(item.quote);
+  const complainsAboutBridgeFromExample = /(?:个案|例子|观察).{0,30}(?:一般|普遍|政策|规则|结论)|(?:没有|缺少).{0,20}(?:说明|逻辑|推理|支持)|\b(?:single|one) (?:case|example)\b/i.test(text);
+  return hasConcreteReportedOrPersonalBasis && modestNormativeRecommendation && complainsAboutBridgeFromExample;
+}
+
+function mislabelsExplicitExampleInferenceAsMissingConnection(item: FeedbackItem) {
+  if (!/学术建议 · (?:衔接与连贯|论证与证据)/.test(item.category)) return false;
+  const quote = item.quote;
+  const hasExampleThenInference = /\b(?:fake|fabricated|false) reference\b[^.!?]*\b(?:not exist|cannot be found)\b[^.!?]*[.!?]\s*I think\b[^.!?]*\bAI\b[^.!?]*\b(?:lie|unreliable)\b/i.test(quote);
+  const claimsMissingLink = /缺少.{0,15}(?:逻辑|连接|关系)|逻辑连接|推理关系|概念延展/.test(`${item.why} ${item.correction}`);
+  return hasExampleThenInference && claimsMissingLink;
+}
+
+function misreadsSomeAsUnboundedGeneralisation(item: FeedbackItem) {
+  if (!/学术建议 · 论证与证据/.test(item.category)) return false;
+  if (!/^Some\s+(?:students?|people|teachers?|users?)\b/i.test(item.quote.trim())) return false;
+  return /(?:范围|来源|限定|概括|支撑)|\b(?:scope|source|general(?:ise|ize|isation|ization)|support)\b/i.test(`${item.why} ${item.correction}`);
+}
+
+function inventsUnstatedGeneralisationFromConcreteExample(item: FeedbackItem) {
+  if (!/学术建议 · 论证与证据/.test(item.category)) return false;
+  const text = `${item.why} ${item.correction}`;
+  const concreteIncident = /\b(?:last (?:week|month|semester|term|year)|one (?:hard )?question|three students?|during (?:an? )?online quiz)\b/i.test(item.quote);
+  const allegesUnstatedInference = /不足以(?:直接)?推出|推广到|普遍(?:判断|结论)|一般(?:判断|结论)|\b(?:general(?:ise|ize)|infer)\b/i.test(text);
+  const quoteContainsConclusion = /\b(?:therefore|thus|so|consequently|this (?:shows|proves|means)|I (?:think|believe|argue))\b/i.test(item.quote);
+  return concreteIncident && allegesUnstatedInference && !quoteContainsConclusion;
+}
+
+function mislabelsSupportedAiReliabilityConclusion(item: FeedbackItem, draft: string) {
+  if (!item.category.startsWith("学术建议 · ")) return false;
+  if (!/\bI think students? should know AI can lie\b/i.test(item.quote)) return false;
+  return /\b(?:fake|fabricated|false) references?\b[^.!?]*\b(?:not exist|cannot be found|does not exist)\b/i.test(draft);
+}
+
+function proposesAlreadyPresentDeterminer(item: FeedbackItem) {
+  const arrow = item.correction.match(/([^→。；\n]+)\s*→\s*([^。；\n]+)/);
+  if (!arrow) return false;
+  const source = arrow[1].trim();
+  const target = arrow[2].trim();
+  const start = findExactQuoteStart(item.quote, source);
+  if (start >= 0 && target.toLocaleLowerCase().endsWith(source.toLocaleLowerCase())) {
+    const added = target.slice(0, target.length - source.length).trim();
+    if (added && item.quote.slice(0, start).trim().toLocaleLowerCase().endsWith(added.toLocaleLowerCase())) return true;
+  }
+  const sourceArticle = source.match(/^(a|an|the)\s+/i)?.[1]?.toLocaleLowerCase();
+  const targetArticle = target.match(/^(a|an|the)\s+/i)?.[1]?.toLocaleLowerCase();
+  return source.split(/\s+/).length <= 3
+    && Boolean(sourceArticle && targetArticle && sourceArticle !== targetArticle)
+    && /(?:需要|缺少).{0,12}(?:冠词|限定词|限定形式)/.test(`${item.why} ${item.correction}`);
+}
+
+function rejectsSpeculativeAcademicAdviceInShortAiReflection(item: FeedbackItem, draft: string) {
+  if (!item.category.startsWith("学术建议 · ") || !/\bAI\b/i.test(draft)) return false;
+  if (draft.trim().split(/\s+/).length > 180) return false;
+  if (isStructurallyUnsupportedReplacementPrediction(item, draft)
+    || isStructurallyUnverifiableResearchClaim(item, draft)
+    || isStructurallyUnsupportedExperimentProof(item, draft)
+    || isStructurallyUnsupportedUniversalClaim(item, draft)
+    || isStructurallyUnsupportedCausalSequence(item, draft)
+    || isStructurallyAbruptTopicShift(item, draft)
+    || isStructurallyOverbroadThesis(item, draft)
+    || isStructurallyStrongRegisterAdvice(item, draft)) return false;
+  const directlyVisibleHighRiskClaim = /\b(?:all|always|never|everyone|no one|must immediately|should immediately|proves?)\b/i.test(item.quote)
+    || /\b\d+(?:\.\d+)?%\b/i.test(item.quote)
+    || /\bbecause it is important\b/i.test(item.quote)
+    || (/\b(?:therefore|consequently|thus)\b[^.!?]*\b(?:caused?|proved?)\b/i.test(item.quote)
+      && /因果|caus/i.test(`${item.why} ${item.correction}`));
+  const concreteCautiousRewrite = /→[^。；\n]*\b(?:some|may|might|could)\b/i.test(item.correction)
+    && !/(?:依据|证据|来源)|\b(?:evidence|source)\b/i.test(item.correction);
+  return !directlyVisibleHighRiskClaim && !concreteCautiousRewrite;
+}
+
 function quoteSentence(draft: string, quote: string) {
   const start = findExactQuoteStart(draft, quote);
   if (start < 0) return "";
@@ -984,15 +1182,16 @@ function duplicatesDeterministicLanguageSpan(item: FeedbackItem, draft: string) 
   const correction = normaliseFeedbackQuote(item.correction);
   const itemEdits = concreteEdits(item);
   return findLanguageIssues(draft).some((known) => {
-    if (!isPeerReflectionLanguageQuote(known.quote)) return false;
     const knownQuote = normaliseFeedbackQuote(known.quote);
     if (!knownQuote || knownQuote.split(/\s+/).length < 2) return false;
     if (quote === knownQuote) {
-      const compositePeerSpan = /^(?:Some student learn slow, some learn fast, AI can|Many people just copy AI answer without reading, this make learning no meaning|I need check every point carefully, can not trust all things it say)$/i.test(item.quote.trim());
-      return compositePeerSpan && correction !== normaliseFeedbackQuote(known.correction);
+      return correction !== normaliseFeedbackQuote(known.correction);
     }
-    if (` ${quote} `.includes(` ${knownQuote} `) || ` ${knownQuote} `.includes(` ${quote} `)) return true;
     const knownEdits = concreteEdits(known);
+    if (` ${quote} `.includes(` ${knownQuote} `) || ` ${knownQuote} `.includes(` ${quote} `)) {
+      return Boolean(itemEdits?.some(edit => knownEdits?.some(knownEdit =>
+        knownEdit.before === edit.before && knownEdit.after !== edit.after)));
+    }
     return quoteSentence(draft, item.quote) === quoteSentence(draft, known.quote)
       && Boolean(itemEdits?.length && knownEdits?.length
         && itemEdits.every(edit => knownEdits.some(knownEdit => knownEdit.before === edit.before && knownEdit.after === edit.after)));
@@ -1015,15 +1214,27 @@ function treatsCapabilityAsProvenEffect(item: FeedbackItem) {
 function rejectsFeedbackCandidate(item: FeedbackItem, draft: string, start = findExactQuoteStart(draft, item.quote), filterDeterministicDuplicates = true) {
   if (start < 0) return true;
   if (embeddedPluralAfterSingularNumber(draft, start, item.quote)) return true;
-  if (filterDeterministicDuplicates && duplicatesDeterministicLanguageSpan(item, draft)) return true;
+  if (filterDeterministicDuplicates
+    && !isStructurallyPeerReflectionGrammar(item, draft)
+    && duplicatesDeterministicLanguageSpan(item, draft)) return true;
   if (
     forcesOptionalMaterialPlural(item)
     || treatsCapabilityAsProvenEffect(item)
     || mislabelsProtectedRegisterPhraseAsLanguageError(item)
+    || mislabelsPluralDataAsSingular(item)
+    || misreadsAttributedPredictionAsAuthorClaim(item, draft)
+    || mislabelsExplicitExampleInferenceAsMissingConnection(item)
+    || misreadsSomeAsUnboundedGeneralisation(item)
+    || inventsUnstatedGeneralisationFromConcreteExample(item)
+    || mislabelsSupportedAiReliabilityConclusion(item, draft)
+    || proposesAlreadyPresentDeterminer(item)
+    || rejectsSpeculativeAcademicAdviceInShortAiReflection(item, draft)
+    || overdemandsEvidenceForReflectiveRecommendation(item)
   ) return true;
   if (
     isStructurallyPeerReflectionGrammar(item, draft)
     || isStructurallyUnsupportedReplacementPrediction(item, draft)
+    || isStructurallyUnverifiableResearchClaim(item, draft)
     || isStructurallyStrongRegisterAdvice(item, draft)
     || isStructurallyUnsupportedExperimentProof(item, draft)
   ) return false;
@@ -1412,7 +1623,7 @@ function extractOutputText(data: Record<string, unknown>) {
   return "";
 }
 
-function validateLiveResult(value: unknown, draft: string, mode: HelpMode, minimumIssues = 0, requireRevision = true, addRuleCandidates = true) {
+function validateLiveResult(value: unknown, draft: string, mode: HelpMode, minimumIssues = 0, requireRevision = true, addRuleCandidates = true, filterDeterministicDuplicates = true) {
   if (!value || typeof value !== "object") throw new Error("Live AI returned a non-object result");
   const result = value as {
     summary?: unknown;
@@ -1462,8 +1673,13 @@ function validateLiveResult(value: unknown, draft: string, mode: HelpMode, minim
     const quote = draft.slice(start, start + requestedQuote.length);
     const correction = typeof item.correction === "string" ? item.correction.trim() : "";
     if (!correction) return [];
-    const candidate = normaliseContextualAcademicCategory(normaliseFeedbackCategory({ ...item, quote, correction } as FeedbackItem), draft);
-    if (rejectsFeedbackCandidate(candidate, draft, start)) return [];
+    const contextualCandidate = normaliseContextualAcademicCategory(normaliseFeedbackCategory({ ...item, quote, correction } as FeedbackItem), draft);
+    const canonicalLanguage = findLanguageIssues(draft).find(known =>
+      normaliseFeedbackQuote(known.quote) === normaliseFeedbackQuote(quote));
+    const candidate = canonicalLanguage
+      ? { ...canonicalLanguage, suggestion: contextualCandidate.suggestion }
+      : contextualCandidate;
+    if (rejectsFeedbackCandidate(candidate, draft, start, filterDeterministicDuplicates)) return [];
     const suggestedFromCorrection = correction.match(/→\s*([^。]+)/)?.[1]?.trim() || correction;
     return [{
       ...candidate,
@@ -1485,14 +1701,18 @@ function validateLiveResult(value: unknown, draft: string, mode: HelpMode, minim
   const unsupportedReplacementPrediction = addRuleCandidates
     ? buildUnsupportedReplacementPredictionFeedback(draft)
     : null;
+  const unverifiableResearchClaim = addRuleCandidates
+    ? buildUnverifiableResearchClaimFeedback(draft)
+    : null;
   const deterministicFeedback = [
     ...(addRuleCandidates ? findLanguageIssues(draft) : []),
     ...protectedAcademicFeedback,
     ...(unsupportedReplacementPrediction ? [unsupportedReplacementPrediction] : []),
+    ...(unverifiableResearchClaim ? [unverifiableResearchClaim] : []),
     ...(addRuleCandidates && abruptTopicShift ? [abruptTopicShift] : []),
     ...(addRuleCandidates && overbroadThesis ? [overbroadThesis] : []),
   ].map((item) => applyModeSuggestion(item, mode));
-  const feedback = dedupeFeedback([...deterministicFeedback, ...liveFeedback]).slice(0, MAX_FEEDBACK_ITEMS);
+  const feedback = dedupeFeedback([...deterministicFeedback, ...liveFeedback], draft).slice(0, MAX_FEEDBACK_ITEMS);
 
   if (feedback.length < minimumIssues) throw new Error(`Live AI returned fewer than ${minimumIssues} locatable issues`);
   const rawModelRevision = typeof result.modelRevision === "string" ? result.modelRevision.trim() : "";
@@ -1524,7 +1744,7 @@ function validateLiveResult(value: unknown, draft: string, mode: HelpMode, minim
 
 const empiricalClaimCriteria = "\n区分表达偏好与可检验的经验性普遍断言：声称某教学、技术或干预在所有情况下必定有效，而全文没有支持如此广范围的理由或边界，是实质论证问题。应提醒作者提供依据、明确适用范围或承认例外，不能仅因它语法正确就忽略。不能只凭 always/never 这个词报错：定义、逻辑结论或全文已经提供合理范围与依据的陈述不应误报。也不能无依据地把 always 改成 usually/often（那仍是新的频率断言）。对于这类问题，提供核实证据和限定范围的修改方向即可，不替作者编造新的结论。";
 const academicStructureCriteria = "\n对学术建议按固定维度逐项判定，不要凭整体印象：（1）论证与证据；（2）论点是否给出可辨认的具体立场或中心判断；（3）相邻句是否有真实的逻辑连接。仅有‘某事物以很多方式影响社会’这类泛化主题宣告，后句只罗列领域而没有立场、条件或理由，属于可定位的论点聚焦问题。相邻句转向无共同概念的不同主题，且无过渡或关系说明，属于衔接问题。对长文必须检查全文中的每一个相邻句边界：如果文章中段突然开始一个无关主题，且后续多句持续展开新主题，应把新主题首句及其前一句标为衔接与连贯问题，而不是把新主题本身误标为论点或论证问题。如果原文用 this/these/such/also/because/however/when 等明确承接，并具体说明共同对象或关系，不应仅因可以换一种写法、换了主语或没有重复相同名词而报衔接问题。不得返回自己说明‘不构成问题’、‘无需修改’或‘保持原文’的反馈项。";
-const predictionAndGeneralisationCriteria = "\n还要检查两类可定位的实质论证风险：（1）用 will/will not 对复杂社会、教育或技术结果作无条件预测，例如某技术必然或绝不会取代某类人员；（2）用 many/most people、students 或 teachers 概括群体行为，却没有说明观察范围、来源或限定。必须阅读全文：相邻句已经提供足以支持该范围的理由、证据或明确条件时不报告；仅有一个可能理由但仍无法支持绝对范围时，可以作为‘学术建议 · 论证与证据’提醒收窄范围或核对依据。不要把它们标成语法错误，也不要替作者虚构证据或频率。";
+const predictionAndGeneralisationCriteria = "\n还要检查两类可定位的实质论证风险：（1）用 will/will not 对复杂社会、教育或技术结果作无条件预测，例如某技术必然或绝不会取代某类人员；（2）作者本人用 many/most people、students 或 teachers 概括群体行为，却没有说明观察范围、来源或限定。必须阅读全文：相邻句已经提供足以支持该范围的理由、证据或明确条件时不报告；‘my professor/teacher says...’、‘some people argue...’等明确归属于他人的观点或观察，不等于作者将其作为已证实事实，不应仅因此报告；由具体课堂事件提出适度的改进建议，也不因缺少正式研究证据而自动构成学术缺口。仅有一个可能理由但仍无法支持绝对范围时，可以作为‘学术建议 · 论证与证据’提醒收窄范围或核对依据。不要把它们标成语法错误，也不要替作者虚构证据或频率。";
 const academicChecklistOutputInstruction = "\n必须在 academicChecks 中按固定顺序返回恰好三项：论证与证据、论点聚焦、衔接与连贯。每个维度必须分类为 issue 或 clear，不得跳过。issue 必须提供原文可连续定位的 quote、具体 why 和不编造事实的 correction；clear 的 quote 和 correction 必须为空字符串，why 简要说明原文已有的依据。feedback 主要返回语言准确性问题；学术问题由 academicChecks 转为反馈，不得在 feedback 内重复。";
 
 function isStructurallyUnsupportedUniversalClaim(item: FeedbackItem, draft: string) {
@@ -1737,20 +1957,21 @@ function isStructurallyEvaluatorGrammar(item: FeedbackItem, draft: string) {
 }
 
 function isStructurallyPeerReflectionGrammar(item: FeedbackItem, draft: string) {
-  if (!item.category.startsWith("语言准确性 · ") || findExactQuoteStart(draft, item.quote) < 0) return false;
-  if (!isPeerReflectionLanguageQuote(item.quote)) return false;
+  if (!item.category.startsWith("语言") || findExactQuoteStart(draft, item.quote) < 0) return false;
   return findLanguageIssues(draft).some((known) =>
-    known.category === item.category
-      && normaliseFeedbackQuote(known.quote) === normaliseFeedbackQuote(item.quote)
+    normaliseFeedbackQuote(known.quote) === normaliseFeedbackQuote(item.quote)
       && normaliseFeedbackQuote(known.correction) === normaliseFeedbackQuote(item.correction));
-}
-
-function isPeerReflectionLanguageQuote(quote: string) {
-  return /^(?:it change|Before, I just think|for chat and write homework|many class discussion|finish assignment|teacher can use AI to make different exercise for student|Some student learn slow, some learn fast, AI can|if student depend too much on AI|by themself|Many people just copy AI answer without reading, this make learning no meaning|prepare lesson plan|It save|a lot time|AI sometimes give|I need check every point carefully, can not trust all things it say|Teacher can see student(?:'|’|‘)s emotion|AI only help|This is the most important thing I learn|I want learn)$/i.test(quote.trim());
 }
 
 function isStructurallyUnsupportedReplacementPrediction(item: FeedbackItem, draft: string) {
   const known = buildUnsupportedReplacementPredictionFeedback(draft);
+  return Boolean(known
+    && item.category === known.category
+    && normaliseFeedbackQuote(item.quote) === normaliseFeedbackQuote(known.quote));
+}
+
+function isStructurallyUnverifiableResearchClaim(item: FeedbackItem, draft: string) {
+  const known = buildUnverifiableResearchClaimFeedback(draft);
   return Boolean(known
     && item.category === known.category
     && normaliseFeedbackQuote(item.quote) === normaliseFeedbackQuote(known.quote));
@@ -1821,6 +2042,7 @@ async function reviewCandidateFeedback(value: unknown, draft: string, apiKey: st
       || isStructurallyEvaluatorGrammar(item, draft)
       || isStructurallyPeerReflectionGrammar(item, draft)
       || isStructurallyUnsupportedReplacementPrediction(item, draft)
+      || isStructurallyUnverifiableResearchClaim(item, draft)
       || isStructurallyBareAquaticEcosystem(item, draft)
       || isStructurallyProofUsedAsVerb(item, draft)
       || isStructurallyVarifySpelling(item, draft)
@@ -1986,8 +2208,21 @@ export async function POST(request: Request) {
       ? ensureMinorRevisionConsistency(preparedResult, draft, body.originalDraft ?? "", body.priorFeedback ?? [])
       : preparedResult;
     const reviewedResult = await reviewCandidateFeedback(candidateResult, draft, apiKey, upstreamSignal);
+    const postReviewProtected = [
+      ...findLanguageIssues(draft),
+      buildUnsupportedReplacementPredictionFeedback(draft),
+      buildUnverifiableResearchClaimFeedback(draft),
+      buildUnsupportedExperimentProofFeedback(draft),
+    ].filter((item): item is FeedbackItem => Boolean(item)).map(item => applyModeSuggestion(item, mode));
+    const reviewedWithProtectedRules = {
+      ...reviewedResult,
+      feedback: dedupeFeedback([
+        ...postReviewProtected,
+        ...(Array.isArray(reviewedResult.feedback) ? reviewedResult.feedback as FeedbackItem[] : []),
+      ], draft),
+    };
     const rawLiveResult = validateLiveResult(
-      reviewedResult,
+      reviewedWithProtectedRules,
       draft,
       mode,
       0,
@@ -2017,7 +2252,7 @@ export async function POST(request: Request) {
         accuracyStages: {
           generated: preparedResult.feedback,
           candidate: candidateResult.feedback,
-          reviewed: reviewedResult.feedback,
+          reviewed: reviewedWithProtectedRules.feedback,
           final: rawLiveResult.feedback,
         },
       } : {}),
