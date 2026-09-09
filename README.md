@@ -151,8 +151,8 @@ Live benchmarks are intentionally separate because they consume API credit. The 
 
 - Chinese candidate build: automated release gate, real-phone core journeys, and three live-AI assistance-level checks passed
 - Independent academic-English review: pending and still required before a stable-release claim
-- English parity version: not started; begins only after the Chinese stable release
-- GitHub publication and public deployment: not yet performed
+- Independent English edition: complete and deployed separately at [https://thinkrevise-ai.vercel.app](https://thinkrevise-ai.vercel.app)
+- GitHub publication and public Chinese deployment: complete
 
 ## License
 
