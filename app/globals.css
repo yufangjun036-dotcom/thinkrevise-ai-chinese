@@ -222,6 +222,21 @@ textarea:focus, input:focus, select:focus { border-color: var(--blue); box-shado
 .self-check h2 { margin: 8px 0; font-size: 1.35rem; letter-spacing: -.025em; }
 .self-check p { margin: 0; color: #6c798e; font-size: .82rem; line-height: 1.6; }
 .self-check input, .self-check select { height: 48px; padding: 0 14px; font-size: .86rem; line-height: 1.4; }
+.assignment-brief { margin: 0 0 24px; padding: 24px; border: 1px solid #dce3ee; border-radius: 20px; background: #f8faff; }
+.assignment-brief-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.assignment-brief-heading h2, .feedback-decision h2 { margin: 7px 0; font-size: 1.35rem; letter-spacing: -.025em; }
+.assignment-brief-heading p, .feedback-decision p { margin: 0; max-width: 680px; color: #68768b; font-size: .84rem; line-height: 1.6; }
+.assignment-brief-heading .secondary-button { flex: 0 0 auto; min-height: 44px; padding: 0 16px; }
+.assignment-brief-fields, .feedback-decision { margin-top: 20px; display: grid; grid-template-columns: minmax(0,1fr) minmax(180px,.35fr); gap: 16px; }
+.assignment-brief-fields label, .feedback-decision label { display: grid; gap: 8px; }
+.assignment-brief-fields label > span, .feedback-decision label > span { color: #33435b; font-size: .82rem; font-weight: 800; }
+.assignment-brief-fields .wide, .feedback-decision .wide { grid-column: 1 / -1; }
+.assignment-brief-fields input, .assignment-brief-fields textarea, .feedback-decision select, .feedback-decision textarea { width: 100%; padding: 12px 14px; border: 1px solid #ccd5e4; border-radius: 11px; background: #fff; color: var(--ink); font: inherit; font-size: .86rem; }
+.assignment-brief-fields textarea, .feedback-decision textarea { min-height: 88px; resize: vertical; line-height: 1.55; }
+.privacy-note { display: block; margin-top: 12px; color: #718096; font-size: .75rem; line-height: 1.5; }
+.feedback-decision { margin: 24px 0; padding: 24px; border: 1px solid #cfdaf2; border-radius: 18px; background: #f4f7fd; }
+.feedback-decision > div { grid-column: 1 / -1; }
+.feedback-decision select { min-height: 46px; }
 .error-message { margin: 18px 0 0; padding: 12px 14px; border-radius: 10px; background: #fff0f0; color: #a23131; font-size: .83rem; font-weight: 650; }
 .provider-status { margin: -5px 0 22px; padding: 10px 13px; display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 8px; border-radius: 11px; background: #f1f7f4; color: #347256; font-size: .76rem; }
 .provider-status > span { width: 8px; height: 8px; border-radius: 50%; background: #2fa36e; }
@@ -365,6 +380,7 @@ textarea:focus, input:focus, select:focus { border-color: var(--blue); box-shado
 .finish-actions { margin-top: 25px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px; }
 .finish-actions .primary-button { width: 100%; }
 .finish-actions button:disabled { opacity: .45; cursor: not-allowed; }
+.finish-actions.report-actions { grid-template-columns: 1fr 1fr 1.35fr; }
 
 button:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid rgba(33,85,217,.28); outline-offset: 2px; }
 
@@ -410,8 +426,11 @@ button:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-
   .help-grid button { min-height: 205px; }
   .vocabulary-list { grid-template-columns: 1fr; }
   .vocabulary-list > button.open { grid-column: auto; }
-  .draft-tools, .self-check { grid-template-columns: 1fr; }
+  .draft-tools, .self-check, .assignment-brief-fields, .feedback-decision { grid-template-columns: 1fr; }
   .self-check > div { grid-row: auto; }
+  .assignment-brief-heading { display: grid; }
+  .assignment-brief-heading .secondary-button { width: 100%; }
+  .assignment-brief-fields .wide, .feedback-decision .wide { grid-column: auto; }
   .provider-status { grid-template-columns: auto 1fr; }
   .provider-status p { grid-column: 1/-1; }
   .result-summary { grid-template-columns: 1fr auto 1fr; }
@@ -422,7 +441,7 @@ button:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-
   .revision-review-list article { grid-template-columns: 1fr; gap: 6px; }
   .inline-issue-popover { position: fixed; z-index: 30; top: auto; right: 14px; bottom: 14px; left: 14px; width: auto; max-height: min(52vh,430px); overflow-y: auto; }
   .inline-issue-popover::before { display: none; }
-  .finish-actions { grid-template-columns: 1fr; }
+  .finish-actions, .finish-actions.report-actions { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after { scroll-behavior: auto!important; transition-duration: .01ms!important; }
