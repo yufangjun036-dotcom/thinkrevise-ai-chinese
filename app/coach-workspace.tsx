@@ -1,4 +1,5 @@
 "use client";
+import GrammarPractice from "./grammar-practice/practice";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import Image from "next/image";
@@ -924,6 +925,7 @@ export default function CoachWorkspace() {
       <div className="reflection-fields"><label><span>学习反思</span><strong>比较原稿、第二稿与最终版本，这一次你学到的最重要修改原则是什么？</strong><textarea value={reflection} maxLength={1000} onChange={(event) => setReflection(event.target.value)} placeholder="可以用中文或英文回答……" /></label></div>
       <div className="ai-record"><div><SparkIcon /><span>AI 贡献记录</span></div><p>AI 首先诊断原稿；学习者独立完成第二稿；AI 随后重新分析第二稿并处理仍存在的问题。最终文本仍需由学习者核对事实、立场与课程规定。</p></div>
       <div className="finish-actions report-actions"><button className="secondary-button" type="button" disabled={!reflection.trim()} onClick={async () => { await navigator.clipboard.writeText(buildLearningRecord()); setRecordCopied(true); }}>{recordCopied ? "学习记录已复制" : "复制学习记录"}</button><button className="secondary-button" type="button" disabled={!reflection.trim()} onClick={downloadLearningRecord}>下载学习报告</button><button className="primary-button" type="button" disabled={!reflection.trim()} onClick={() => { resetLearningWork(); setStage("home"); }}>完成并返回首页 <ArrowIcon /></button></div>
+      <GrammarPractice initial={response.feedback} recheck={revisionResponse.feedback} />
     </section>}
   </div></main>;
 }

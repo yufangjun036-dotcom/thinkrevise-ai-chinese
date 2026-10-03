@@ -446,3 +446,25 @@ button:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after { scroll-behavior: auto!important; transition-duration: .01ms!important; }
 }
+/* Independent optional practice: deliberately separate from diagnosis styles. */
+.grammar-practice { margin-top: 36px; padding: 28px; border: 1px solid #cbd8eb; border-radius: 22px; background: #f6f9ff; color: #20334f; }
+.grammar-practice-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.grammar-practice-heading > div { flex: 1; min-width: 0; }
+.grammar-practice-heading > button { flex-shrink: 0; }
+.grammar-practice .grammar-practice-heading h2 { font-size: 1.2rem; margin: 5px 0; }
+.grammar-practice .grammar-practice-heading p { margin: 4px 0; }
+.grammar-practice h2 { font-size: 1.5rem; margin: 6px 0 16px; }
+.grammar-practice p { line-height: 1.7; margin: 12px 0; }
+.grammar-practice-note { color: #526783; font-size: .92rem; }
+.grammar-practice-question { padding: 22px; margin: 22px 0; background: white; border: 1px solid #d9e2ef; border-radius: 16px; }
+.grammar-practice blockquote { margin: 16px 0; font-size: 1.15rem; line-height: 1.7; }
+.grammar-practice label { display: block; font-weight: 600; }
+.grammar-practice textarea { display: block; width: 100%; min-height: 90px; padding: 14px; margin-top: 10px; border: 1px solid #bacbe3; border-radius: 10px; font: inherit; color: #20334f; background: white; resize: vertical; }
+.grammar-practice-answer { margin-top: 20px; padding: 18px; border-radius: 12px; background: #eef6f2; overflow-wrap: anywhere; }
+.grammar-practice .attempt-needs-revision .grammar-practice-answer { background: #fff0f1; border: 1px solid #e5a5ae; }
+.grammar-practice .attempt-needs-revision textarea { border-color: #c94c60; color: #9b263b; background: #fff7f8; }
+.grammar-practice .attempt-needs-revision .practice-attempt-status { color: #9b263b; }
+.grammar-practice .attempt-reference .practice-attempt-status { color: #226747; }
+.grammar-practice .attempt-review .grammar-practice-answer { background: #f2f5f9; border: 1px solid #cbd5e1; }
+.grammar-practice .attempt-review .practice-attempt-status { color: #465972; }
+@media (max-width: 640px) { .grammar-practice { padding: 16px; } .grammar-practice-heading { align-items: flex-start; flex-direction: column; } .grammar-practice-question { padding: 14px; } }
