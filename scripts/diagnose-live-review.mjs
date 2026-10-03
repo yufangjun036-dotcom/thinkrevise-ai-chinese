@@ -10,7 +10,7 @@ require('@next/env').loadEnvConfig(process.cwd());
 assert.ok(process.env.OPENAI_API_KEY);
 let source=fs.readFileSync(new URL('../app/api/coach/route.ts',import.meta.url),'utf8').replace(/^import .*;\n/gm,'');
 source+='\nexport {reviewCandidateFeedback};';
-const compiled=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const compiled=ts.transpileModule(fs.readFileSync(new URL('../app/api/coach/upstream.ts',import.meta.url),'utf8')+'\n'+source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
 const sandbox={exports:{}};
 new Function('exports','require','module',compiled)(sandbox.exports,require,sandbox);
 const fixture=JSON.parse(fs.readFileSync('reports/accuracy/boundaries-2026-09-08T11-48-30-519Z.json','utf8')).results.find(item=>item.id==='unsupported-universal');

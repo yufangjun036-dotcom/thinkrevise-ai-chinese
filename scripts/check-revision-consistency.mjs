@@ -6,7 +6,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 let source = fs.readFileSync(new URL('../app/api/coach/route.ts', import.meta.url), 'utf8').replace(/^import .*;\n/gm, '');
 source += '\nexport { validateLiveResult, ensureMinorRevisionConsistency, addRevisionComparison, explicitlySaysNoIssue, reviewCandidateFeedback, isStructurallyUnsupportedUniversalClaim, isStructurallyAbruptTopicShift, isStructurallyOverbroadThesis, isStructurallyMissingPlanInfinitive, isStructurallyMissingPluralAfterMany, isStructurallyBareAquaticEcosystem, isStructurallyProofUsedAsVerb, isStructurallyVarifySpelling, schema };';
-const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const compiled = ts.transpileModule(fs.readFileSync(new URL('../app/api/coach/upstream.ts', import.meta.url), 'utf8') + '\n' + source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const sandbox = { exports: {} };
 new Function('exports', 'require', 'module', compiled)(sandbox.exports, require, sandbox);
 const f = sandbox.exports;

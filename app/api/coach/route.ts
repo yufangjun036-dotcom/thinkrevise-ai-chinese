@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { fetchCoachResponse, coachFailure } from "./upstream";
 import type { HelpMode } from "../../data";
 import { countNonWhitespaceCharacters, MAX_DRAFT_NON_WHITESPACE_CHARACTERS, MAX_RAW_DRAFT_CHARACTERS } from "../../text-limits";
 import { acquireAiRequest, readLimitedJson, requestBodyLimits } from "../security";
@@ -558,6 +559,14 @@ function findExactQuoteStart(source: string, quote: string) {
 }
 
 function normaliseFeedbackCategory(item: FeedbackItem): FeedbackItem {
+  const modalError = item.quote.match(/\b(can|could|may|might|must|shall|should|will|would)\s+([a-z]+)\b/i);
+  const modalEdits = concreteEdits(item);
+  if (modalError && modalEdits?.length === 1 && modalEdits[0].before === modalError[2].toLowerCase()
+    && /^[a-z]+$/.test(modalEdits[0].after)
+    && [`${modalEdits[0].after}s`, `${modalEdits[0].after}es`, `${modalEdits[0].after.replace(/y$/, "i")}es`].includes(modalEdits[0].before)) {
+    item = { ...item, category: "语言准确性 · 时态与动词形式",
+      why: `情态动词 ${modalError[1]} 后应使用动词原形 ${modalEdits[0].after}，而不是 ${modalEdits[0].before}。` };
+  }
   const quotedSentences = (item.quote ?? "").trim().split(/(?<=[.!?])\s+/).filter(Boolean);
   if (/中心观点|论点聚焦/.test(item.category ?? "")
     && /^because\b/i.test((item.quote ?? "").trim())
@@ -1198,6 +1207,12 @@ function contradictsVisibleNounForm(item: FeedbackItem) {
 }
 
 function ignoresExistingQualifier(item: FeedbackItem, draft: string) {
+  const sentence = quoteSentence(draft, item.quote) || item.quote;
+  // A denial of generalisability is not itself a universal positive claim.
+  // Keep this narrow: "cannot improve all ..." is NOT an epistemic limit.
+  if (item.category.startsWith("学术") && /过度概括|范围过大|推及|收窄|所有|概括群体/.test(`${item.why} ${item.correction}`)
+    && /\b(?:cannot|can't|does not|do not)\s+(?:necessarily\s+)?(?:tell\s+us\s+(?:how|whether)|show\s+(?:how|whether|that)|prove\s+that|establish\s+that|generalise\s+to|generalize\s+to)\b/i.test(sentence)
+    && !/\b(?:but|yet|however|nevertheless)\b[\s\S]*\b(?:all|every|always|everyone)\b/i.test(sentence)) return true;
   if (!/(?:限定条件|适用范围|加入限定|补充条件|避免绝对|什么情境)/.test(`${item.why} ${item.correction}`)) return false;
   if (/\b(?:when|if|provided that|as long as|where|in cases where)\b/i.test(item.quote)) return true;
   const start = draft.toLocaleLowerCase().indexOf(item.quote.toLocaleLowerCase());
@@ -1425,7 +1440,11 @@ function addRevisionComparison(
       remainingPrior.add(changedPrior);
       return { ...item, revisionStatus: "changed" as const };
     }
-    if (findExactQuoteStart(originalDraft, item.quote) >= 0 || approximatelyExistsInOriginal(originalDraft, item.quote)) {
+    // Similar surrounding wording cannot make a newly introduced erroneous
+    // form an initial miss (e.g. can finish -> can finishes).
+    const newErrorForm = concreteEdits(item)?.some(edit => edit.before.trim()
+      && findExactQuoteStart(originalDraft, edit.before) < 0);
+    if (findExactQuoteStart(originalDraft, item.quote) >= 0 || (!newErrorForm && approximatelyExistsInOriginal(originalDraft, item.quote))) {
       return { ...item, revisionStatus: "supplemental" as const };
     }
     return { ...item, revisionStatus: "changed" as const };
@@ -2106,6 +2125,34 @@ function isStructurallyUnsupportedCausalSequence(item: FeedbackItem, draft: stri
   return introductionOnly && causalConclusion && !qualified;
 }
 
+function recoverUnlistedModalRepairs(value: unknown, draft: string) {
+  if (!value || typeof value !== "object") return value;
+  const result = value as { feedback?: FeedbackItem[]; modelRevision?: string };
+  if (!Array.isArray(result.feedback) || !result.modelRevision) return value;
+  const before = draft.match(/[^.!?]+[.!?]*/g) ?? [];
+  const after = result.modelRevision.match(/[^.!?]+[.!?]*/g) ?? [];
+  if (before.length !== after.length) return value;
+  const recovered: FeedbackItem[] = [];
+  before.forEach((sentence, index) => {
+    const oldWords = sentence.match(/[A-Za-z]+/g) ?? [];
+    const newWords = after[index].match(/[A-Za-z]+/g) ?? [];
+    if (oldWords.length !== newWords.length) return;
+    oldWords.forEach((word, i) => {
+      const base = newWords[i];
+      if (!i || !/^(can|could|may|might|must|shall|should|will|would)$/i.test(oldWords[i - 1])) return;
+      if (!/^[a-z]+$/i.test(base) || ![`${base}s`, `${base}es`, `${base.replace(/y$/, "i")}es`].includes(word) || word === base) return;
+      const quote = `${oldWords[i - 1]} ${word}`;
+      if (!sentence.includes(quote) || result.feedback!.some(item => item.quote.includes(quote))) return;
+      recovered.push({ category: "语言准确性 · 时态与动词形式", quote,
+        why: `情态动词 ${oldWords[i - 1]} 后应使用动词原形 ${base}，而不是 ${word}。`,
+        correction: `${quote} → ${oldWords[i - 1]} ${base}`, confidence: "高", suggestion: "" });
+    });
+  });
+  // These are candidates, never automatically approved corrections. The
+  // independent reviewer and normal validation still decide whether to retain them.
+  return { ...result, feedback: [...result.feedback, ...recovered] };
+}
+
 async function reviewCandidateFeedback(value: unknown, draft: string, apiKey: string, signal: AbortSignal) {
   if (!value || typeof value !== "object") throw new Error("Invalid draft review");
   const result = value as { feedback?: unknown; modelRevision?: unknown };
@@ -2138,7 +2185,7 @@ async function reviewCandidateFeedback(value: unknown, draft: string, apiKey: st
       || isStructurallyVarifySpelling(item, draft)
       || isStructurallyStrongRegisterAdvice(item, draft)
       || isStructurallyUnsupportedExperimentProof(item, draft) ? [index] : []));
-  const response = await fetch("https://api.openai.com/v1/responses", {
+  const response = await fetchCoachResponse("https://api.openai.com/v1/responses", {
     method: "POST", signal,
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -2158,7 +2205,9 @@ async function reviewCandidateFeedback(value: unknown, draft: string, apiKey: st
   const approved = new Set(decision.approved);
   for (const index of rubricProtected) approved.add(index);
   console.info("Feedback review counts", { candidates: candidates.length, approved: approved.size });
-  if (result.modelRevision && (typeof decision.modelRevision !== "string" || !decision.modelRevision.trim())) throw new Error("Missing reviewed revision");
+  // No approved repairs means the unchanged draft IS the final text. The
+  // reviewer need not repeat it; an empty optional copy is not an AI outage.
+  if (result.modelRevision && approved.size && (typeof decision.modelRevision !== "string" || !decision.modelRevision.trim())) throw new Error("Missing reviewed revision");
   return { ...result, feedback: candidates.filter((_, index) => approved.has(index)), modelRevision: result.modelRevision ? (approved.size ? decision.modelRevision : draft) : "" };
 }
 
@@ -2253,7 +2302,7 @@ export async function POST(request: Request) {
   let upstreamStartedAt = totalStartedAt;
   try {
     upstreamStartedAt = Date.now();
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const response = await fetchCoachResponse("https://api.openai.com/v1/responses", {
       method: "POST",
       signal: upstreamSignal,
       headers: {
@@ -2293,7 +2342,7 @@ export async function POST(request: Request) {
     if (!outputText) throw new Error("The response did not contain output text");
     const upstreamMs = Date.now() - upstreamStartedAt;
     const validationStartedAt = Date.now();
-    const preparedResult = validateLiveResult(JSON.parse(outputText), draft, mode, 0, phase === "revision" || mode === "rewrite");
+    const preparedResult = validateLiveResult(recoverUnlistedModalRepairs(JSON.parse(outputText), draft), draft, mode, 0, phase === "revision" || mode === "rewrite");
     const candidateResult = phase === "revision"
       ? ensureMinorRevisionConsistency(preparedResult, draft, body.originalDraft ?? "", body.priorFeedback ?? [])
       : preparedResult;
@@ -2349,23 +2398,7 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("OpenAI coach request failed:", error instanceof Error ? error.message : "unknown_error");
-    const timedOut = error instanceof Error && ["TimeoutError", "AbortError"].includes(error.name);
-    const rawFallback = phase === "revision"
-      ? demoRevisionResponse(draft, body.taskPrompt)
-      : demoResponse(draft, mode, body.taskPrompt);
-    const fallback = phase === "revision"
-      ? ensureMinorRevisionConsistency(rawFallback, draft, body.originalDraft ?? "", body.priorFeedback ?? [])
-      : rawFallback;
-    const responseFallback = phase === "revision"
-      ? addRevisionComparison(fallback, draft, body.originalDraft ?? "", body.priorFeedback ?? [])
-      : fallback;
-    return json({
-      ...responseFallback,
-      provider: "demo",
-      fallbackNotice: timedOut
-        ? "实时 AI 等待时间过长，已自动切换到预配置演示反馈。"
-        : "AI 服务暂时不可用，已切换到预配置演示反馈。",
-    });
+    return json(coachFailure(error, false), 503);
   }
   } finally {
     access.release();
