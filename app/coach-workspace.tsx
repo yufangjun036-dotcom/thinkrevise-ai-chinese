@@ -1,5 +1,6 @@
 "use client";
 import GrammarPractice from "./grammar-practice/practice";
+import LinkedRevisionEditor from "./linked-revision-editor";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import Image from "next/image";
@@ -191,7 +192,7 @@ function InteractiveHighlightedDraft({
   activeIssue: number | null;
   pinnedIssue: number | null;
   onShowIssue: (index: number | null) => void;
-  onPinIssue: (index: number) => void;
+  onPinIssue: (index: number, sourceStart: number) => void;
   onDismiss: () => void;
   issueRefs: RefObject<Map<number, HTMLButtonElement>>;
 }) {
@@ -217,9 +218,9 @@ function InteractiveHighlightedDraft({
           }}
           aria-label={`查看问题：${range.issueIndexes.map((index) => feedback[index].category).join("、")}`}
           aria-expanded={isOpen}
-          onFocus={() => { if (pinnedIssue === null) onShowIssue(range.issueIndexes[0]); }}
+          onFocus={(event) => { if (pinnedIssue === null && event.currentTarget.matches(":focus-visible")) onShowIssue(range.issueIndexes[0]); }}
           onBlur={() => { if (pinnedIssue === null) onShowIssue(null); }}
-          onClick={() => onPinIssue(issueIndex)}
+          onClick={() => onPinIssue(issueIndex, text.toLocaleLowerCase().indexOf(item.quote.trim().replace(/^[“”"']+|[“”"']+$/g, "").toLocaleLowerCase(), range.start))}
         >
           {text.slice(range.start, range.end)}
         </button>
@@ -306,6 +307,8 @@ export default function CoachWorkspace() {
   const [feedbackDecisions, setFeedbackDecisions] = useState<FeedbackDecision[]>([]);
   const [activeIssue, setActiveIssue] = useState<number | null>(null);
   const [pinnedIssue, setPinnedIssue] = useState<number | null>(null);
+  const [linkedSourceStart, setLinkedSourceStart] = useState<number | undefined>();
+  const [locationNavigationId, setLocationNavigationId] = useState(0);
   const [loopStep, setLoopStep] = useState(0);
   const loopDragStartX = useRef<number | null>(null);
   const draftRef = useRef("");
@@ -341,9 +344,11 @@ export default function CoachWorkspace() {
     const normalized = response?.feedback.length ? (index + response.feedback.length) % response.feedback.length : 0;
     setActiveIssue(normalized);
     setPinnedIssue(pin ? normalized : null);
+    setLinkedSourceStart(undefined);
+    setLocationNavigationId(value => value + 1);
     window.requestAnimationFrame(() => {
       const mark = issueRefs.current.get(normalized);
-      mark?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+      mark?.scrollIntoView({ behavior: "instant", block: "center", inline: "nearest" });
       mark?.focus({ preventScroll: true });
     });
   }
@@ -351,6 +356,15 @@ export default function CoachWorkspace() {
   function dismissIssue() {
     setActiveIssue(null);
     setPinnedIssue(null);
+    setLinkedSourceStart(undefined);
+  }
+
+  function pinLinkedIssue(index: number, sourceStart: number) {
+    if (pinnedIssue === index && linkedSourceStart === sourceStart) { dismissIssue(); return; }
+    setActiveIssue(index);
+    setPinnedIssue(index);
+    setLinkedSourceStart(sourceStart);
+    setLocationNavigationId(value => value + 1);
   }
 
   function moveLoop(direction: -1 | 1) {
@@ -920,7 +934,7 @@ export default function CoachWorkspace() {
     {stage === "revise" && response && helpMode !== "rewrite" && <section className="flow-panel revise-panel">
       <div className="flow-heading compact-heading"><p className="overline">步骤 4 · 自己修改</p><h1>把文章问题改成你自己的第二稿</h1><p>左侧原稿用红色下划线标出反馈对应的位置，右侧由你完成修改。{helpMode === "model" ? "需要时可返回上一页查看局部示例。" : "系统不会提前替你改写。"}</p></div>
       <ProviderBadge response={response} />
-      <div className="comparison-grid revision-comparison"><div className="version-pane locked interactive-original"><div><span>带问题定位的原稿</span><strong>{draftWordCount} 词</strong></div><div className="issue-navigator" aria-label="逐项查看文章问题"><button type="button" onClick={() => showIssue((activeIssue ?? 0) - 1, true)} aria-label="查看上一个问题"><ArrowIcon back /></button><button type="button" className="issue-position" onClick={() => showIssue(activeIssue ?? 0, true)}>{activeIssue === null ? `查看全部 ${response.feedback.length} 项问题` : `问题 ${activeIssue + 1} / ${response.feedback.length} · ${response.feedback[activeIssue]?.category}`}</button><button type="button" onClick={() => showIssue((activeIssue ?? -1) + 1, true)} aria-label="查看下一个问题"><ArrowIcon /></button></div><aside className="draft-highlight-legend"><i />悬停查看提示；点击可固定，修改右侧时不会消失</aside><p className="interactive-draft-copy"><InteractiveHighlightedDraft text={draft} feedback={response.feedback} activeIssue={activeIssue} pinnedIssue={pinnedIssue} onShowIssue={setActiveIssue} onPinIssue={(index) => { if (pinnedIssue === index) dismissIssue(); else { setActiveIssue(index); setPinnedIssue(index); } }} onDismiss={dismissIssue} issueRefs={issueRefs} /></p></div><label className="version-pane editable"><div><span>你的第二稿</span><strong>{path === "practice" ? `${revisedWordCount} / 300 词` : `${revisedWordCount} 词 · ${revisedNonWhitespaceCount} / 6000 非空白字符`}</strong></div><textarea value={revisedDraft} maxLength={path === "practice" ? 6000 : MAX_RAW_DRAFT_CHARACTERS} onChange={(event) => updateRevisedDraft(event.target.value)} aria-label="修改后的英文文本" /></label></div>
+      <div className="comparison-grid revision-comparison"><div className="version-pane locked interactive-original"><div><span>带问题定位的原稿</span><strong>{draftWordCount} 词</strong></div><div className="issue-navigator" aria-label="逐项查看文章问题"><button type="button" onClick={() => showIssue((activeIssue ?? 0) - 1, true)} aria-label="查看上一个问题"><ArrowIcon back /></button><button type="button" className="issue-position" onClick={() => showIssue(activeIssue ?? 0, true)}>{activeIssue === null ? `查看全部 ${response.feedback.length} 项问题` : `问题 ${activeIssue + 1} / ${response.feedback.length} · ${response.feedback[activeIssue]?.category}`}</button><button type="button" onClick={() => showIssue((activeIssue ?? -1) + 1, true)} aria-label="查看下一个问题"><ArrowIcon /></button></div><aside className="draft-highlight-legend"><i />悬停查看提示；点击可固定并定位右侧，修改时不会消失</aside><p className="interactive-draft-copy"><InteractiveHighlightedDraft text={draft} feedback={response.feedback} activeIssue={activeIssue} pinnedIssue={pinnedIssue} onShowIssue={setActiveIssue} onPinIssue={pinLinkedIssue} onDismiss={dismissIssue} issueRefs={issueRefs} /></p></div><div className="version-pane editable linked-revision-pane"><div><label htmlFor="revision-draft-input">你的第二稿</label><strong>{path === "practice" ? `${revisedWordCount} / 300 词` : `${revisedWordCount} 词 · ${revisedNonWhitespaceCount} / 6000 非空白字符`}</strong></div><LinkedRevisionEditor original={draft} value={revisedDraft} onChange={updateRevisedDraft} issue={pinnedIssue !== null && response.feedback[pinnedIssue] ? {index: pinnedIssue, quote: response.feedback[pinnedIssue].quote, sourceStart: linkedSourceStart} : null} navigationId={locationNavigationId} maxLength={path === "practice" ? 6000 : MAX_RAW_DRAFT_CHARACTERS} /></div></div>
       <details className="revision-decisions"><summary>查看与调整反馈决定 · {feedbackDecisions.filter(item => item.action).length} / {response.feedback.length}</summary><p className="decision-guidance">均为选填，不需要选择所有建议。</p>{response.feedback.map((item, index) => <article key={index}><strong>问题 {index + 1} · {item.category}</strong><blockquote>{item.quote}</blockquote>{renderFeedbackDecision(index)}</article>)}</details>
       {revisionError && <p className="error-message" role="alert">{revisionError}</p>}
       <button className="primary-button wide-action" type="button" disabled={isReanalyzing || countNonWhitespaceCharacters(revisedDraft) < 20} onClick={reanalyzeSecondDraft}>{isReanalyzing ? "正在重新分析第二稿……" : "提交第二稿并重新分析"} <ArrowIcon /></button>
