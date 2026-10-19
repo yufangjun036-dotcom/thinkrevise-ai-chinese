@@ -48,6 +48,25 @@ type RevisionComparison = {
   supplementalCount: number;
 };
 
+function omitDuplicateAnaphoricEvidence(items: FeedbackItem[], draft: string): FeedbackItem[] {
+  const principle = (item: FeedbackItem) => item.category === "学术建议 · 论证与证据"
+    && /^(?:This|The|Our) (?:conclusion|inference|interpretation) (?:should|must) follows? (?:directly )?from (?:the )?(?:measurements|data|evidence|observations|results)[.!?]?$/i.test(item.quote.trim());
+  return items.filter(item => {
+    if (!principle(item)) return true;
+    const start = findExactQuoteStart(draft, item.quote);
+    if (start < 0) return true;
+    // Merge only an anaphoric restatement immediately after the already
+    // located substantive evidence problem. Retain that precise finding and
+    // all language repairs, including should follows -> should follow.
+    return !items.some(other => other !== item && other.category === item.category && !principle(other)
+      && (() => {
+        const previous = findExactQuoteStart(draft, other.quote);
+        return previous >= 0 && previous + other.quote.length <= start
+          && !draft.slice(previous + other.quote.length, start).trim();
+      })());
+  });
+}
+
 function qualifyReviewedProofClaim(revision: string, feedback: FeedbackItem[]): string {
   // Only soften an affirmative deictic proof claim explicitly diagnosed as an
   // evidence gap; do not globally replace "prove", negations, or formal proofs.
@@ -3724,6 +3743,7 @@ export async function POST(request: Request) {
       const reviewed = (Array.isArray(reviewedResult.feedback) ? reviewedResult.feedback as FeedbackItem[] : []).find(x => x.quote === item.quote && x.correction === item.correction && x.why === item.why);
       return reviewed ? { ...item, whyEnglish: reviewed.whyEnglish, correctionEnglish: reviewed.correctionEnglish } : item;
     });
+    rawLiveResult.feedback = omitDuplicateAnaphoricEvidence(rawLiveResult.feedback, draft);
     rawLiveResult.modelRevision = qualifyReviewedProofClaim(rawLiveResult.modelRevision, rawLiveResult.feedback);
     const responseResult = phase === "revision"
       ? addRevisionComparison(rawLiveResult, draft, body.originalDraft ?? "", body.priorFeedback ?? [])

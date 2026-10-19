@@ -6,7 +6,7 @@ const require=createRequire(import.meta.url),box={exports:{}};
 const source=fs.readFileSync(new URL('../app/api/coach/route.ts',import.meta.url),'utf8').replace(/^import .*;\n/gm,'')+'\nexport {validateLiveResult,guardAcademicReplacement,checkedSentenceFeedback,separateAcademicPolarityEdit,conflictingEventTimeIssues,reviewCandidateFeedback,dedupeFeedback};';
 new Function('exports','require','module','NextResponse','readLimitedJson','requestBodyLimits','acquireAiRequest',ts.transpileModule(fs.readFileSync(new URL('../app/text-limits.ts',import.meta.url),'utf8')+'\n'+fs.readFileSync(new URL('../app/api/coach/upstream.ts',import.meta.url),'utf8')+'\n'+source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(box.exports,require,box,{json:Response.json},async r=>({ok:true,value:await r.json()}),{coach:100000},async()=>({ok:true,release:async()=>{}}));
 const extra={exports:{}};
-const helperSource=fs.readFileSync(new URL('../app/api/coach/route.ts',import.meta.url),'utf8').replace(/^import .*;\n/gm,'')+'\nexport {reconcileUnappliedQuotedRepairs,attachEnglishFeedback,unresolvedComplementIssues,unappliedSentenceRepairIssues};';
+const helperSource=fs.readFileSync(new URL('../app/api/coach/route.ts',import.meta.url),'utf8').replace(/^import .*;\n/gm,'')+'\nexport {reconcileUnappliedQuotedRepairs,attachEnglishFeedback,unresolvedComplementIssues,unappliedSentenceRepairIssues,omitDuplicateAnaphoricEvidence};';
 new Function('exports','require','module',ts.transpileModule(helperSource,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(extra.exports,require,extra);
 const f={...box.exports,reconcileUnappliedQuotedRepairs:extra.exports.reconcileUnappliedQuotedRepairs,attachEnglishFeedback:extra.exports.attachEnglishFeedback};
 const partial=[{index:0,replacement:'The service provides a example.',why:'"a example" should be "an example."'}];
@@ -34,6 +34,9 @@ const academic=(quote,correction)=>({category:'学术建议 · 论证与证据',
 const caution='The interviews do not establish whether the programme improved reading ability.';
 assert.equal(f.validateLiveResult({feedback:[academic(caution,`${caution} → ${caution}`)]},caution,'coach',0,false,false).feedback.length,0,'Identity feedback must not demand an impossible rewrite');
 const claim='The increase in height demonstrates that the plants became shorter.';
+const substantive=academic(claim,'核对数据。'),principle=academic('This conclusion should follows directly from the measurements.','核对数据。'),grammar={...principle,category:'语言准确性 · 时态与动词形式'};
+assert.deepEqual(extra.exports.omitDuplicateAnaphoricEvidence([substantive,principle,grammar],claim+' '+principle.quote),[substantive,grammar],'Merge the adjacent duplicate academic finding without removing its independent grammar repair');
+assert.equal(extra.exports.omitDuplicateAnaphoricEvidence([principle],principle.quote).length,1,'No guessed deletion without an adjacent substantive finding');
 const expression=(quote,correction)=>({...academic(quote,correction),category:'学术建议 · 表达精确性与语域'});
 assert.match(f.guardAcademicReplacement(expression(claim,'demonstrates that the plants became shorter → should be revised to match the records'),claim).correction,/未通过原文匹配或代入检查/);
 assert.equal(f.guardAcademicReplacement(expression(claim,'shorter → taller'),claim).correction,'shorter → taller');
