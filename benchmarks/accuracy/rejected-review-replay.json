@@ -1,0 +1,95 @@
+{
+  "sentenceChecks": [
+    {
+      "index": 0,
+      "meaningToPreserve": "陈述在最近的年份，社交媒体是青少年日常生活的重要组成部分。",
+      "replacement": "In recent years, social media have become an essential part of teenagers' daily lives.",
+      "why": "修正了复数时间表达、主谓一致、冠词和所有格：year→years，become 形式与复数主语一致，a essential→an essential，teenager daily life→teenagers' daily lives。",
+      "category": "语言准确性 · 冠词与名词形式",
+      "confidence": "高"
+    },
+    {
+      "index": 1,
+      "meaningToPreserve": "陈述许多研究者认为它带来对青年心理状态的正负影响。",
+      "replacement": "Many researchers argue that it brings both positive and negative effects for youths' mental health.",
+      "why": "修正了复数名词、主谓一致和名词形式：researcher→researchers，it bring→it brings，effect→effects，youth mental state 改为更准确的 youths' mental health。",
+      "category": "语言准确性 · 主谓一致",
+      "confidence": "高"
+    },
+    {
+      "index": 2,
+      "meaningToPreserve": "陈述这项研究从150名学生收集数据，他们回答关于线上使用和情绪状态的问卷。",
+      "replacement": "This study collects data from 150 students, and they answer a questionnaire about online usage and emotional status.",
+      "why": "修正了主谓一致、名词单复数和句子连接：collect→collects，student→students，补充并列连词使逗号拼接的两个分句完整。",
+      "category": "语言准确性 · 句子连接与标点",
+      "confidence": "高"
+    },
+    {
+      "index": 3,
+      "meaningToPreserve": "陈述一些参与者说他们在收到很多点赞时感到开心，但其他人说他们经历了焦虑和睡眠不足。",
+      "replacement": "Some participants report that they feel happy when they receive many likes, but others say that they suffer from anxiety and sleep loss.",
+      "why": "修正了复数名词、谓语形式、从句引导和词形：participant→participants，report/said 形式统一为现在时并保持原意，like→likes，other→others，sleep lose→sleep loss。",
+      "category": "语言准确性 · 词形选择",
+      "confidence": "高"
+    },
+    {
+      "index": 4,
+      "meaningToPreserve": "陈述过多刷手机会导致人们拿自己和他人完美生活作比较。",
+      "replacement": "Too much scrolling online will cause people to compare themselves with others' perfect lives.",
+      "why": "修正了动名词、情态后动词形式和所有格：scroll→scrolling，will causes→will cause，compare themself→compare themselves，others perfect life→others' perfect lives。",
+      "category": "语言准确性 · 词形选择",
+      "confidence": "高"
+    },
+    {
+      "index": 5,
+      "meaningToPreserve": "陈述这项研究发现每天在社交平台上花超过4小时的学生患抑郁的风险更高。",
+      "replacement": "This research finds out that students who spend over 4 hours each day on social platforms have a higher risk of getting depression.",
+      "why": "修正了主谓一致、句子结构和名词单复数：find→finds，补出 that 引导并使从句完整，student→students，platform→platforms，get depression→getting depression。",
+      "category": "语言准确性 · 句子完整性",
+      "confidence": "高"
+    },
+    {
+      "index": 6,
+      "meaningToPreserve": "转折说明并非所有影响都是坏的。",
+      "replacement": "However, not all influences are bad.",
+      "why": "修正了名词单复数和主谓一致：influence are→influences are。",
+      "category": "语言准确性 · 名词单复数",
+      "confidence": "高"
+    },
+    {
+      "index": 7,
+      "meaningToPreserve": "陈述线上社区可以给感到孤独的人提供支持。",
+      "replacement": "Online communities can give support to those who feel lonely.",
+      "why": "修正了冠词/名词形式和介词结构：Online community→Online communities，使主谓一致更自然；for whom→to those who。",
+      "category": "语言准确性 · 冠词与名词形式",
+      "confidence": "中"
+    },
+    {
+      "index": 8,
+      "meaningToPreserve": "陈述实验显示社交媒体的有限使用有助于年轻人建立新的友谊。",
+      "replacement": "The experiment shows that limited use of social media helps young people build new friendships.",
+      "why": "修正了主谓一致、词形和名词单复数：show→shows，used→use，help→helps，friendship→friendships。",
+      "category": "语言准确性 · 主谓一致",
+      "confidence": "高"
+    },
+    {
+      "index": 9,
+      "meaningToPreserve": "陈述因为样本量很小，结果不能适用于所有年轻人。",
+      "replacement": "Because this sample size is small, the result cannot apply to all young people.",
+      "why": "修正了名词形式：young person→young people，保留原有因果与否定关系不变。",
+      "category": "语言准确性 · 名词单复数",
+      "confidence": "高"
+    },
+    {
+      "index": 10,
+      "meaningToPreserve": "陈述未来工作需要更多更大的数据集和更长的观察期来验证这个结论。",
+      "replacement": "Future work needs a larger dataset and a longer observation period to verify this conclusion.",
+      "why": "修正了主谓一致和形容词比较结构：need→needs，more large→larger，observe period→observation period。",
+      "category": "语言准确性 · 主谓一致",
+      "confidence": "高"
+    }
+  ],
+  "approved": [],
+  "reason": "候选0不批准：原句确实存在“limited use of social media helps...”这类主谓一致与用词问题，但候选给出的理由主要在说前文证据不足、结论推广范围过宽，这是学术论证问题，不是该句语言错误；且该句本身并未把结果直接写成对所有年轻人的普遍结论，因此不按该候选批准。",
+  "modelRevision": ""
+}

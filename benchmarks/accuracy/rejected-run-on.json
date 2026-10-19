@@ -1,0 +1,191 @@
+{
+  "draft": "Last week, our class visited the public library to learn how local records are stored. The librarian showed us several folders and explained how the catalogue works. We collected information about three streets and recorded the dates beside each note. My group compared two maps from different years. We noticed that some buildings had changed, but we did not know why. We decided to describe only the changes that we could see in the maps. After lunch, I checked our notes carefully with another student. We kept the original dates because they were important to the comparison. The final page included a short description of our visit and a list of the materials we had used. We did not claim that our small activity explained the history of the whole town. In our next lesson, we will ask the librarian about one street whose name appears differently in the two records. I enjoyed this activity because it gave me a reason to read local documents. It also reminded me to separate what I observed from what I only guessed. Our teacher asked us to keep both versions of our notes so that we could explain each change during the next class.",
+  "primary": {
+    "summary": "第二稿未发现可可靠定位的语言错误；学术层面也未见明确论证或衔接问题。",
+    "feedback": [],
+    "academicChecks": [
+      {
+        "dimension": "论证与证据",
+        "why": "文中只是陈述一次实地活动、记录方式和个人体验，没有把未经核实的信息当作普遍结论，也没有无依据的因果断言。",
+        "verdict": "clear",
+        "quote": "",
+        "correction": ""
+      },
+      {
+        "dimension": "论点聚焦",
+        "why": "全文中心始终围绕一次图书馆活动、记录比较和后续提问展开，论题一致。",
+        "verdict": "clear",
+        "quote": "",
+        "correction": ""
+      },
+      {
+        "dimension": "衔接与连贯",
+        "why": "前句写“我们收集三条街的信息并记录日期”，后句接着写“小组比较不同年份的两张地图”，是同一活动流程中的自然推进，没有主题跳转。",
+        "verdict": "clear",
+        "quote": "",
+        "correction": ""
+      }
+    ],
+    "modelRevision": "",
+    "overview": [
+      "第二稿语言基本准确。",
+      "未发现需要修正的明确学术问题。"
+    ],
+    "meaningRisk": "低"
+  },
+  "review": {
+    "englishFeedback": [
+      {
+        "index": 0,
+        "sourceQuote": "The final page included a short description of our visit and a list of the materials we had used.",
+        "why": "This sentence already contains two independent clauses joined with a comma, so the feedback should address a comma splice between them.",
+        "correction": "Use a period, a semicolon, or a coordinating conjunction to join the two independent clauses accurately."
+      }
+    ],
+    "sentenceChecks": [
+      {
+        "index": 0,
+        "eventTime": "past_event",
+        "timeEvidence": "“Last week” anchors the sentence in a completed past visit; the whole sentence describes that one past event.",
+        "meaningToPreserve": "The class visited the public library last week to learn about how local records are stored.",
+        "replacement": "Last week, our class visited the public library to learn how local records are stored.",
+        "why": "无需修改；句子语法和时态都正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 1,
+        "eventTime": "past_event",
+        "timeEvidence": "This follows the same past visit and continues describing what the librarian did during that trip.",
+        "meaningToPreserve": "The librarian, during that past visit, showed several folders and explained how the catalogue works.",
+        "replacement": "The librarian showed us several folders and explained how the catalogue works.",
+        "why": "无需修改；句子语法正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 2,
+        "eventTime": "past_event",
+        "timeEvidence": "The sentence continues the same completed activity from the visit; ‘collected’ and ‘recorded’ describe past actions done by the group.",
+        "meaningToPreserve": "The class collected information about three streets and recorded the dates beside each note during the past activity.",
+        "replacement": "We collected information about three streets and recorded the dates beside each note.",
+        "why": "无需修改；句子语法正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 3,
+        "eventTime": "past_event",
+        "timeEvidence": "This is still part of the same past record-comparison activity, and ‘compared’ reports what the group did then.",
+        "meaningToPreserve": "The group compared two maps from different years during the past activity.",
+        "replacement": "My group compared two maps from different years.",
+        "why": "无需修改；句子语法正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 4,
+        "eventTime": "past_event",
+        "timeEvidence": "The sentence follows the map comparison and reports what the group noticed during that same completed activity.",
+        "meaningToPreserve": "The group noticed that some buildings had changed, but they did not know why at that time.",
+        "replacement": "We noticed that some buildings had changed, but we did not know why.",
+        "why": "无需修改；句子语法正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 5,
+        "eventTime": "past_event",
+        "timeEvidence": "The decision is part of the same past activity and refers back to the map comparison and what they observed.",
+        "meaningToPreserve": "The group decided to describe only the changes that they could see in the maps during the past activity.",
+        "replacement": "We decided to describe only the changes that we could see in the maps.",
+        "why": "无需修改；句子语法正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 6,
+        "eventTime": "past_event",
+        "timeEvidence": "“After lunch” places the checking in the past, and it is another action in the same completed activity.",
+        "meaningToPreserve": "After lunch, the speaker checked their notes carefully with another student during the past activity.",
+        "replacement": "After lunch, I checked our notes carefully with another student.",
+        "why": "无需修改；句子语法正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 7,
+        "eventTime": "past_event",
+        "timeEvidence": "This sentence still reports completed actions from the same past work; keeping the dates is explained as part of that comparison.",
+        "meaningToPreserve": "The group kept the original dates because they were important to the comparison in the past activity.",
+        "replacement": "We kept the original dates because they were important to the comparison.",
+        "why": "无需修改；句子语法正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 8,
+        "eventTime": "past_event",
+        "timeEvidence": "The final page is described as something that was included in the past write-up, and the materials had already been used before that page was completed.",
+        "meaningToPreserve": "The final page included a short description of the visit and a list of the materials used in the past activity.",
+        "replacement": "The final page included a short description of our visit and a list of the materials we had used.",
+        "why": "句中没有必须修正的语言错误；原句可直接成立。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 9,
+        "eventTime": "past_event",
+        "timeEvidence": "This is a past reflection about what the group did not claim in the completed activity.",
+        "meaningToPreserve": "The group did not claim that their small activity explained the history of the whole town.",
+        "replacement": "We did not claim that our small activity explained the history of the whole town.",
+        "why": "无需修改；句子语法正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 10,
+        "eventTime": "future",
+        "timeEvidence": "“In our next lesson” clearly shifts the sentence to a future plan, and “will ask” matches that future time.",
+        "meaningToPreserve": "In the next lesson, the group will ask the librarian about one street whose name appears differently in the two records.",
+        "replacement": "In our next lesson, we will ask the librarian about one street whose name appears differently in the two records.",
+        "why": "无需修改；句子语法正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 11,
+        "eventTime": "past_event",
+        "timeEvidence": "The speaker is describing a past feeling about this activity; “gave” keeps the reason in the same completed experience.",
+        "meaningToPreserve": "The speaker enjoyed this activity because it gave them a reason to read local documents.",
+        "replacement": "I enjoyed this activity because it gave me a reason to read local documents.",
+        "why": "无需修改；句子语法正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 12,
+        "eventTime": "past_event",
+        "timeEvidence": "The reminder is reported as part of the same past experience and refers to what the activity caused the speaker to do.",
+        "meaningToPreserve": "The activity also reminded the speaker to separate what they observed from what they only guessed.",
+        "replacement": "It also reminded me to separate what I observed from what I only guessed.",
+        "why": "无需修改；句子语法正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      },
+      {
+        "index": 13,
+        "eventTime": "past_event",
+        "timeEvidence": "This is a past request from the teacher about the notes and the next class.",
+        "meaningToPreserve": "The teacher asked the students to keep both versions of their notes so that they could explain each change during the next class.",
+        "replacement": "Our teacher asked us to keep both versions of our notes so that we could explain each change during the next class.",
+        "why": "无需修改；句子语法正确。",
+        "category": "语言准确性 · 句子完整性",
+        "confidence": "高"
+      }
+    ],
+    "approved": [],
+    "reason": "候选仅有一条，且原句本身已经是用句号分开的两个完整分句，不存在所说的逗号拼接或缺少连接词问题，因此不批准。",
+    "modelRevision": ""
+  }
+}

@@ -1,0 +1,530 @@
+[
+  {
+    "id": "original-1",
+    "data": {
+      "accuracyStages": {
+        "qualityReview": {
+          "sentenceChecks": [
+            {
+              "index": 0,
+              "replacement": "In recent years, social media become an essential part of teenagers' daily life.",
+              "why": "应改正 year 的单复数、a/an 冠词，以及 teenager 的所有格形式；句子其余结构保留。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 1,
+              "replacement": "Many researchers argue that it brings both positive and negative effects for youth mental state.",
+              "why": "应改正 researcher 的复数形式，以及 it/bring 的主谓一致和 effect 的单复数。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 2,
+              "replacement": "This study collected data from 150 students, and they answered a questionnaire about online usage and emotion status.",
+              "why": "应把动词改为过去时，并补上句内连接与冠词，使分句完整连贯。",
+              "category": "语言准确性 · 句子完整性",
+              "confidence": "高"
+            },
+            {
+              "index": 3,
+              "replacement": "Some participants reported they felt happy when they received many likes, but others said they suffered from anxiety and sleep loss.",
+              "why": "应改正 participant 和 other 的复数形式，以及 like、lose 的词形。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 4,
+              "replacement": "Too much scrolling online will cause people to compare themselves with others' perfect lives.",
+              "why": "应将 scroll 改为动名词 scrolling，将 will causes 改为 will cause，并补出 to compare 的不定式结构，同时修正反身代词和所有格。",
+              "category": "语言准确性 · 时态与动词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 5,
+              "replacement": "This research found out that students who spent over 4 hours each day on social platforms had a higher risk of getting depression.",
+              "why": "应改正主谓一致、student 的复数、social platform 的复数，以及 risk 后的搭配形式。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 6,
+              "replacement": "However, not all influences are bad.",
+              "why": "应改正 influence 的复数形式并保持谓语一致。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 7,
+              "replacement": "Online communities can give support to those who feel lonely.",
+              "why": "for whom feel lonely 结构不成立，应改为可以作主语的关系表达。",
+              "category": "语言准确性 · 词形选择",
+              "confidence": "高"
+            },
+            {
+              "index": 8,
+              "replacement": "The experiment shows that the limited use of social media helps young people build new friendships.",
+              "why": "应改正 experiment 的主谓一致、used 的词形，以及 help 的三单形式，并使 friendship 复数更自然。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 9,
+              "replacement": "Because this sample size is small, the results cannot apply to all young people.",
+              "why": "应改正 result 和 person 的复数形式。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 10,
+              "replacement": "Future work needs a larger dataset and a longer observation period to verify this conclusion.",
+              "why": "应改正 more large、observe period 的词形表达，并使名词短语结构完整。",
+              "category": "语言准确性 · 词形选择",
+              "confidence": "高"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "original-2",
+    "data": {
+      "accuracyStages": {
+        "qualityReview": {
+          "sentenceChecks": [
+            {
+              "index": 0,
+              "replacement": "In recent years, social media have become an essential part of teenagers' daily lives.",
+              "why": "原句有多处语言错误：recent year 应为 recent years，become 需与复数主语一致变为 have become，a essential 应为 an essential，teenager daily life 需改为 teenagers' daily lives。",
+              "category": "语言准确性 · 句子完整性",
+              "confidence": "高"
+            },
+            {
+              "index": 1,
+              "replacement": "Many researchers argue that it brings both positive and negative effects for youths' mental states.",
+              "why": "原句存在 many researcher、it bring、effect 等多处单复数和主谓一致问题，需统一为复数 researchers、brings、effects。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 2,
+              "replacement": "This study collects data from 150 students, and they answer questionnaires about online usage and emotional states.",
+              "why": "原句有 study collect、150 student、逗号拼接等问题；questionnaire 也更适合用复数 questionnaires，与后文内容一致。",
+              "category": "语言准确性 · 句子连接与标点",
+              "confidence": "高"
+            },
+            {
+              "index": 3,
+              "replacement": "Some participants report that they feel happy when they receive many likes, but others said they suffered from anxiety and sleep loss.",
+              "why": "原句中 participant、like、other、sleep lose 都有语言问题，需分别改为 participants、likes、others、sleep loss。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 4,
+              "replacement": "Too much scrolling online will cause people to compare themselves with others' perfect lives.",
+              "why": "原句中 scroll 需改为动名词 scrolling，will causes 应为 will cause，compare themself 应为 compare themselves，others perfect life 需改为所有格表达。",
+              "category": "语言准确性 · 时态与动词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 5,
+              "replacement": "This research finds out that students who spend over 4 hours each day on social platforms have a higher risk of developing depression.",
+              "why": "原句中 find out、student、social platform、get depression 都需要调整为更符合语法的形式。",
+              "category": "语言准确性 · 句子完整性",
+              "confidence": "高"
+            },
+            {
+              "index": 6,
+              "replacement": "However, not all influences are bad.",
+              "why": "原句 influence 与 are 不一致，且此处应使用复数 influences 表示“影响”。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 7,
+              "replacement": "Online communities can give support to those who feel lonely.",
+              "why": "原句中 support for whom feel lonely 结构不正确，需改为能作宾语和主语的完整关系从句。",
+              "category": "语言准确性 · 冠词与名词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 8,
+              "replacement": "The experiment shows that limited use of social media helps young people build new friendships.",
+              "why": "原句中 show、used、help、friendship 需要按单复数和词形统一调整。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 9,
+              "replacement": "Because this sample size is small, the result cannot apply to all young people.",
+              "why": "原句中 young person 应为复数 young people。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 10,
+              "replacement": "Future work needs a larger dataset and a longer observation period to verify this conclusion.",
+              "why": "原句中 need、more large、observe period 都存在词形或搭配问题，需改为更自然的学术表达。",
+              "category": "语言准确性 · 时态与动词形式",
+              "confidence": "高"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "original-1",
+    "data": {
+      "accuracyStages": {
+        "qualityReview": {
+          "sentenceChecks": [
+            {
+              "index": 0,
+              "replacement": "In recent years, social media have become an essential part of teenagers' daily lives.",
+              "why": "原句有年数单复数、冠词、主谓一致和所有格问题，需统一修正。",
+              "category": "语言准确性 · 冠词与名词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 1,
+              "replacement": "Many researchers argue that it brings both positive and negative effects for youths' mental states.",
+              "why": "原句存在 researcher 复数、it 主谓一致以及 effect 复数和所有格表达问题。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 2,
+              "replacement": "This study collected data from 150 students, and they answered questionnaires about online usage and emotional status.",
+              "why": "原句有主谓一致、名词单复数和逗号拼接问题。",
+              "category": "语言准确性 · 句子连接与标点",
+              "confidence": "高"
+            },
+            {
+              "index": 3,
+              "replacement": "Some participants reported that they felt happy when they received many likes, but others said they suffered from anxiety and sleep loss.",
+              "why": "原句需要将复数主语、时态一致和拼写错误一并修正。",
+              "category": "语言准确性 · 时态与动词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 4,
+              "replacement": "Too much scrolling online will cause people to compare themselves with other people's perfect lives.",
+              "why": "原句存在动名词形式、will 后动词形式以及反身代词和所有格表达问题。",
+              "category": "语言准确性 · 时态与动词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 5,
+              "replacement": "This research found that students spent over 4 hours each day on social platforms and had a higher risk of getting depression.",
+              "why": "原句有主谓一致、名词单复数和不自然搭配问题，需要整体顺畅化。",
+              "category": "语言准确性 · 时态与动词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 6,
+              "replacement": "However, not all influences are bad.",
+              "why": "原句主要问题是 influence 的单复数。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 7,
+              "replacement": "Online communities can give support to those who feel lonely.",
+              "why": "原句中 for whom feel lonely 不符合英语结构，需改为定语从句。",
+              "category": "语言准确性 · 词形选择",
+              "confidence": "高"
+            },
+            {
+              "index": 8,
+              "replacement": "The experiment showed that limited use of social media helped young people build new friendships.",
+              "why": "原句有主谓一致、词形和动词形式问题。",
+              "category": "语言准确性 · 时态与动词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 9,
+              "replacement": "Because this sample size is small, the result cannot apply to all young people.",
+              "why": "原句主要问题是 young person 复数形式不当。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 10,
+              "replacement": "Future work needs a larger dataset and a longer observation period to verify this conclusion.",
+              "why": "原句有主谓一致、比较级结构和名词词形问题。",
+              "category": "语言准确性 · 词形选择",
+              "confidence": "高"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "original-1",
+    "data": {
+      "accuracyStages": {
+        "qualityReview": {
+          "sentenceChecks": [
+            {
+              "index": 0,
+              "replacement": "In recent years, social media has become an essential part of teenagers' daily lives.",
+              "why": "原句有 year/years、become/has become、a/an 以及 teenager/dayly lives 的单复数和所有格问题，需要整体改正。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 1,
+              "replacement": "Many researchers argue that it brings both positive and negative effects for youth mental health.",
+              "why": "原句存在 researcher/researchers、argue 后的主谓一致以及 effect/effects 等语言错误；同时 youth mental state 更自然地应写为 youth mental health。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 2,
+              "replacement": "This study collected data from 150 students, and they answered questionnaires about online usage and emotional status.",
+              "why": "原句有 collect/collected、student/students 以及逗号拼接问题，需拆分并修正谓语和名词形式。",
+              "category": "语言准确性 · 句子连接与标点",
+              "confidence": "高"
+            },
+            {
+              "index": 3,
+              "replacement": "Some participants reported that they felt happy when they received many likes, but others said they suffered from anxiety and sleep loss.",
+              "why": "原句存在 participant/participants、report/reported、other/others、like/likes 以及 sleep lose/sleep loss 等错误。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 4,
+              "replacement": "Too much scrolling online will cause people to compare themselves with others' perfect lives.",
+              "why": "原句中 scroll 应为动名词 scrolling，will causes 应为 will cause，compare 后缺少 to 的结构且 themself、others perfect life 也需要改正。",
+              "category": "语言准确性 · 时态与动词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 5,
+              "replacement": "This research finds out that students who spend over 4 hours each day on social platforms have a higher risk of developing depression.",
+              "why": "原句有 find out/finds out、student/students、social platform/social platforms 以及句子结构不完整等问题，需要整体修正。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 6,
+              "replacement": "However, not all influences are bad.",
+              "why": "原句 influence 应为复数 influences，谓语 are 也需要与复数主语保持一致。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 7,
+              "replacement": "Online communities can give support to those who feel lonely.",
+              "why": "原句中 for whom feel lonely 结构不正确，需要改为能正确表达“给感到孤独的人支持”的形式。",
+              "category": "语言准确性 · 词形选择",
+              "confidence": "高"
+            },
+            {
+              "index": 8,
+              "replacement": "The experiment shows that limited use of social media helps young people build new friendships.",
+              "why": "原句有 show/shows、limited used/limited use、help/helps 以及 friendship/friendships 等语言错误。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 9,
+              "replacement": "Because this sample size is small, the results cannot apply to all young people.",
+              "why": "原句 young person 应为复数 young people，result 也应与前文指代保持一致。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 10,
+              "replacement": "Future work needs a larger dataset and a longer observation period to verify this conclusion.",
+              "why": "原句 need/needs、more large/larger、observe/observation 等形式不当，需要整体改正。",
+              "category": "语言准确性 · 词形选择",
+              "confidence": "高"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "original-2",
+    "data": {
+      "accuracyStages": {
+        "qualityReview": {
+          "sentenceChecks": [
+            {
+              "index": 0,
+              "replacement": "In recent years, social media has become an essential part of teenagers' daily life.",
+              "why": "修正了 year→years、become→has become，以及 a essential→an essential 的冠词和时态问题。",
+              "category": "语言准确性 · 冠词与名词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 1,
+              "replacement": "Many researchers argue that it brings both positive and negative effects for youth mental state.",
+              "why": "修正了 researcher→researchers、it bring→it brings、effect→effects 的单复数与主谓一致问题。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 2,
+              "replacement": "This study collects data from 150 students, and they answer questionnaires about online usage and emotional status.",
+              "why": "修正了 collect→collects、student→students，并将逗号拼接改为并列连接，使两部分关系更清楚。",
+              "category": "语言准确性 · 句子连接与标点",
+              "confidence": "高"
+            },
+            {
+              "index": 3,
+              "replacement": "Some participants report that they feel happy when they receive many likes, but others said they suffered from anxiety and sleep loss.",
+              "why": "修正了 participant→participants、like→likes、other→others、lose→loss，并补足 report 后的从句结构。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 4,
+              "replacement": "Too much scrolling online will cause people to compare themselves with others' perfect lives.",
+              "why": "修正了 scroll→scrolling、causes→cause、compare themself→compare themselves，以及 others perfect life→others' perfect lives。",
+              "category": "语言准确性 · 词形选择",
+              "confidence": "高"
+            },
+            {
+              "index": 5,
+              "replacement": "This research finds out students who spent over 4 hours each day on social platforms have a higher risk of depression.",
+              "why": "修正了 find→finds、student→students，并将 risk to get depression 改为更完整的 risk of depression。",
+              "category": "语言准确性 · 句子完整性",
+              "confidence": "高"
+            },
+            {
+              "index": 6,
+              "replacement": "However, not all influences are bad.",
+              "why": "修正了 influence→influences 以匹配 are。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 7,
+              "replacement": "Online communities can give support to those who feel lonely.",
+              "why": "修正了 community→communities、for whom feel→to those who feel，使介词和关系从句更自然完整。",
+              "category": "语言准确性 · 词形选择",
+              "confidence": "高"
+            },
+            {
+              "index": 8,
+              "replacement": "The experiment shows that limited use of social media helps young people build new friendships.",
+              "why": "修正了 show→shows、used→use、help→helps、friendship→friendships，并统一了主谓一致。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 9,
+              "replacement": "Because this sample size is small, the result cannot apply to all young people.",
+              "why": "修正了 young person→young people。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 10,
+              "replacement": "Future work needs a larger dataset and a longer observation period to verify this conclusion.",
+              "why": "修正了 need→needs、more large→larger、observe→observation，使表达更完整自然。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "original-3",
+    "data": {
+      "accuracyStages": {
+        "qualityReview": {
+          "sentenceChecks": [
+            {
+              "index": 0,
+              "replacement": "In recent years, social media has become an essential part of teenagers' daily lives.",
+              "why": "原句有单复数和冠词错误：recent year 应为 recent years，become 需改为 has become，a essential 应为 an essential，teenager daily life 需改为所有格或复数形式。",
+              "category": "语言准确性 · 拼写与大小写",
+              "confidence": "高"
+            },
+            {
+              "index": 1,
+              "replacement": "Many researchers argue that it brings both positive and negative effects for youths' mental health.",
+              "why": "researcher 需用复数 researchers，it bring 应为 it brings，effect 需用复数 effects。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 2,
+              "replacement": "This study collected data from 150 students, and they answered questionnaires about online usage and emotional status.",
+              "why": "原句存在动词时态错误和逗号拼接问题；collect/answer 应改为过去式，并用并列连接词把两个完整分句连接起来。",
+              "category": "语言准确性 · 句子连接与标点",
+              "confidence": "高"
+            },
+            {
+              "index": 3,
+              "replacement": "Some participants reported that they felt happy when they received many likes, but others said they suffered from anxiety and sleep loss.",
+              "why": "participant、other、like、lose 都有单复数或词形错误；原句应统一为复数主语和正确的名词形式。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 4,
+              "replacement": "Too much scrolling online will cause people to compare themselves with others' perfect lives.",
+              "why": "scroll 需作动名词 scrolling，will causes 应为 will cause，compare 后缺少不定式结构 to compare，themself 需改为 themselves。",
+              "category": "语言准确性 · 时态与动词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 5,
+              "replacement": "This research found that students who spent over 4 hours each day on social platforms had a higher risk of developing depression.",
+              "why": "原句中 find out、student、platform、risk to get 等表达不规范；需要改为完整的过去式陈述和更自然的搭配。",
+              "category": "语言准确性 · 词形选择",
+              "confidence": "高"
+            },
+            {
+              "index": 6,
+              "replacement": "However, not all influences are bad.",
+              "why": "influence 需用复数 influences，are 与复数主语一致。",
+              "category": "语言准确性 · 主谓一致",
+              "confidence": "高"
+            },
+            {
+              "index": 7,
+              "replacement": "Online communities can give support to those who feel lonely.",
+              "why": "online community 作为泛指更适合用复数；for whom feel lonely 结构错误，应改为 to those who feel lonely。",
+              "category": "语言准确性 · 冠词与名词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 8,
+              "replacement": "The experiment showed that limited use of social media helped young people build new friendships.",
+              "why": "show 和 help 应改为过去式 showed、helped；limited used 应为 limited use，new friendship 需用复数 friendships。",
+              "category": "语言准确性 · 时态与动词形式",
+              "confidence": "高"
+            },
+            {
+              "index": 9,
+              "replacement": "Because this sample size is small, the results cannot apply to all young people.",
+              "why": "result 需用复数 results，young person 需改为复数 young people。",
+              "category": "语言准确性 · 名词单复数",
+              "confidence": "高"
+            },
+            {
+              "index": 10,
+              "replacement": "Future work needs a larger dataset and a longer observation period to verify this conclusion.",
+              "why": "need 应为第三人称单数 needs，more large 不自然，应改为 larger；observe period 需改为 observation period。",
+              "category": "语言准确性 · 时态与动词形式",
+              "confidence": "高"
+            }
+          ]
+        }
+      }
+    }
+  }
+]
