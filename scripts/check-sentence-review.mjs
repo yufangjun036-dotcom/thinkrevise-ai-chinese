@@ -137,11 +137,16 @@ try{
  await assert.rejects(()=>f.reviewCandidateFeedback({feedback:[],modelRevision:''},original,'test',new AbortController().signal),/Invalid review decision/);
  globalThis.fetch=async(_url,options)=>{
   const body=JSON.parse(options.body),input=JSON.parse(body.input);
+  if(!input.candidates.length){
+   assert.equal(input.languageCandidates.length,1,'Language review retains its own untrusted candidates');
+   assert.equal(input.languageCandidates[0].quote,item.quote);
+   return Response.json({output_text:JSON.stringify({approved:[],reason:'language only',modelRevision:'',sentenceChecks:checks})});
+  }
   assert.equal(input.candidates.length,1);
   assert.equal(input.candidates[0].index,0,'Candidate IDs are rebased after separating language review');
   assert.ok(input.candidates[0].category.startsWith('学术'));
-  assert.equal(input.languageCandidates.length,1,'Retain the language candidate as a cross-check, not an approved item');
-  assert.equal(input.languageCandidates[0].quote,item.quote);
+  assert.equal(input.languageCandidates.length,0,'Academic review must not also generate language repairs');
+  assert.ok(!body.text.format.schema.required.includes('sentenceChecks'));
   return Response.json({output_text:JSON.stringify({approved:[0],reason:'academic retained',modelRevision:'',sentenceChecks:checks})});
  };
  const academic={...item,category:'学术建议 · 论证与证据',quote:sentences[5],correction:'说明比较基准。'};
