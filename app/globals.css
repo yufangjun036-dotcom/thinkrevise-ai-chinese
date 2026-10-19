@@ -468,3 +468,15 @@ button:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-
 .grammar-practice .attempt-review .grammar-practice-answer { background: #f2f5f9; border: 1px solid #cbd5e1; }
 .grammar-practice .attempt-review .practice-attempt-status { color: #465972; }
 @media (max-width: 640px) { .grammar-practice { padding: 16px; } .grammar-practice-heading { align-items: flex-start; flex-direction: column; } .grammar-practice-question { padding: 14px; } }
+.feedback-choice { margin-top: 18px; padding-top: 14px; border-top: 1px solid #e0e6ef; }
+.feedback-choice .decision-field { margin: 0; border: 0; padding: 0; }
+.feedback-choice .decision-field legend { font-weight: 700; margin-bottom: 10px; }
+.feedback-choice .decision-field div { display: flex; flex-wrap: wrap; gap: 8px; }
+.feedback-choice .decision-field button { padding: 8px 16px; border: 1px solid #ccd6e8; border-radius: 8px; background: white; color: #263b5a; cursor: pointer; }
+.feedback-choice .decision-field button.active { background: #e9efff; border-color: #2455df; color: #204dce; }
+.decision-guidance { color: #65738a; font-size: .85rem; line-height: 1.65; margin: 16px 0; }
+.revision-decisions { margin-top: 24px; border: 1px solid #dce3ee; border-radius: 12px; padding: 16px; }
+.revision-decisions > summary { cursor: pointer; font-weight: 700; }
+.revision-decisions article { margin-top: 16px; padding: 16px 0; border-top: 1px solid #e0e6ef; }
+.revision-decisions blockquote { margin: 10px 0; color: #65738a; overflow-wrap: anywhere; }
+.feedback-choice button:focus-visible, .revision-decisions > summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
