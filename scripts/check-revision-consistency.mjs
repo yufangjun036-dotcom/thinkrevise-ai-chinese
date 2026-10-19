@@ -459,8 +459,9 @@ for (const feedback of [
 const runOn='The library extended its opening hours students still could not access specialist support.';
 const badRunOn={...issue(runOn.slice(0,-1),'The library extended its opening hours → The library extended its opening hours; students still could not access specialist support','语法'),why:'前后是两个独立分句，没有连接。'};
 const runOnOutput=f.validateLiveResult(result([badRunOn],runOn),runOn,'coach',0,false);
-assert.equal(runOnOutput.feedback.length,1);
-assert.ok(!runOnOutput.feedback[0].correction.includes('→'),'Do not duplicate a clause through an incorrectly scoped replacement');
+assert.equal(runOnOutput.feedback.length,0,'Reject a replacement which duplicates a clause; do not rescue it with an unverified regex verdict');
+const validRunOn=f.validateLiveResult(result([{...issue(runOn,runOn+' → The library extended its opening hours; students still could not access specialist support.','语言准确性 · 句子连接与标点'),why:'两个独立分句需要边界。'}],runOn),runOn,'coach',0,false);
+assert.equal(validRunOn.feedback.length,1,'A correctly scoped run-on repair must still be kept');
 const splice='Online feedback is immediate, the guidance may still fail to explain why a change is necessary.';
 const spliceOutput=f.validateLiveResult(result([{...issue(splice,'immediate, the guidance → immediate. The guidance','语法'),why:'两个独立分句仅用逗号连接，构成逗号拼接。'}],splice),splice,'coach',0,false);
 assert.equal(spliceOutput.feedback[0].category,'语言准确性 · 逗号拼接');

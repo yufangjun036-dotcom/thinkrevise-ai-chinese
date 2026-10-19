@@ -898,32 +898,9 @@ function findLanguageIssues(draft: string): FeedbackItem[] {
       confidence: "高",
     });
   }
-  const sentences = draft.match(/[^.!?]+[.!?]?/g) ?? [];
-  for (const rawSentence of sentences) {
-    const sentence = rawSentence.trim();
-    if (!sentence || /[,;:]/.test(sentence)) continue;
-    // An -ed word may be a reduced relative ("students represented ..."),
-    // not a second finite clause. Leave ambiguous lexical verbs to the model.
-    const clausePattern = /\b(?:students?|people|teachers?|users?|they|we|he|she|it)\s+(?:still\s+)?(?:am|is|are|was|were|do|does|did|has|have|had|can|could|should|would|will|may|might|must)\b/gi;
-    for (const clause of sentence.matchAll(clausePattern)) {
-      const start = clause.index ?? 0;
-      const prefix = sentence.slice(0, start).trim();
-      if (!prefix || !/\b(?:am|is|are|was|were|do|does|did|has|have|had|can|could|should|would|will|may|might|must|[a-z]+(?:ed|s))\b/i.test(prefix)) continue;
-      if (/\b(?:and|but|so|yet|because|although|while|when|whenever|if|since|unless|until|before|after|that|whether|how|why|where|as|than)(?:\s+(?:each|every|some|all|the|these|those))?\s*$/i.test(prefix)) continue;
-      if (/\b(?:ensure|ensures|help|helps|allow|allows|enable|enables|require|requires|encourage|encourages|expect|expects|show|shows|suggest|suggests|indicate|indicates|mean|means|find|finds|believe|believes|argue|argues|report|reports)\s+(?:\w+\s+){0,3}$/i.test(prefix)) continue;
-      found.push({
-        category: "语言准确性 · 连写句",
-        quote: sentence,
-        why: "这一句在没有标点或连接词的情况下连续放入了两个独立主谓结构，读者难以判断句间关系。",
-        correction: "在两个独立分句之间使用句号、分号，或加入能准确表达逻辑关系的并列连词。",
-        question: "",
-        hints: [],
-        suggestion: "",
-        confidence: "高",
-      });
-      break;
-    }
-  }
+  // Clause independence requires syntactic context, not a pronoun + auxiliary
+  // regex. The mandatory sentence review checks genuine run-ons. A generic
+  // regex verdict here could outrank and erase a concrete reviewed verb repair.
   return found;
 }
 
