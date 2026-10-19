@@ -87,7 +87,10 @@ function attachEnglishFeedback(item: FeedbackItem, index: number, translations: 
   const originalEdits = concreteEdits(item);
   const translatedEdits = concreteEdits({ ...item, correction: translation.correction });
   if (originalEdits?.length && JSON.stringify(originalEdits) !== JSON.stringify(translatedEdits)) return item;
-  return { ...item, whyEnglish: translation.why, correctionEnglish: translation.correction };
+  const correctionEnglish = item.category === "学术建议 · 论证与证据"
+    && item.correction.includes("本项不自动补写替代结论。") && item.correctionEnglish
+    ? item.correctionEnglish : translation.correction;
+  return { ...item, whyEnglish: translation.why, correctionEnglish };
 }
 
 
@@ -412,14 +415,20 @@ function unappliedSentenceRepairIssues(checks: unknown, sentences: string[]): st
   if (!Array.isArray(checks)) return [];
   return checks.flatMap(entry => {
     if (!entry || typeof entry.why !== "string" || entry.replacement !== sentences[entry.index]) return [];
-    const claimsRepair = /改为|改成|应(?:为|使用|用)|需要(?:改|补)|缺少|(?:存在|有明显).{0,8}错误/.test(entry.why);
-    const saysCorrect = /无需|无须|不需要|没有错误|无(?:明确|客观|明显)?(?:语言|语法)?错误|语法正确|(?:不应|不要|不必)改/.test(entry.why);
+    const claimsRepair = /改为|改成|应(?:为|使用|用)|需要(?:改|补)|缺少|(?:存在|有明显).{0,8}错误|\b(?:should|must|needs? to)\s+be\s+(?!kept|left|unchanged|retained|preserved)\w+|\bis misspelled\b/i.test(entry.why);
+    const saysCorrect = /无需|无须|不需要|没有错误|无(?:明确|客观|明显)?(?:语言|语法)?错误|语法正确|(?:不应|不要|不必)改|no (?:language |grammar )?(?:change|correction|repair) (?:is )?needed|already correct|grammatically correct/i.test(entry.why);
     return claimsRepair && !saysCorrect ? [`Sentence ${entry.index}: explanation identifies a language repair, but replacement is unchanged. Apply the actual justified repair or explicitly confirm the sentence is correct; do not omit a diagnosed error.`] : [];
   });
 }
 
 function unresolvedComplementIssues(before: string, after: string): string[] {
   const issues: string[] = [];
+  // A bare lexical verb immediately followed by its object cannot function as
+  // a noun after these prepositions. Do not match nominal "before use of ..."
+  // or a finite clause with an explicit subject ("before we submit it").
+  if (!/[“”"]/.test(after)
+    && /\b(?:before|after|without|by)\s+(?:submit|send|check|read|write|use|revise|discuss|review|compare|copy|collect|record)\s+(?:it|them|the|this|that|these|those|my|your|his|her|its|our|their|a|an)\b/i.test(after))
+    issues.push("A preposition still has a bare lexical verb followed by its object (for example before submit it). Check the required non-finite form or a complete finite clause; do not call the bare form correct after a preposition. Preserve the actor, time and object.");
   // Positive lexical need requires an infinitive. Do not apply this check to
   // quotations, questions, negative-polarity or "all ... need do" constructions,
   // where modal need can legitimately take a bare infinitive.
@@ -581,6 +590,34 @@ function reconcileUnappliedQuotedRepairs(checks: unknown, sentences: string[], c
       if (!corroborated) continue;
       revised = revised.slice(0, start) + after + revised.slice(start + before.length);
     }
+    // The reviewer may explain a real fix in unquoted English ("a should be
+    // an") yet omit it from a partly corrected sentence. Require agreement
+    // with the independent first diagnosis, and map the ORIGINAL word position
+    // through existing edits. Never replace the first matching "a" by guesswork.
+    const reason = " " + entry.why.toLowerCase().replace(/[“”",;:.!?()]/g, " ").replace(/\s+/g, " ").trim() + " ";
+    const words = (text: string) => [...text.matchAll(/[a-z0-9]+(?:['’][a-z]+)?/gi)];
+    for (const candidate of candidates) {
+      const at = findExactQuoteStart(sentence, candidate.quote);
+      if (at < 0 || findExactQuoteStart(sentence.slice(at + candidate.quote.length), candidate.quote) >= 0) continue;
+      const offset = words(sentence.slice(0, at)).length;
+      for (const known of concreteEdits(candidate as FeedbackItem) ?? []) {
+        if (!/^[a-z]+$/i.test(known.before) || !/^[a-z]+$/i.test(known.after)) continue;
+        const oldWord = known.before.toLowerCase(), newWord = known.after.toLowerCase();
+        const affirmed = [" should be ", " must be ", " needs to be ", " should become "]
+          .some(relation => reason.includes(" " + oldWord + relation + newWord + " "))
+          || (reason.includes(" " + oldWord + " is misspelled ") && reason.includes(" correct spelling is " + newWord + " "));
+        if (!affirmed) continue;
+        const position = offset + known.start;
+        const changes = concreteEdits({quote: sentence, correction: sentence + " → " + revised} as FeedbackItem);
+        if (!changes || changes.some(change => change.start < position + 1 && change.end > position)) continue;
+        const shift = changes.filter(change => change.end <= position).reduce((sum, change) => sum + words(change.after).length - (change.end - change.start), 0);
+        const token = words(revised)[position + shift];
+        if (!token || token[0].toLowerCase() !== oldWord) continue;
+        const replacementWord = token[0].length > 1 && token[0] === token[0].toUpperCase()
+          ? known.after.toUpperCase() : /^[A-Z]/.test(token[0]) ? known.after[0].toUpperCase() + known.after.slice(1) : known.after;
+        revised = revised.slice(0, token.index) + replacementWord + revised.slice(token.index! + token[0].length);
+      }
+    }
     entry.replacement = revised;
   }
 }
@@ -637,6 +674,8 @@ function checkedSentenceFeedback(checks: unknown, sentences: string[]): Feedback
       else if (/\b(?:before|after|without|by)\s*$/i.test(prefix)
         && ["use:using", "revise:revising", "submit:submitting", "start:starting", "check:checking"].includes(`${edit.before.toLowerCase()}:${edit.after.toLowerCase()}`)) item.category = "语言准确性 · 时态与动词形式";
       else if (/\b(?:can|could|may|might|must|shall|should|will|would)\s*$/i.test(prefix)
+        && /^[a-z]+$/i.test(edit.before) && /^[a-z]+$/i.test(edit.after)) item.category = "语言准确性 · 时态与动词形式";
+      else if (/\b(?:(?:do|does|did)(?:\s+not)?|don['’]t|doesn['’]t|didn['’]t)\s*$/i.test(prefix)
         && /^[a-z]+$/i.test(edit.before) && /^[a-z]+$/i.test(edit.after)) item.category = "语言准确性 · 时态与动词形式";
       else if ((/^(?:is|are)$/.test(edit.before) && /^(?:is|are)$/.test(edit.after))
         || (/^(?:was|were)$/.test(edit.before) && /^(?:was|were)$/.test(edit.after))
@@ -2518,6 +2557,20 @@ function repeatsExplicitCaution(item: FeedbackItem): boolean {
 }
 
 function guardAcademicReplacement(item: FeedbackItem, draft: string): FeedbackItem {
+  // A plausible replacement conclusion can still invent an observation or
+  // change the measured outcome. Evidence gaps require an author decision,
+  // not an automatically executable factual conclusion in any support mode.
+  if (item.category === "学术建议 · 论证与证据") {
+    const conflict = /矛盾|相反|不一致|方向|contradict|inconsisten|opposite/i.test(item.why);
+    return { ...item, suggestion: "",
+      correction: conflict
+        ? "请回到原始记录，核对文中冲突的数量、方向或陈述，并统一证据与结论；未核实前不假定哪一项正确。本项不自动补写替代结论。"
+        : "请将结论限定在原文证据实际支持的范围，区分观察、因果与推广；更强的结论需要你能核实的证据，不新增原文未报告的结果。本项不自动补写替代结论。",
+      correctionEnglish: conflict
+        ? "Check the original records, reconcile the conflicting quantities, directions or statements, and align the evidence and conclusion. Do not assume which is correct before verification. No replacement conclusion is supplied automatically."
+        : "Limit the conclusion to what the reported evidence supports, distinguishing observation, causation and generalisation. A stronger conclusion needs verifiable evidence; do not add unreported results. No replacement conclusion is supplied automatically."
+    };
+  }
   if (!/^(?:学术|表达用语)/.test(item.category) || !item.correction.includes("→")) return item;
   const parts = item.correction.split("→").map(part => part.trim());
   const [source, replacement] = parts;
