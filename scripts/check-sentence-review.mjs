@@ -7,6 +7,12 @@ const source=fs.readFileSync(new URL('../app/api/coach/route.ts',import.meta.url
 const box={exports:{}};
 new Function('exports','require','module',ts.transpileModule(fs.readFileSync(new URL('../app/api/coach/upstream.ts',import.meta.url),'utf8')+'\n'+source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(box.exports,require,box);
 const f=box.exports;
+const numericDraft='The survey included forty students. Each student submitted one response. Forty-five different students answered the question.';
+const numericItem={category:'学术建议 · 论证与证据',quote:'The survey included forty students. ... Forty-five different students answered the question.',why:'同一调查的总人数与答题人数矛盾。',correction:'核对原始记录，不猜测哪个数字正确。',confidence:'高'};
+assert.equal(f.validateLiveResult({feedback:[numericItem]},numericDraft,'coach',0,false,false).feedback[0]?.quote,'Forty-five different students answered the question.');
+assert.equal(f.validateLiveResult({feedback:[{...numericItem,quote:numericItem.quote.replace('forty students','eighty students')}]},numericDraft,'coach',0,false,false).feedback.length,0,'Fabricated excerpts cannot be rescued');
+assert.equal(f.narrativeTimeIssues([{index:0,eventTime:'past_event',meaningToPreserve:'Every participant answered the questions.',replacement:'Every participant answers the questions.'}],['Every participant answer the questions.']).length,1);
+assert.equal(f.narrativeTimeIssues([{index:0,eventTime:'past_event',meaningToPreserve:'Thirty students arrived.',replacement:'Thirty students arrived.'}],['Thirty student arrived.']).length,0,'Plural noun repairs are not tense drift');
 for (const [quote, replacement, count] of [
  ['We study long‑term changes in high‑skill work.', 'We study long-term changes in high-skill work.', 0],
  ['Many company study long‑term changes.', 'Many companies study long-term changes.', 1],
