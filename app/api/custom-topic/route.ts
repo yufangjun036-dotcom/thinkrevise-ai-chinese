@@ -83,7 +83,7 @@ export async function POST(request: Request) {
   const forcedDemo = process.env.THINKREVISE_DEMO_MODE === "1" || process.env.REVISIONCOACH_DEMO_MODE === "1";
   const apiKey = forcedDemo ? undefined : process.env.OPENAI_API_KEY;
   if (!apiKey) return json({ error: "实时主题理解暂时不可用。" }, 503);
-  const access = acquireAiRequest(request, "custom-topic");
+  const access = await acquireAiRequest(request, "custom-topic");
   if (!access.ok) return access.response;
 
   const instructions = `你是一名学术英语写作教练，负责理解学习者的中文兴趣描述，以便为自由写作提供真正相关的英文目标词。不要把用户原文简单复制成主题标签，也不要只返回一个宽泛类别（例如“娱乐”“旅行”“动物”）。请根据描述中的对象、场景、行为、关系、影响、冲突或变化，推断最适合选择词汇的具体主题角度；不要替学习者规定必须回答的写作问题，也不要生成固定写作题目。
@@ -141,6 +141,6 @@ inferredDirection 用一句中文概括你真正理解到的具体主题角度�
     console.warn("Custom topic understanding failed:", error instanceof Error ? error.message : "unknown_error");
     return json({ error: "暂时无法根据这段描述理解写作方向，请稍后重试。" }, 502);
   } finally {
-    access.release();
+    await access.release();
   }
 }

@@ -7,7 +7,8 @@ process.env.AI_GLOBAL_DAILY_REQUEST_LIMIT = "3";
 process.env.AI_CONCURRENT_PER_VISITOR = "1";
 process.env.AI_GLOBAL_CONCURRENT_LIMIT = "2";
 
-const { acquireAiRequest, readLimitedJson } = await import("../app/api/security.ts");
+const { loadSecurity } = await import("./load-security.mjs");
+const { acquireAiRequest, readLimitedJson } = await loadSecurity();
 
 function request(session, body = "{}") {
   return new Request("http://localhost/api/coach", {
@@ -17,27 +18,27 @@ function request(session, body = "{}") {
   });
 }
 
-const first = acquireAiRequest(request("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "coach");
+const first = await acquireAiRequest(request("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "coach");
 assert.equal(first.ok, true);
-const duplicate = acquireAiRequest(request("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "coach");
+const duplicate = await acquireAiRequest(request("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "coach");
 assert.equal(duplicate.ok, false);
 assert.equal(duplicate.response.status, 429);
 assert.equal(duplicate.response.headers.get("cache-control"), "no-store");
 first.release();
 first.release();
 
-const second = acquireAiRequest(request("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "coach");
+const second = await acquireAiRequest(request("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "coach");
 assert.equal(second.ok, true);
 second.release();
-const tooFrequent = acquireAiRequest(request("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "coach");
+const tooFrequent = await acquireAiRequest(request("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "coach");
 assert.equal(tooFrequent.ok, false);
 assert.equal(tooFrequent.response.status, 429);
 assert.ok(Number(tooFrequent.response.headers.get("retry-after")) >= 1);
 
-const third = acquireAiRequest(request("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "custom-topic");
+const third = await acquireAiRequest(request("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "custom-topic");
 assert.equal(third.ok, true);
 third.release();
-const globalBudget = acquireAiRequest(request("cccccccc-cccc-cccc-cccc-cccccccccccc"), "demo-draft");
+const globalBudget = await acquireAiRequest(request("cccccccc-cccc-cccc-cccc-cccccccccccc"), "demo-draft");
 assert.equal(globalBudget.ok, false);
 assert.equal(globalBudget.response.status, 503);
 

@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   const forcedDemo = process.env.THINKREVISE_DEMO_MODE === "1" || process.env.REVISIONCOACH_DEMO_MODE === "1";
   const key = forcedDemo ? undefined : process.env.OPENAI_API_KEY;
   if (!key) return json({ error: "演示初稿生成需要连接 AI，请稍后重试。你也可以自行填写初稿。" }, 503);
-  const access = acquireAiRequest(request, "demo-draft");
+  const access = await acquireAiRequest(request, "demo-draft");
   if (!access.ok) return access.response;
   const schema = {
     type: "object", additionalProperties: false,
@@ -70,6 +70,6 @@ export async function POST(request: Request) {
   const validationFailure = /missing|invalid|length|similar|grounded|spelling|target word/i.test(lastFailure);
   return json({ error: validationFailure ? "本次演示稿未通过目标词或内容检查，请再次点击生成。" : "AI 暂时无法生成演示初稿，请稍后重试。" }, 502);
   } finally {
-    access.release();
+    await access.release();
   }
 }

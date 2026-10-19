@@ -38,7 +38,10 @@ async function readJsonResponse<T>(response: Response): Promise<T> {
 function apiRequestHeaders() {
   const key = "thinkrevise-anonymous-session";
   const legacyKey = "revisioncoach-anonymous-session";
-  let session = window.sessionStorage.getItem(key) ?? window.sessionStorage.getItem(legacyKey);
+  // Persist the anonymous ID across tabs; draft content remains in sessionStorage.
+  let session: string | null = null;
+  try { session = window.localStorage.getItem(key); } catch { /* Storage may be blocked. */ }
+  try { session ??= window.sessionStorage.getItem(key) ?? window.sessionStorage.getItem(legacyKey); } catch { /* Use an ephemeral ID. */ }
   if (!session) {
     const bytes = new Uint8Array(16);
     if (window.crypto?.getRandomValues) window.crypto.getRandomValues(bytes);
@@ -47,9 +50,9 @@ function apiRequestHeaders() {
     bytes[8] = (bytes[8] & 0x3f) | 0x80;
     const hex = Array.from(bytes, (value) => value.toString(16).padStart(2, "0"));
     session = `${hex.slice(0, 4).join("")}-${hex.slice(4, 6).join("")}-${hex.slice(6, 8).join("")}-${hex.slice(8, 10).join("")}-${hex.slice(10).join("")}`;
-    window.sessionStorage.setItem(key, session);
   }
-  if (!window.sessionStorage.getItem(key)) window.sessionStorage.setItem(key, session);
+  try { window.localStorage.setItem(key, session); } catch { /* Private browser fallback. */ }
+  try { window.sessionStorage.setItem(key, session); } catch { /* Still allow this request. */ }
   return { "Content-Type": "application/json", "X-ThinkRevise-Session": session };
 }
 

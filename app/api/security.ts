@@ -1,3 +1,4 @@
+import { acquireShared } from "./shared-limits";
 type RouteKind = "coach" | "custom-topic" | "demo-draft";
 
 type VisitorState = {
@@ -20,14 +21,16 @@ const MINUTE_MS = 60_000;
 const DAY_MS = 86_400_000;
 
 function numericSetting(name: string, fallback: number, minimum: number, maximum: number) {
-  const value = Number(process.env[name]);
+  const raw = process.env[name]?.trim();
+  if (!raw) return fallback;
+  const value = Number(raw);
   return Number.isFinite(value) ? Math.min(maximum, Math.max(minimum, Math.floor(value))) : fallback;
 }
 
 const limits = {
   perMinute: numericSetting("AI_RATE_LIMIT_PER_MINUTE", 5, 1, 60),
   perDay: numericSetting("AI_RATE_LIMIT_PER_DAY", 20, 1, 2_000),
-  globalPerDay: numericSetting("AI_GLOBAL_DAILY_REQUEST_LIMIT", 100, 1, 100_000),
+  globalPerDay: numericSetting("AI_GLOBAL_DAILY_REQUEST_LIMIT", 120, 1, 100_000),
   perVisitorConcurrent: numericSetting("AI_CONCURRENT_PER_VISITOR", 1, 1, 4),
   globalConcurrent: numericSetting("AI_GLOBAL_CONCURRENT_LIMIT", 3, 1, 100),
 };
@@ -52,15 +55,17 @@ function securityResponse(error: string, status: number, retryAfter?: number) {
 }
 
 function visitorKey(request: Request) {
+  // Campus NAT must not merge different learners into one visitor.
+  const session = request.headers.get("x-thinkrevise-session")?.trim()
+    || request.headers.get("x-revisioncoach-session")?.trim()
+    || "";
+  if (/^[a-f0-9-]{20,64}$/i.test(session)) return `session:${session.toLowerCase()}`;
   const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
   const ip = request.headers.get("cf-connecting-ip")?.trim()
     || request.headers.get("x-real-ip")?.trim()
     || forwarded;
   if (ip) return `ip:${ip.slice(0, 80)}`;
-  const session = request.headers.get("x-thinkrevise-session")?.trim()
-    || request.headers.get("x-revisioncoach-session")?.trim()
-    || "";
-  return /^[a-f0-9-]{20,64}$/i.test(session) ? `session:${session}` : "anonymous-local";
+  return "anonymous-local";
 }
 
 function resetExpiredCounters(visitor: VisitorState, now: number) {
@@ -85,7 +90,18 @@ function cleanInactiveVisitors(now: number) {
   }
 }
 
-export function acquireAiRequest(request: Request, route: RouteKind) {
+export async function acquireAiRequest(request: Request, route: RouteKind) {
+  // Production must never silently fall back to process-local counters.
+  if (process.env.VERCEL_ENV === "production" || process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL) {
+    try {
+      const result = await acquireShared(visitorKey(request), limits, "zh");
+      if (result.code === 0) return { ok: true as const, route, release: result.release };
+      const messages = ["","你已达到今日 AI 使用上限，请在北京时间零点后重试。","今日全站 AI 共享次数已用完，请在北京时间零点后重试。","短时间请求过多，请稍后重试。","你还有一个 AI 请求正在处理，请等待完成。","当前使用人数较多，请稍后重试；文章仍会保留。"];
+      return { ok: false as const, response: securityResponse(messages[result.code], result.code === 2 || result.code === 5 ? 503 : 429, result.retryAfter) };
+    } catch {
+      return { ok: false as const, response: securityResponse("暂时无法核验使用次数，请稍后重试；文章仍会保留。", 503, 10) };
+    }
+  }
   const now = Date.now();
   cleanInactiveVisitors(now);
   const key = visitorKey(request);
