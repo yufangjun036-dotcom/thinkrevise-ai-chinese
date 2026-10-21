@@ -40,6 +40,7 @@ type FeedbackItem = {
 };
 
 type RevisionComparison = {
+  editAudit?: EditAudit[];
   initialCount: number;
   resolved: Array<Pick<FeedbackItem, "category" | "quote">>;
   remainingCount: number;
@@ -102,7 +103,7 @@ function attachEnglishFeedback(item: FeedbackItem, index: number, translations: 
   // Preserve the central scope diagnosis, rather than translating only a
   // neighbouring source claim. This is a conservative check, not a semantic proof.
   if (/普遍结论|普遍推广|所有大学|所有学生/.test(item.why)
-    && !/universal|generali[sz]|all (?:(?:university|college) students|students|universities)|every university|overreach|overbroad|scope/i.test(translation.why)) return item;
+    && !/universal|generali[sz]|general (?:conclusion|claim)|all (?:(?:university|college) students|students|universities)|every university|overreach|overbroad|scope/i.test(translation.why)) return item;
   const originalEdits = concreteEdits(item);
   const translatedEdits = concreteEdits({ ...item, correction: translation.correction });
   if (originalEdits?.length && JSON.stringify(originalEdits) !== JSON.stringify(translatedEdits)) return item;
@@ -641,6 +642,42 @@ function reconcileUnappliedQuotedRepairs(checks: unknown, sentences: string[], c
   }
 }
 
+function preserveContextualPastPerfect(original: string, replacement: string, previous: string): string {
+  // Different subjects in coordinated clauses can have different time references.
+  // Do not harmonise an already grammatical past-perfect history with a present
+  // clause when a preceding completed event supplies its past reference.
+  if (!/\b(?:have|has)\b.*\bbut\b/i.test(original)
+    || !/\b(?:planned|decided|met|visited|arrived|checked|asked|said|wrote|went|yesterday)\b|\blast\s+(?:week|month|year|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\b/i.test(previous)
+    || /\b(?:now|currently|at present)\b/i.test(original)) return replacement;
+  const histories = [...original.matchAll(/\bhad\s+(?:(?:never|already|previously|not)\s+)?(?:[a-z]+ed|been|gone|seen|done|known|read|written|taken|made|met|found|left|lost)\b/gi)];
+  if (histories.length !== 1) return replacement;
+  const phrase = histories[0][0];
+  for (const present of ["has", "have"]) {
+    const changed = phrase.replace(/^had/i, present);
+    if (replacement.includes(changed) && replacement.indexOf(changed) === replacement.lastIndexOf(changed)) return replacement.replace(changed, phrase);
+  }
+  return replacement;
+}
+
+function sentenceIndexIssues(checks: unknown, sentences: string[]): string[] {
+  if (!Array.isArray(checks)) return [];
+  return checks.flatMap(entry => {
+    if (!entry || !Number.isInteger(entry.index) || typeof entry.replacement !== "string"
+      || typeof sentences[entry.index] !== "string") return [];
+    const source = sentences[entry.index], replacement = entry.replacement.trim();
+    if (replacement === source) return [];
+    const other = sentences.findIndex((sentence, index) => index !== entry.index && sentence === replacement);
+    if (other < 0) return [];
+    const words = (text: string): string[] => text.toLowerCase().match(/[a-z]+/g) ?? [];
+    const originalWords = words(source), replacedWords = words(replacement);
+    const overlap = originalWords.filter(word => replacedWords.includes(word)).length / Math.max(1, originalWords.length);
+    // Exact text from an unrelated input sentence is an indexing failure, not
+    // a grammar repair. Similar sentences can legitimately share a correction.
+    if (overlap >= 0.5) return [];
+    return [`Sentence index ${entry.index} must review this original: ${JSON.stringify(source)}. Your replacement copied unrelated input sentence ${other}. Rebuild sentenceChecks using the original input.sentences indices, including unchanged sentences. Never skip a sentence, renumber later sentences, or duplicate the last entry to fill the count. Review the missing original; do not simply copy it if it contains an error.`];
+  });
+}
+
 function checkedSentenceFeedback(checks: unknown, sentences: string[]): FeedbackItem[] {
   if (!Array.isArray(checks) || checks.length !== sentences.length) throw new Error("Incomplete sentence review");
   const seen = new Set<number>();
@@ -655,6 +692,7 @@ function checkedSentenceFeedback(checks: unknown, sentences: string[]): Feedback
     const quote = sentences[entry.index];
     const modelReplacement = entry.replacement.trim();
     entry.replacement = preserveOptionalLexicalChoice(quote, entry.replacement);
+    entry.replacement = preserveContextualPastPerfect(quote, entry.replacement, sentences.slice(Math.max(0, entry.index - 3), entry.index).join(" "));
     const replacement = preserveOptionalAgreementChoice(quote, normalisePracticeNoun(normaliseNarrativeDiscovery(quote, normaliseQuantifiedCountSubjects(normaliseCertainArticles(preserveGrammaticalSubjectPronoun(quote, preserveOptionalCoordinatorComma(quote, entry.replacement.trim())))), sentences[entry.index + 1] ?? "")));
     entry.replacement = replacement;
     if (quote === replacement && modelReplacement !== quote) entry.why = "无需修改：此处仅为已排除的可选表达调整。";
@@ -674,6 +712,13 @@ function checkedSentenceFeedback(checks: unknown, sentences: string[]): Feedback
         && issue.correction.split("→")[1]?.match(/^\s*([A-Za-z]+)/)?.[1].toLowerCase() === edit.after.toLowerCase());
       if (knownSpelling || (edit.before !== edit.after && edit.before.toLowerCase() === edit.after.toLowerCase())) item.category = "语言准确性 · 拼写与大小写";
       else if (edit.before === "practise" && edit.after === "practice") item.category = "语言准确性 · 词形选择";
+      // Label only an already reviewed edit; never invent a correction.
+      else if (["information", "advice", "equipment", "research", "homework", "furniture", "luggage", "knowledge"].includes(edit.after.toLowerCase())
+        && edit.before.toLowerCase() === edit.after.toLowerCase() + "s") item.category = "语言准确性 · 冠词与不可数名词";
+      else if (/^(?:more|most)$/i.test(edit.before.trim()) && !edit.after.trim()
+        && /^(?:cheaper|better|worse|easier|faster|slower|larger|smaller|higher|lower|stronger|weaker|best|worst|easiest|fastest|cheapest)\b/i.test(
+          (quote.match(/[a-z0-9]+(?:['’][a-z]+)?/gi) ?? []).slice(edit.end).join(" "))) item.category = "语言准确性 · 词形选择";
+      else if (["me:i","i:me","him:he","he:him","her:she","she:her","us:we","we:us","them:they","they:them"].includes(edit.before.toLowerCase() + ":" + edit.after.toLowerCase())) item.category = "语言准确性 · 词形选择";
       else if (/^(?:a|an)$/i.test(edit.before) && /^(?:a|an)$/i.test(edit.after)) item.category = "语言准确性 · 冠词与名词形式";
       else if (!edit.before.trim() && /^(?:a|an|the)$/i.test(edit.after.trim())) item.category = "语言准确性 · 冠词与名词形式";
       else if (/\b(?:both|many|several|two|three|four|five)\s*$/i.test(prefix)
@@ -1440,7 +1485,30 @@ function feedbackQuotesOverlap(first: string, second: string, firstCategory = ""
 
 // Category names alone are not stable identities. Cross-category discourse
 // matching additionally requires the same passage and the same advice intent.
+function commaRepairBoundary(item: FeedbackItem): number | undefined {
+  if (!item.category.startsWith("语言") || feedbackCategoryFamily(item.category) !== "sentence-structure") return undefined;
+  const target = explicitLanguageReplacement(item);
+  if (!target) return undefined;
+  const source = item.quote;
+  for (let index = 0; index < source.length; index++) {
+    if (source[index] !== ",") continue;
+    const left = source.slice(0, index), right = source.slice(index + 1);
+    // Identify the SAME unchanged comma boundary, not all punctuation in a sentence.
+    // These are alternative executable repairs; detection remains independent.
+    const alternatives = [left + ";" + right, left + "." + right.replace(/^(\s*)([a-z])/, (_, space, letter) => space + letter.toUpperCase())];
+    for (const word of ["and", "but", "so", "yet", "or", "nor", "for"]) alternatives.push(left + ", " + word + " " + right.trimStart());
+    if (alternatives.includes(target)) return index;
+  }
+  return undefined;
+}
+
+function sameCommaRepair(old: FeedbackItem, current: FeedbackItem) {
+  const boundary = commaRepairBoundary(old);
+  return boundary !== undefined && old.quote === current.quote && commaRepairBoundary(current) === boundary;
+}
+
 function sameRevisionFinding(old: FeedbackItem, current: FeedbackItem) {
+  if (sameCommaRepair(old, current)) return true;
   // Shared evidence words and overlapping passages do not make source
   // verification and narrowing a conclusion the same learning action.
   const requestsSource = (item: FeedbackItem) => item.category.startsWith("学术建议")
@@ -2232,14 +2300,10 @@ function partialRevisionProgress(old: FeedbackItem, current: FeedbackItem, origi
   if (!expectedQuote || !currentTarget) return undefined;
   const original = quoteSentence(originalDraft, old.quote);
   const revised = quoteSentence(revisedDraft, current.quote);
-  // Only credit an unambiguous, position-aligned sentence. Reordered or split
-  // passages retain the conservative changed status instead of guessed credit.
-  const sentences = (text: string) => Array.from(new Intl.Segmenter("en", { granularity: "sentence" }).segment(text)).map(part => part.segment.trim());
-  const left = sentences(originalDraft), right = sentences(revisedDraft);
-  const index = left.indexOf(original);
-  if (index < 0 || left.length !== right.length || right[index] !== revised
-    || left.filter(value => value === original).length !== 1 || right.filter(value => value === revised).length !== 1) return undefined;
   const expected = original.replace(old.quote, expectedQuote);
+  // Match the actual passage, not its old sentence index. Unrelated insertions
+  // must not erase partial progress; ambiguous passages remain unassigned.
+  if (matchedAuditPassage(originalDraft, revisedDraft, original, expected) !== revised) return undefined;
   const target = revised.replace(current.quote, currentTarget);
   const planned = sentenceEdits(original, expected);
   const actual = sentenceEdits(original, revised);
@@ -2250,6 +2314,70 @@ function partialRevisionProgress(old: FeedbackItem, current: FeedbackItem, origi
   const completed = planned.filter(edit => actual.some(change => same(edit, change)) && final.some(change => same(edit, change)));
   if (!completed.length || completed.length === planned.length) return undefined;
   return { completed: completed.map(edit => edit.label), pending: pending.map(edit => edit.label) };
+}
+
+
+type EditAudit = { quote: string; edit: string; kind: "punctuation" | "wording"; status: "applied" | "alternative_applied" | "still_reported" | "alternative_reported" | "not_reconfirmed" | "unmapped" };
+
+function matchedAuditPassage(original: string, revised: string, source: string, expected: string): string | undefined {
+  if (!source || original.indexOf(source) !== original.lastIndexOf(source)) return undefined;
+  const size = (text: string) => (text.match(/[a-z0-9]+/gi) ?? []).length;
+  const punctuation = { category: "语言准确性 · 句子连接与标点", quote: source, correction: source + " → " + expected } as FeedbackItem;
+  const compatible = (text: string) => text === source || text === expected
+    || sameCommaRepair(punctuation, { ...punctuation, correction: source + " → " + text })
+    || (Math.min(size(source), size(text)) / Math.max(size(source), size(text), 1) >= 0.8
+      && (approximatelyExistsInOriginal(source, text) || approximatelyExistsInOriginal(text, source)));
+  const candidates = (draft: string) => {
+    const sentences = Array.from(new Intl.Segmenter("en", { granularity: "sentence" }).segment(draft));
+    const counts = new Set([source, expected].map(text => Array.from(new Intl.Segmenter("en", { granularity: "sentence" }).segment(text)).length));
+    if (commaRepairBoundary(punctuation) !== undefined) counts.add(2);
+    const matches: string[] = [];
+    for (let start = 0; start < sentences.length; start++) {
+      for (let count = 1; count <= 3 && start + count <= sentences.length; count++) {
+        if (!counts.has(count)) continue;
+        const end = sentences[start + count - 1];
+        const text = draft.slice(sentences[start].index, end.index + end.segment.length).trim();
+        if (compatible(text)) matches.push(text);
+      }
+    }
+    return matches.filter(text => !matches.some(other => other !== text && text.includes(other)));
+  };
+  // Unique in BOTH drafts: inserting, deleting or moving unrelated sentences
+  // must not break a match, but repeated or near-identical passages stay unassigned.
+  const before = candidates(original), after = candidates(revised);
+  return before.length === 1 && before[0] === source && after.length === 1 ? after[0] : undefined;
+}
+
+function priorEditAudit(original: string, revised: string, prior: FeedbackItem[], current: FeedbackItem[]): EditAudit[] {
+  return prior.flatMap(item => {
+    const replacement = explicitLanguageReplacement(item);
+    if (!replacement) return [];
+    const sentence = quoteSentence(original, item.quote);
+    const expected = sentence.replace(item.quote, replacement);
+    const planned = sentenceEdits(sentence, expected);
+    if (!planned) return [];
+    const mapped = matchedAuditPassage(original, revised, sentence, expected);
+    const actual = mapped ? sentenceEdits(sentence, mapped) : null;
+    const same = (a: typeof planned[number], b: typeof planned[number]) => a.start === b.start && a.end === b.end && a.before === b.before && a.after === b.after;
+    return planned.map(edit => {
+      const base = { quote: sentence, edit: edit.label, kind: /[\p{L}\p{N}]/u.test(edit.before + edit.after) ? "wording" as const : "punctuation" as const };
+      if (!actual) return { ...base, status: "unmapped" as const };
+      if (actual.some(change => same(edit, change))) return { ...base, status: "applied" as const };
+      if (item.quote === sentence && sameCommaRepair(item, { ...item, correction: item.quote + " → " + mapped })) return { ...base, status: "alternative_applied" as const };
+      // Confirmation requires a current, executable correction that leads to
+      // the same original-position edit, not merely a similar sentence/category.
+      const confirmed = current.some(now => {
+        if (quoteSentence(revised, now.quote) !== mapped) return false;
+        const target = explicitLanguageReplacement(now);
+        if (!target) return false;
+        const final = sentenceEdits(sentence, mapped!.replace(now.quote, target));
+        return final?.some(change => same(edit, change));
+      });
+      if (confirmed) return { ...base, status: "still_reported" as const };
+      if (current.some(now => sameCommaRepair(item, now))) return { ...base, status: "alternative_reported" as const };
+      return { ...base, status: "not_reconfirmed" as const };
+    });
+  });
 }
 
 function addRevisionComparison(
@@ -2310,6 +2438,7 @@ function addRevisionComparison(
   ));
   const finalFeedback = dedupeFeedback(orderedFeedback).slice(0, MAX_FEEDBACK_ITEMS);
   const revisionComparison: RevisionComparison = {
+    editAudit: priorEditAudit(originalDraft, revisedDraft, prior, finalFeedback),
     initialCount: prior.length,
     resolved,
     remainingCount: finalFeedback.filter((item) => item.revisionStatus === "remaining").length,
@@ -2890,6 +3019,15 @@ function hasStructurallyAbruptTopicShift(text: string) {
 }
 
 function normaliseContextualAcademicCategory(item: FeedbackItem, draft: string) {
+  // Reclassify an explicitly diagnosed unsupported causal claim, not every
+  // sentence mentioning cause. Genuine off-topic feedback retains its type.
+  if (item.category === "学术建议 · 论点聚焦"
+    && /\b(?:caus(?:e[ds]?|ing)|proves?|led to|leads? to)\b/i.test(item.quote)
+    && /因果/.test(item.why)
+    && /(?:超出|不足|缺乏|没有).{0,35}(?:材料|证据|支持|依据)/.test(item.why)
+    && !/跑题|偏离主题|转换主题|切换主题/.test(item.why)) {
+    return { ...item, category: "学术建议 · 论证与证据" };
+  }
   if (/学术/.test(item.category) && /\bproposal (?:already )?proves?\b/i.test(item.quote)) {
     const sentence = quoteSentence(draft, item.quote);
     if (/\b(?:should|must) require every\b[^.!?]*\breplace\b/i.test(sentence)) {
@@ -3105,7 +3243,7 @@ const baseCohesionReviewInstruction = "\n复核衔接建议时，依据 draft �
 
 const evidenceBoundaryInstruction = "\n论证检查先区分原文实际说了什么：（1）作者断言了某效果或结论；（2）作者明确承认未知、数字有待核对或证据不能证明某效果；（3）作者提出诚实写作、按测量描述结果等原则；（4）作者只描述观察值。第2类若已说明需核对记录，不再要求作者重复承认同一矛盾；但若另一个位置仍坚持冲突数字都是准确结果，定位那个位置。第3类不是已证实的效果主张，不要把 should follow the measurements 等规范要求改成 may，也不要求排除所有原因才能描述高度确实增加。第4类可以支持与其直接对应的大小、方向描述，不能仅因缺少对照组而否认描述性变化；若作者进一步断言导致变化的原因或推广到所有人，再检查缺口。不得假设作者还会保留文中已经删除的更强主张。真正的因果过强、无依据的普遍保证、未经承认的数据冲突仍需报告。";
 
-const eventTimeBoundaryInstruction = "\n时间核对按整段事件判断：every/each 修饰人或物时表达数量分配，不是惯例的时间标记；只有 every day/week 等修饰时间单位时才直接支持反复发生。前文已明确 last Tuesday 等过去活动时，参与者在该次活动中的回答、填写、测量、记录等动作应延续过去时间；不能把单数主语或每人执行同样步骤误读为当前习惯。若原文确实转述当前有效的规则、功能或一般流程，仍可保留现在时，但须有真实语境依据。";
+const eventTimeBoundaryInstruction = "\n时间核对按整段事件判断：every/each 修饰人或物时表达数量分配，不是惯例的时间标记；只有 every day/week 等修饰时间单位时才直接支持反复发生。前文已明确 last Tuesday 等过去活动时，参与者在该次活动中的回答、填写、测量、记录等动作应延续过去时间；不能把单数主语或每人执行同样步骤误读为当前习惯。若原文确实转述当前有效的规则、功能或一般流程，仍可保留现在时，但须有真实语境依据。并列句或 but 两侧不必使用相同完成时：现在完成时可陈述说话人截至现在的经历，过去完成时可回指前文计划、决定或访问时另一人的既往经历。只因同句出现 have/has 和 had 不能判时态不一致；有过去叙事参照或时间可合理不同，应保留 had，而不是统一改成 has/have。只有实际时间含义矛盾才纠正。";
 
 class MeaningPreservationError extends Error {
   constructor(message: string, readonly issues: string[] = [], readonly rejectedReview?: unknown) { super(message); }
@@ -3196,6 +3334,17 @@ function isOptionalClarityPolish(item: FeedbackItem): boolean {
 function preservesMeaningAnchors(before: string, after: string): boolean {
   const target = JSON.stringify(meaningAnchors(after));
   if (JSON.stringify(meaningAnchors(before)) === target) return true;
+  // Accept, never generate, a reviewed present-form repair in an explicitly
+  // future subordinate condition. The entire result clause must stay unchanged.
+  // This is not permission to drop prediction/willingness modals in main clauses.
+  const condition = before.match(/^(If|Unless|When|Once|Until|Before|After)\s+([^,.;!?]+?)\s+will\s+be\s+([^,.;!?]+),(\s+.+)$/i);
+  if (condition && /\b(?:tomorrow|next\s+(?:day|week|month|year|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday))\b/i.test(condition[3])
+    && /\bwill\b/i.test(condition[4])) {
+    for (const present of ["am", "is", "are"]) {
+      const candidate = before.replace(/\bwill\s+be\b/i, present);
+      if (candidate === after) return true;
+    }
+  }
   // Only adjacent duplicate future modals are malformed here. Never exempt
   // separated modals, negation, numbers, scope, or arbitrary modal changes.
   const pairs = [...before.matchAll(/\b(will)\s+(would)\b|\b(would)\s+(will)\b/gi)];
@@ -3443,6 +3592,11 @@ async function reviewCandidateFeedback(value: unknown, draft: string, apiKey: st
     }
   }
   console.info("Feedback review counts", { candidates: candidates.length, approved: approved.size });
+  const indexIssues = sentenceIndexIssues(decision.sentenceChecks, sentences);
+  if (indexIssues.length) {
+    if (retryIssues) throw new MeaningPreservationError("Sentence indices still mismatch after retry", indexIssues, decision);
+    return reviewCandidateFeedback(value, draft, apiKey, signal, trace, indexIssues, scope);
+  }
   if (sentences.length && Array.isArray(decision.sentenceChecks)) {
     const approvedAcademic = candidates.filter((item, index) => approved.has(index) && item.category.startsWith("学术"));
     for (const entry of decision.sentenceChecks) {
@@ -3762,6 +3916,15 @@ export async function POST(request: Request) {
     });
     return json({
       ...responseResult,
+      feedback: responseResult.feedback.map(item => {
+        const replacement = explicitLanguageReplacement(item);
+        const edits = replacement ? sentenceEdits(item.quote, replacement) : null;
+        return { ...item, suggestedChanges: edits?.map(edit => ({
+          label: edit.label,
+          kind: /[\p{L}\p{N}]/u.test(edit.before + edit.after) ? "wording" : "punctuation",
+          coordinatorComma: edit.before === "" && edit.after === "," && Array.from(item.quote.matchAll(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*|[^\s]/gu))[edit.start]?.[0].toLowerCase() === "and",
+        })) };
+      }),
       provider: "openai",
       ...(includeAccuracyStages ? {
         accuracyStages: {

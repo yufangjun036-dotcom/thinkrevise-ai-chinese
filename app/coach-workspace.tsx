@@ -1,5 +1,6 @@
 "use client";
 import GrammarPractice from "./grammar-practice/practice";
+import RevisionEditAudit, { SuggestedChanges, type SuggestedChange, type EditAudit } from "./revision-edit-audit";
 import LinkedRevisionEditor from "./linked-revision-editor";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
@@ -11,9 +12,9 @@ import { countNonWhitespaceCharacters, limitNonWhitespaceCharacters, MAX_RAW_DRA
 
 type Path = "practice" | "revision";
 type Stage = "home" | "setup" | "draft" | "feedback" | "revise" | "reflect";
-type RevisionStatus = "remaining" | "changed" | "supplemental";
-type FeedbackItem = { category: string; quote: string; why: string; correction?: string; question?: string; hints?: string[]; suggestion?: string; confidence: "高" | "中" | "低"; revisionStatus?: RevisionStatus };
-type RevisionComparison = { initialCount: number; resolved: Array<Pick<FeedbackItem, "category" | "quote">>; remainingCount: number; changedCount: number; supplementalCount: number };
+type RevisionStatus = "partial" | "remaining" | "changed" | "supplemental";
+type FeedbackItem = { suggestedChanges?: SuggestedChange[]; category: string; quote: string; why: string; correction?: string; question?: string; hints?: string[]; suggestion?: string; confidence: "高" | "中" | "低"; revisionProgress?: { completed: string[]; pending: string[] }; revisionStatus?: RevisionStatus };
+type RevisionComparison = { editAudit?: EditAudit[]; initialCount: number; resolved: Array<Pick<FeedbackItem, "category" | "quote">>; remainingCount: number; changedCount: number; supplementalCount: number };
 type CoachResponse = { summary: string; feedback: FeedbackItem[]; modelRevision: string; overview: string[]; meaningRisk: string; provider: "openai" | "demo"; fallbackNotice?: string; revisionComparison?: RevisionComparison };
 type CustomTopicResult = { inferredDirection: string; words: Array<Pick<VocabularyItem, "word" | "definition" | "collocation" | "example">>; provider: "openai" };
 type AssignmentBrief = { title: string; instructions: string; wordLimit: string; criteria: string };
@@ -227,6 +228,7 @@ function InteractiveHighlightedDraft({
         {isOpen && item && <span className="inline-issue-popover" role="dialog" aria-label={`问题 ${issueIndex + 1} 的修改提示`}>
           <span className="inline-issue-heading"><strong>问题 {issueIndex + 1} / {feedback.length} · {item.category}</strong><button type="button" onClick={onDismiss} aria-label="关闭修改提示">×</button></span>
           <span className="inline-issue-copy">{item.why}</span>
+          <SuggestedChanges items={item.suggestedChanges} />
           <span className="inline-issue-label">修改方向</span>
           <span className="inline-issue-copy correction">{item.correction || "请根据诊断，用自己的语言完成修改。"}</span>
           {range.issueIndexes.length > 1 && <small>这一位置关联 {range.issueIndexes.length} 项问题；可用上方问题导航逐项查看。</small>}
@@ -956,7 +958,8 @@ export default function CoachWorkspace() {
         <p>{revisionResponse.feedback.length === 0 ? "本轮独立复检未发现可可靠定位的问题；最终版本仍需由你核对原意和事实。" : "第二稿已按与初稿相同的标准独立检测；下方标签说明问题来自原问题、修改位置，还是复检补充发现。"}</p>
       </div>
       {revisionResponse.revisionComparison?.resolved.length ? <div className="resolved-issue-list"><h2>本轮未再检出的原问题</h2>{revisionResponse.revisionComparison.resolved.map((item, index) => <span key={`${item.category}-${item.quote}-${index}`}><CheckIcon />{item.category}：{item.quote}</span>)}</div> : null}
-      {revisionResponse.feedback.length > 0 && <div className="revision-review-list"><h2>第二稿仍需注意的问题</h2>{revisionResponse.feedback.map((item, index) => <article key={`${item.category}-${index}`}><div className="revision-issue-title"><strong>{index + 1}. {item.category}</strong>{item.revisionStatus && <span className={`revision-status ${item.revisionStatus}`}>{item.revisionStatus === "remaining" ? "原问题仍存在" : item.revisionStatus === "changed" ? "修改位置仍需注意" : "复检补充发现"}</span>}</div><blockquote>{item.quote}</blockquote><p>{item.correction}</p></article>)}</div>}
+      <RevisionEditAudit items={revisionResponse.revisionComparison?.editAudit} />
+      {revisionResponse.feedback.length > 0 && <div className="revision-review-list"><h2>第二稿仍需注意的问题</h2>{revisionResponse.feedback.map((item, index) => <article key={`${item.category}-${index}`}><div className="revision-issue-title"><strong>{index + 1}. {item.category}</strong>{item.revisionStatus && <span className={`revision-status ${item.revisionStatus}`}>{item.revisionStatus === "partial" ? "已完成部分修改" : item.revisionStatus === "remaining" ? "原问题仍存在" : item.revisionStatus === "changed" ? "修改位置仍需注意" : "复检补充发现"}</span>}</div><blockquote>{item.quote}</blockquote><div>{item.revisionProgress && <><p><strong>已完成：</strong>{item.revisionProgress.completed.join("；")}</p><p><strong>仍需修改：</strong>{item.revisionProgress.pending.join("；")}</p></>}<p><strong>判断依据：</strong>{item.why}</p><p><strong>修改方向：</strong>{item.correction}</p></div></article>)}</div>}
       <div className="final-version-stack">
         <article className="version-pane locked"><div><span>原稿</span><strong>{draftWordCount} 词</strong></div><p>{draft}</p></article>
         <article className="version-pane locked"><div><span>你的第二稿</span><strong>{revisedWordCount} 词</strong></div>{revisionResponse.feedback.length > 0 && <aside className="draft-highlight-legend"><i />红色下划线表示第二稿复检后仍存在的问题</aside>}<p><HighlightedDraft text={revisedDraft} feedback={revisionResponse.feedback} /></p></article>
