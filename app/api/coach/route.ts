@@ -3396,21 +3396,11 @@ async function reviewCandidateFeedback(value: unknown, draft: string, apiKey: st
   if (scope === "all" && sentences.length) {
     // Isolate the tasks at the request boundary. Showing evidence-gap advice
     // to the language reviewer was causing it to weaken grammatical claims.
+    const language = await reviewCandidateFeedback({ ...result, feedback: result.feedback.filter((item: FeedbackItem) => item.category.startsWith("语言")) }, draft, apiKey, signal, trace, retryIssues, "language");
     const academicCandidates = result.feedback.filter((item: FeedbackItem) => !item.category.startsWith("语言"));
-    const languageTask = reviewCandidateFeedback({ ...result, feedback: result.feedback.filter((item: FeedbackItem) => item.category.startsWith("语言")) }, draft, apiKey, signal, trace, retryIssues, "language");
-    if (!academicCandidates.length) return languageTask;
+    if (!academicCandidates.length) return language;
     const academicTrace: AccuracyTrace = {};
-    // Same isolated inputs, prompts, retries and guards; only overlap waiting.
-    // Settle both before returning, including failures, so quota release cannot
-    // leave an unobserved reviewer running. Never return a partial diagnosis.
-    const reviews = await Promise.allSettled([
-      languageTask,
-      reviewCandidateFeedback({ feedback: academicCandidates, modelRevision: "" }, draft, apiKey, signal, academicTrace, retryIssues, "academic"),
-    ]);
-    if (reviews[0].status === "rejected") throw reviews[0].reason;
-    if (reviews[1].status === "rejected") throw reviews[1].reason;
-    const language = reviews[0].value;
-    const academic = reviews[1].value;
+    const academic = await reviewCandidateFeedback({ feedback: academicCandidates, modelRevision: "" }, draft, apiKey, signal, academicTrace, retryIssues, "academic");
     if (trace && trace.review && typeof trace.review === "object") trace.review = { ...trace.review, academicReview: academicTrace.review };
     let modelRevision = result.modelRevision ? String(language.modelRevision || draft) : "";
     if (modelRevision) for (const item of academic.feedback) {
