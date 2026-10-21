@@ -489,3 +489,7 @@ button:focus-visible, textarea:focus-visible, input:focus-visible, select:focus-
 .version-pane .revision-location-status { margin: 0; min-height: 2.8em; font: .76rem/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; color: #41628c; }
 .version-pane .revision-location-status.unmatched { color: #805b26; }
 @media (max-width: 800px) { .version-pane.linked-revision-pane { position: static; } }
+/* Busy indicator replaces the action arrow; it never implies progress %. */
+.analysis-spinner { display: inline-block; width: 1.15em; height: 1.15em; flex: 0 0 auto; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: analysis-spin .8s linear infinite; }
+@keyframes analysis-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .analysis-spinner { animation: none; } }
