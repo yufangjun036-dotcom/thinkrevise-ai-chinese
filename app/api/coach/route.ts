@@ -84,6 +84,38 @@ function json(data: unknown, status = 200) {
   });
 }
 
+// Preserve an already valid "maybe + finite verb" when the reviewer merely
+// substitutes "may + base verb". Position and token-count checks prevent this
+// bounded presentation cleanup from accepting added/deleted meaning or negation.
+function preserveOptionalMaybeWording(source: string, replacement: string): string {
+  const tokens = (text: string) => [...text.matchAll(/[A-Za-z]+(?:['’][A-Za-z]+)?|[^\sA-Za-z]/g)];
+  const before = tokens(source), after = tokens(replacement);
+  if (before.length !== after.length) return replacement;
+  const edits: { start: number; end: number; text: string }[] = [];
+  for (let i = 0; i < before.length - 1; i++) {
+    if (before[i][0].toLowerCase() !== "maybe" || after[i][0].toLowerCase() !== "may") continue;
+    const verb = before[i + 1][0].toLowerCase(), base = after[i + 1][0].toLowerCase();
+    const subject = before[i - 1]?.[0].toLowerCase() ?? "";
+    const originalDeterminer = before[i - 2]?.[0].toLowerCase() ?? "";
+    const determiner = originalDeterminer === "teh" && after[i - 2]?.[0].toLowerCase() === "the"
+      ? "the" : originalDeterminer;
+    const clearSingular = /^(?:he|she|it)$/.test(subject)
+      || (/^(?:the|a|an|this|that)$/.test(determiner) && /^[a-z]+$/.test(subject)
+        && (!subject.endsWith("s") || /^(?:class|business)$/.test(subject)));
+    if (!clearSingular) continue;
+    const forms = [base + "s", ...(/(?:s|sh|ch|x|z|o)$/.test(base) ? [base + "es"] : []),
+      ...(/[^aeiou]y$/.test(base) ? [base.slice(0, -1) + "ies"] : []),
+      ...(base === "have" ? ["has"] : [])];
+    if (!/^[a-z]+$/.test(base) || !forms.includes(verb)) continue;
+    // All other words must either match or be handled by the existing guards.
+    // Never remove a modal introduced at a different word position.
+    edits.push({ start: after[i].index!, end: after[i + 1].index! + after[i + 1][0].length,
+      text: source.slice(before[i].index!, before[i + 1].index! + before[i + 1][0].length) });
+  }
+  for (const edit of edits.reverse()) replacement = replacement.slice(0, edit.start) + edit.text + replacement.slice(edit.end);
+  return replacement;
+}
+
 function attachEnglishFeedback(item: FeedbackItem, index: number, translations: unknown, draft = ""): FeedbackItem {
   if (!Array.isArray(translations)) return item;
   const matches = translations.filter(x => x && x.index === index);
@@ -3631,7 +3663,8 @@ async function reviewCandidateFeedback(value: unknown, draft: string, apiKey: st
   let languageFeedback = sentences.length ? checkedSentenceFeedback(decision.sentenceChecks, sentences) : [];
   if (sentences.length) {
     const entries = decision.sentenceChecks as {index: number; replacement: string}[];
-    for (const entry of entries) entry.replacement = preserveOptionalCoordinatorComma(sentences[entry.index], entry.replacement);
+    for (const entry of entries) entry.replacement = preserveOptionalMaybeWording(sentences[entry.index],
+      preserveOptionalCoordinatorComma(sentences[entry.index], entry.replacement));
     // Validate first, then normalize only the bounded auxiliary form. Full
     // rewrite mode keeps the rejection path so two returned texts cannot diverge.
     if (!result.modelRevision) {
