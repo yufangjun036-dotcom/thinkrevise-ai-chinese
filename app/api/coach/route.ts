@@ -3019,6 +3019,16 @@ function hasStructurallyAbruptTopicShift(text: string) {
 }
 
 function normaliseContextualAcademicCategory(item: FeedbackItem, draft: string) {
+  // Keep an explicitly diagnosed evidence-to-population overgeneralisation
+  // in the evidence category. Do not infer an issue from "everyone" alone.
+  const explanation = `${item.why} ${item.whyEnglish || ""}`;
+  if (item.category === "学术建议 · 论点聚焦"
+    && /\b(?:everyone|everybody|all (?:people|students|learners)|every (?:student|learner))\b/i.test(item.quote)
+    && /证据|观察|个例|个别|个人经历|evidence|observation|personal experience|single (?:case|example)/i.test(explanation)
+    && /不足|超出|过[于度宽]|推[广到出]|普遍|泛化|universal|generali[sz]|too broad|beyond|insufficient/i.test(explanation)
+    && !/跑题|偏离主题|转换主题|切换主题|off.topic|unrelated topic/i.test(explanation)) {
+    return { ...item, category: "学术建议 · 论证与证据" };
+  }
   // Reclassify an explicitly diagnosed unsupported causal claim, not every
   // sentence mentioning cause. Genuine off-topic feedback retains its type.
   if (item.category === "学术建议 · 论点聚焦"
